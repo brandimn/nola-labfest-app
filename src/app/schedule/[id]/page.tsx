@@ -7,7 +7,10 @@ import { FavoriteButton } from "@/components/favorite-button";
 
 export default async function SessionDetailPage({ params }: { params: { id: string } }) {
   const user = await requireUser();
-  const session = await prisma.session.findUnique({ where: { id: params.id } });
+  const session = await prisma.session.findUnique({
+    where: { id: params.id },
+    include: { speakerRef: true },
+  });
   if (!session) notFound();
   const fav = await prisma.favorite.findUnique({
     where: { userId_sessionId: { userId: user.id, sessionId: session.id } },
@@ -17,8 +20,17 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
     <main className="mx-auto max-w-2xl px-4 py-6">
       <Link href="/schedule" className="text-sm text-[#0F172A]">← Schedule</Link>
       <div className="card mt-3 p-5">
-        <h1 className="text-xl font-bold">{session.title}</h1>
-        {session.speaker && <p className="mt-1 text-slate-600">{session.speaker}</p>}
+        <h1 className="font-display text-2xl font-bold">{session.title}</h1>
+        {session.speakerRef ? (
+          <Link
+            href={`/speakers/${session.speakerRef.id}`}
+            className="mt-1 inline-flex items-center gap-1 text-sm font-semibold text-[#B13E7D] hover:underline"
+          >
+            {session.speakerRef.name} →
+          </Link>
+        ) : (
+          session.speaker && <p className="mt-1 text-slate-600">{session.speaker}</p>
+        )}
         <p className="mt-2 text-sm text-slate-600">
           {formatDay(session.startsAt)}<br />
           {formatTime(session.startsAt)} – {formatTime(session.endsAt)}

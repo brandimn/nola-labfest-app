@@ -2,6 +2,9 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/session";
 import { VendorSearch } from "@/components/vendor-search";
+import { SponsorTier } from "@/components/sponsor-tier";
+
+const TIER_ORDER: Record<string, number> = { PLATINUM: 0, GOLD: 1, SILVER: 2, BRONZE: 3 };
 
 export default async function VendorsPage({
   searchParams,
@@ -12,15 +15,15 @@ export default async function VendorsPage({
   const q = searchParams.q?.trim();
   const category = searchParams.category?.trim();
 
-  const vendors = await prisma.vendor.findMany({
+  const vendorsRaw = await prisma.vendor.findMany({
     where: {
       AND: [
         q
           ? {
               OR: [
-                { name: { contains: q } },
-                { description: { contains: q } },
-                { category: { contains: q } },
+                { name: { contains: q, mode: "insensitive" } },
+                { description: { contains: q, mode: "insensitive" } },
+                { category: { contains: q, mode: "insensitive" } },
               ],
             }
           : {},
@@ -28,6 +31,12 @@ export default async function VendorsPage({
       ],
     },
     orderBy: { name: "asc" },
+  });
+  const vendors = [...vendorsRaw].sort((a, b) => {
+    const ta = a.sponsorTier ? TIER_ORDER[a.sponsorTier] ?? 99 : 99;
+    const tb = b.sponsorTier ? TIER_ORDER[b.sponsorTier] ?? 99 : 99;
+    if (ta !== tb) return ta - tb;
+    return a.name.localeCompare(b.name);
   });
 
   const categoriesRaw = await prisma.vendor.findMany({
@@ -39,7 +48,7 @@ export default async function VendorsPage({
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-6">
-      <h1 className="mb-4 text-2xl font-bold">Vendors</h1>
+      <h1 className="mb-4 font-display text-3xl font-bold">Vendors</h1>
       <VendorSearch categories={categories} />
       {vendors.length === 0 ? (
         <p className="mt-6 text-center text-slate-500">No vendors match your search.</p>
@@ -59,7 +68,10 @@ export default async function VendorsPage({
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold truncate">{v.name}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold truncate">{v.name}</p>
+                    <SponsorTier tier={v.sponsorTier} />
+                  </div>
                   <p className="text-xs text-slate-500 truncate">
                     Booth {v.boothNumber}
                     {v.category ? ` · ${v.category}` : ""}

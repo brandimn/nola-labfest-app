@@ -19,17 +19,22 @@ async function main() {
     },
   });
 
-  const sampleVendors = [
-    { name: "BonaDent Dental Labs", boothNumber: "101", category: "Lab" },
-    { name: "Nowak Dental Supplies", boothNumber: "102", category: "Supplies" },
-    { name: "Nowak Pediatric", boothNumber: "103", category: "Supplies" },
-    { name: "Nowak Lab Solutions", boothNumber: "104", category: "Lab" },
-    { name: "3M Oral Care", boothNumber: "105", category: "Products" },
-    { name: "Dentsply Sirona", boothNumber: "106", category: "Equipment" },
-    { name: "Straumann", boothNumber: "107", category: "Implants" },
-    { name: "Nobel Biocare", boothNumber: "108", category: "Implants" },
-    { name: "Kerr Dental", boothNumber: "109", category: "Products" },
-    { name: "Ivoclar Vivadent", boothNumber: "110", category: "Products" },
+  const sampleVendors: Array<{
+    name: string;
+    boothNumber: string;
+    category: string;
+    sponsorTier?: string;
+  }> = [
+    { name: "BonaDent Dental Labs", boothNumber: "101", category: "Lab", sponsorTier: "PLATINUM" },
+    { name: "Nowak Dental Supplies", boothNumber: "102", category: "Supplies", sponsorTier: "PLATINUM" },
+    { name: "Nowak Pediatric", boothNumber: "103", category: "Supplies", sponsorTier: "GOLD" },
+    { name: "Nowak Lab Solutions", boothNumber: "104", category: "Lab", sponsorTier: "GOLD" },
+    { name: "3M Oral Care", boothNumber: "105", category: "Products", sponsorTier: "GOLD" },
+    { name: "Dentsply Sirona", boothNumber: "106", category: "Equipment", sponsorTier: "SILVER" },
+    { name: "Straumann", boothNumber: "107", category: "Implants", sponsorTier: "SILVER" },
+    { name: "Nobel Biocare", boothNumber: "108", category: "Implants", sponsorTier: "SILVER" },
+    { name: "Kerr Dental", boothNumber: "109", category: "Products", sponsorTier: "BRONZE" },
+    { name: "Ivoclar Vivadent", boothNumber: "110", category: "Products", sponsorTier: "BRONZE" },
     { name: "Ultradent", boothNumber: "201", category: "Products" },
     { name: "Shofu Dental", boothNumber: "202", category: "Products" },
     { name: "Premier Dental", boothNumber: "203", category: "Products" },
@@ -60,8 +65,14 @@ async function main() {
           name: v.name,
           boothNumber: v.boothNumber,
           category: v.category,
+          sponsorTier: v.sponsorTier,
           description: `Visit ${v.name} at booth ${v.boothNumber} to learn more about our ${v.category.toLowerCase()} offerings.`,
         },
+      });
+    } else if (v.sponsorTier && !existing.sponsorTier) {
+      await prisma.vendor.update({
+        where: { id: existing.id },
+        data: { sponsorTier: v.sponsorTier },
       });
     }
   }
@@ -100,26 +111,77 @@ async function main() {
     },
   });
 
-  // Sample sessions (Oct 10-11, 2026)
+  // Speakers
+  const speakers = [
+    {
+      name: "Dr. Jane Smith",
+      title: "Chief Innovation Officer",
+      company: "DentalFuture Group",
+      bio: "Dr. Smith leads innovation strategy at DentalFuture Group. A 20-year veteran of dental practice, she speaks internationally on workflow modernization and the integration of AI in clinical care.",
+    },
+    {
+      name: "Dr. Robert Lee",
+      title: "Digital Dentistry Specialist",
+      company: "Lee Dental Institute",
+      bio: "Dr. Lee pioneered the digital workflow curriculum at three major US dental schools. His hands-on masterclasses have trained over 2,000 clinicians in fully digital restorative workflows.",
+    },
+    {
+      name: "Dr. Maria Chen",
+      title: "Implantologist",
+      company: "Chen Oral Surgery",
+      bio: "Board-certified oral surgeon specializing in full-arch implant rehabilitation. Dr. Chen has published over 40 peer-reviewed articles on digital case planning and guided surgery.",
+    },
+    {
+      name: "Lisa Gomez",
+      title: "Practice Management Consultant",
+      company: "Bright Practice Advisors",
+      bio: "Lisa helps dental practices optimize their insurance billing and revenue cycle management. Her workshops have helped 400+ practices increase collections by 15% or more.",
+    },
+    {
+      name: "Dr. Karen White",
+      title: "Cosmetic Dentist",
+      company: "Smile Design Studio",
+      bio: "Dr. White is recognized nationally for her work in aesthetic dentistry and minimally invasive techniques. She hosts the top-rated Cosmetic Dental Weekly podcast.",
+    },
+  ];
+
+  for (const s of speakers) {
+    const existing = await prisma.speaker.findFirst({ where: { name: s.name } });
+    if (!existing) await prisma.speaker.create({ data: s });
+  }
+
+  // Sample sessions — link to speakers
   const day1 = new Date("2026-10-10T08:00:00-04:00");
   const day2 = new Date("2026-10-11T08:00:00-04:00");
 
   const existingSessions = await prisma.session.count();
   if (existingSessions === 0) {
+    const speakersByName = Object.fromEntries(
+      (await prisma.speaker.findMany()).map((s) => [s.name, s])
+    );
     const sessions = [
       { title: "Welcome Breakfast", startsAt: addHours(day1, 0), endsAt: addHours(day1, 1), location: "Main Hall", track: "Social" },
-      { title: "Keynote: The Future of Dental Practice", speaker: "Dr. Jane Smith", startsAt: addHours(day1, 1), endsAt: addHours(day1, 2), location: "Main Hall", track: "Business" },
+      { title: "Keynote: The Future of Dental Practice", speaker: "Dr. Jane Smith", speakerId: speakersByName["Dr. Jane Smith"]?.id, startsAt: addHours(day1, 1), endsAt: addHours(day1, 2), location: "Main Hall", track: "Business" },
       { title: "Exhibit Hall Open", startsAt: addHours(day1, 2), endsAt: addHours(day1, 8), location: "Exhibit Hall", track: "Business" },
-      { title: "Digital Workflow Masterclass", speaker: "Dr. Robert Lee", startsAt: addHours(day1, 3), endsAt: addHours(day1, 5), location: "Room A", track: "Technology" },
-      { title: "Implant Case Planning", speaker: "Dr. Maria Chen", startsAt: addHours(day1, 5), endsAt: addHours(day1, 7), location: "Room B", track: "Clinical" },
+      { title: "Digital Workflow Masterclass", speaker: "Dr. Robert Lee", speakerId: speakersByName["Dr. Robert Lee"]?.id, startsAt: addHours(day1, 3), endsAt: addHours(day1, 5), location: "Room A", track: "Technology" },
+      { title: "Implant Case Planning", speaker: "Dr. Maria Chen", speakerId: speakersByName["Dr. Maria Chen"]?.id, startsAt: addHours(day1, 5), endsAt: addHours(day1, 7), location: "Room B", track: "Clinical" },
       { title: "Networking Reception", startsAt: addHours(day1, 9), endsAt: addHours(day1, 11), location: "Terrace", track: "Social" },
       { title: "Day 2 Breakfast", startsAt: addHours(day2, 0), endsAt: addHours(day2, 1), location: "Main Hall", track: "Social" },
-      { title: "Insurance & Billing Workshop", speaker: "Lisa Gomez", startsAt: addHours(day2, 1), endsAt: addHours(day2, 3), location: "Room A", track: "Business" },
-      { title: "Aesthetic Dentistry Techniques", speaker: "Dr. Karen White", startsAt: addHours(day2, 3), endsAt: addHours(day2, 5), location: "Room B", track: "Clinical" },
+      { title: "Insurance & Billing Workshop", speaker: "Lisa Gomez", speakerId: speakersByName["Lisa Gomez"]?.id, startsAt: addHours(day2, 1), endsAt: addHours(day2, 3), location: "Room A", track: "Business" },
+      { title: "Aesthetic Dentistry Techniques", speaker: "Dr. Karen White", speakerId: speakersByName["Dr. Karen White"]?.id, startsAt: addHours(day2, 3), endsAt: addHours(day2, 5), location: "Room B", track: "Clinical" },
       { title: "Prize Drawing & Closing", startsAt: addHours(day2, 8), endsAt: addHours(day2, 9), location: "Main Hall", track: "Social" },
     ];
     for (const s of sessions) {
       await prisma.session.create({ data: s });
+    }
+  } else {
+    // If sessions already exist, backfill speaker links by name
+    const existingSpeakers = await prisma.speaker.findMany();
+    for (const sp of existingSpeakers) {
+      await prisma.session.updateMany({
+        where: { speaker: sp.name, speakerId: null },
+        data: { speakerId: sp.id },
+      });
     }
   }
 

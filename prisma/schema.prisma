@@ -43,6 +43,7 @@ model Vendor {
   contactEmail String?
   contactPhone String?
   category     String?
+  sponsorTier  String?  // PLATINUM | GOLD | SILVER | BRONZE | null
   boothToken   String   @unique @default(cuid())
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -71,6 +72,8 @@ model Session {
   title       String
   description String?
   speaker     String?
+  speakerId   String?
+  speakerRef  Speaker? @relation(fields: [speakerId], references: [id], onDelete: SetNull)
   location    String?
   startsAt    DateTime
   endsAt      DateTime
@@ -81,6 +84,22 @@ model Session {
   favorites Favorite[]
 
   @@index([startsAt])
+  @@index([speakerId])
+}
+
+model Speaker {
+  id        String    @id @default(cuid())
+  name      String
+  title     String?
+  company   String?
+  bio       String?
+  photoUrl  String?
+  linkedIn  String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  sessions  Session[]
+
+  @@index([name])
 }
 
 model Favorite {
