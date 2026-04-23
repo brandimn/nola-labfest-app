@@ -3,9 +3,7 @@ generator client {
 }
 
 datasource db {
-  // DEMO MODE: using sqlite for the local click-through.
-  // For production, change provider to "postgresql" and point DATABASE_URL at Neon.
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
