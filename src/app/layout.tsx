@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { BottomNav } from "@/components/bottom-nav";
+import { InstallTracker } from "@/components/install-tracker";
 import { getUser } from "@/lib/session";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -42,6 +43,7 @@ export default async function RootLayout({
         <Providers>
           {children}
           {user && <BottomNav role={user.role} />}
+          {user && <InstallTracker />}
         </Providers>
       </body>
     </html>

@@ -19,6 +19,8 @@ model User {
   company      String?
   title        String?
   badgeToken   String   @unique @default(cuid())
+  invitedAt    DateTime?
+  installedAt  DateTime?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
@@ -152,6 +154,11 @@ model PushSubscription {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+model Setting {
+  key   String @id
+  value String @db.Text
 }
 
 model Announcement {

@@ -22,6 +22,11 @@ export default async function AdminBadgesPage({
   await requireRole("ADMIN");
   const q = searchParams.q?.trim();
 
+  const bgSetting = await prisma.setting.findUnique({
+    where: { key: "badgeBackgroundUrl" },
+  });
+  const customBg = bgSetting?.value || null;
+
   const attendees = await prisma.user.findMany({
     where: {
       role: "ATTENDEE",
@@ -86,7 +91,7 @@ export default async function AdminBadgesPage({
       ) : (
         <div className="badge-grid">
           {badges.map((b) => (
-            <BadgeCard key={b.id} attendee={b} />
+            <BadgeCard key={b.id} attendee={b} background={customBg} />
           ))}
         </div>
       )}
@@ -116,9 +121,50 @@ export default async function AdminBadgesPage({
 
 function BadgeCard({
   attendee,
+  background,
 }: {
   attendee: { name: string; company: string | null; title: string | null; qr: string };
+  background: string | null;
 }) {
+  if (background) {
+    return (
+      <div
+        className="badge-card relative overflow-hidden rounded-2xl border border-slate-200 shadow-sm"
+        style={{
+          aspectRatio: "4 / 3",
+          minHeight: "3in",
+          backgroundImage: `url('${background}')`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-t from-white/85 via-white/0 to-transparent" />
+        <div className="relative flex h-full flex-col justify-end px-5 pb-4 pt-3">
+          <div className="grid grid-cols-[1fr,auto] items-end gap-3">
+            <div className="min-w-0 rounded-lg bg-white/90 backdrop-blur px-3 py-2 shadow-sm">
+              <p className="font-display text-2xl font-bold leading-tight truncate">
+                {attendee.name}
+              </p>
+              {attendee.title && (
+                <p className="text-sm text-slate-700 truncate">{attendee.title}</p>
+              )}
+              {attendee.company && (
+                <p className="text-sm font-semibold text-[#B13E7D] truncate">
+                  {attendee.company}
+                </p>
+              )}
+            </div>
+            <img
+              src={attendee.qr}
+              alt={`${attendee.name} QR badge`}
+              className="h-28 w-28 flex-shrink-0 rounded-md border border-slate-200 bg-white p-1 shadow-sm"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       className="badge-card relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"

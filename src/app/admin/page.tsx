@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
-import { Users, Store, Calendar, Bell, Trophy, Scan, Sparkles, Printer } from "lucide-react";
+import { Users, Store, Calendar, Bell, Trophy, Scan, Sparkles, Printer, Settings } from "lucide-react";
 
 export default async function AdminHome() {
   await requireRole("ADMIN");
@@ -46,6 +46,7 @@ export default async function AdminHome() {
         <AdminTile href="/admin/leads" icon={Scan} label="All Leads" />
         <AdminTile href="/admin/voting" icon={Sparkles} label="Booth Voting" />
         <AdminTile href="/admin/badges" icon={Printer} label="Print Badges" />
+        <AdminTile href="/admin/settings" icon={Settings} label="Settings" />
       </div>
 
       <section>
