@@ -18,6 +18,7 @@ export default async function EditUserPage({ params }: { params: { id: string } 
       <p className="mb-4 text-sm text-slate-600">
         Created {new Date(user.createdAt).toLocaleDateString()}
         {user.invitedAt && ` · Invited ${new Date(user.invitedAt).toLocaleDateString()}`}
+        {user.openedInviteAt && ` · Opened ${new Date(user.openedInviteAt).toLocaleDateString()}`}
         {user.installedAt && ` · Installed ${new Date(user.installedAt).toLocaleDateString()}`}
       </p>
       <EditUserForm

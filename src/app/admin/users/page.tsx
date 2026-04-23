@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
-import { Plus, Upload, Mail, CheckCircle2, Smartphone } from "lucide-react";
+import { Plus, Upload, Mail, CheckCircle2, Smartphone, Eye } from "lucide-react";
 import { emailConfigured } from "@/lib/email";
 import { InviteButton } from "@/components/invite-button";
 
@@ -18,6 +18,7 @@ export default async function AdminUsersPage() {
     VENDOR: users.filter((u) => u.role === "VENDOR").length,
     ADMIN: users.filter((u) => u.role === "ADMIN").length,
     invited: users.filter((u) => u.invitedAt).length,
+    opened: users.filter((u) => u.openedInviteAt).length,
     installed: users.filter((u) => u.installedAt).length,
   };
   const emailReady = emailConfigured();
@@ -31,9 +32,12 @@ export default async function AdminUsersPage() {
           <p className="text-sm text-slate-600">
             {counts.ATTENDEE} attendees · {counts.VENDOR} vendors · {counts.ADMIN} admins
           </p>
-          <p className="mt-1 flex items-center gap-3 text-xs text-slate-500">
+          <p className="mt-1 flex items-center gap-3 text-xs text-slate-500 flex-wrap">
             <span className="inline-flex items-center gap-1">
               <Mail className="h-3 w-3" /> {counts.invited} invited
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <Eye className="h-3 w-3" /> {counts.opened} opened
             </span>
             <span className="inline-flex items-center gap-1">
               <Smartphone className="h-3 w-3" /> {counts.installed} installed
@@ -70,6 +74,11 @@ export default async function AdminUsersPage() {
                 {u.invitedAt && (
                   <span className="inline-flex items-center gap-0.5 rounded-full bg-blue-100 text-blue-800 px-2 py-0.5 text-[10px] font-semibold">
                     <Mail className="h-3 w-3" /> Invited
+                  </span>
+                )}
+                {u.openedInviteAt && (
+                  <span className="inline-flex items-center gap-0.5 rounded-full bg-purple-100 text-purple-800 px-2 py-0.5 text-[10px] font-semibold">
+                    <Eye className="h-3 w-3" /> Opened
                   </span>
                 )}
                 {u.installedAt && (

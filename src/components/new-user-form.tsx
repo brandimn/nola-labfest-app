@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export function NewUserForm() {
+export function NewUserForm({ emailConfigured }: { emailConfigured: boolean }) {
   const router = useRouter();
   const [form, setForm] = useState({
     name: "",
@@ -14,8 +14,13 @@ export function NewUserForm() {
     phone: "",
     password: "",
   });
+  const [sendEmail, setSendEmail] = useState(emailConfigured);
   const [error, setError] = useState("");
-  const [result, setResult] = useState<{ email: string; password: string } | null>(null);
+  const [result, setResult] = useState<{
+    email: string;
+    password: string;
+    emailed?: { ok: boolean; reason?: string } | null;
+  } | null>(null);
   const [busy, setBusy] = useState(false);
 
   function update<K extends keyof typeof form>(k: K, v: string) {
@@ -30,11 +35,11 @@ export function NewUserForm() {
       const res = await fetch("/api/admin/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({ ...form, sendEmail }),
       });
       const body = await res.json();
       if (!res.ok) throw new Error(body.error || "Failed to create user");
-      setResult({ email: body.email, password: body.password });
+      setResult({ email: body.email, password: body.password, emailed: body.emailed });
     } catch (e: any) {
       setError(e.message);
     } finally {
@@ -46,10 +51,21 @@ export function NewUserForm() {
     return (
       <div className="card p-5">
         <p className="font-semibold text-green-700">User created.</p>
-        <p className="mt-2 text-sm text-slate-700">
-          Share these credentials with the attendee:
-        </p>
-        <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3 font-mono text-sm">
+        {result.emailed?.ok ? (
+          <p className="mt-1 text-sm text-green-700">✉️ Invitation email sent to {result.email}.</p>
+        ) : result.emailed && !result.emailed.ok ? (
+          <p className="mt-1 text-sm text-amber-700">
+            ⚠️ Email failed: {result.emailed.reason}
+          </p>
+        ) : (
+          <p className="mt-1 text-sm text-slate-600">
+            {emailConfigured
+              ? "No email sent (you unchecked the box or the user is a vendor/admin)."
+              : "No email was sent — add RESEND_API_KEY in Vercel to enable invitations."}
+          </p>
+        )}
+        <p className="mt-3 text-sm text-slate-700">Credentials:</p>
+        <div className="mt-1 rounded-lg border border-slate-200 bg-slate-50 p-3 font-mono text-sm">
           <p><span className="text-slate-500">Email:</span> {result.email}</p>
           <p><span className="text-slate-500">Password:</span> {result.password}</p>
         </div>
@@ -113,6 +129,21 @@ export function NewUserForm() {
         <label className="label">Password <span className="text-xs font-normal text-slate-500">(leave blank to auto-generate)</span></label>
         <input className="input" value={form.password} onChange={(e) => update("password", e.target.value)} />
       </div>
+      {emailConfigured ? (
+        <label className="flex items-center gap-2 text-sm cursor-pointer">
+          <input
+            type="checkbox"
+            checked={sendEmail}
+            onChange={(e) => setSendEmail(e.target.checked)}
+            className="h-4 w-4"
+          />
+          Email them their login + install instructions right away
+        </label>
+      ) : (
+        <p className="text-xs text-amber-800 bg-amber-50 border border-amber-200 rounded p-2">
+          Email not configured — add <code>RESEND_API_KEY</code> in Vercel to auto-send invites.
+        </p>
+      )}
       {error && <p className="text-sm text-red-600">{error}</p>}
       <button type="submit" disabled={busy} className="btn-primary w-full">
         {busy ? "Creating…" : "Create user"}

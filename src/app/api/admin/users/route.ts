@@ -3,12 +3,14 @@ import bcrypt from "bcryptjs";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { emailConfigured, sendInviteEmail } from "@/lib/email";
 
 function generatePassword() {
-  // memorable: 2 letters + 4 digits, e.g. "nk-7392"
   const letters = "abcdefghjkmnpqrstuvwxyz";
   const digits = "0123456789";
-  const l = letters[Math.floor(Math.random() * letters.length)] + letters[Math.floor(Math.random() * letters.length)];
+  const l =
+    letters[Math.floor(Math.random() * letters.length)] +
+    letters[Math.floor(Math.random() * letters.length)];
   let d = "";
   for (let i = 0; i < 4; i++) d += digits[Math.floor(Math.random() * digits.length)];
   return `${l}-${d}`;
@@ -35,12 +37,15 @@ export async function POST(req: NextRequest) {
 
   const plainPassword = body.password?.trim() || generatePassword();
   const hashed = await bcrypt.hash(plainPassword, 10);
+  const sendEmail = body.sendEmail !== false; // default on
+  const role =
+    body.role === "VENDOR" || body.role === "ADMIN" ? body.role : "ATTENDEE";
 
   const created = await prisma.user.create({
     data: {
       email,
       name: body.name.trim(),
-      role: body.role === "VENDOR" || body.role === "ADMIN" ? body.role : "ATTENDEE",
+      role,
       password: hashed,
       company: body.company?.trim() || null,
       title: body.title?.trim() || null,
@@ -49,5 +54,27 @@ export async function POST(req: NextRequest) {
     select: { id: true, email: true, name: true, role: true },
   });
 
-  return NextResponse.json({ ...created, password: plainPassword });
+  let emailStatus: { ok: boolean; reason?: string } | null = null;
+  if (sendEmail && role === "ATTENDEE" && emailConfigured()) {
+    const send = await sendInviteEmail({
+      to: email,
+      name: created.name,
+      password: plainPassword,
+    });
+    emailStatus = send;
+    if (send.ok) {
+      await prisma.user.update({
+        where: { id: created.id },
+        data: { invitedAt: new Date() },
+      });
+    }
+  }
+
+  return NextResponse.json({
+    ...created,
+    password: plainPassword,
+    email: created.email,
+    emailed: emailStatus,
+    emailConfigured: emailConfigured(),
+  });
 }
