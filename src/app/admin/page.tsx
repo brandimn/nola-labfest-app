@@ -2,9 +2,10 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
 import { Users, Store, Calendar, Bell, Trophy, Scan, Sparkles, Printer, Settings } from "lucide-react";
+import { SignOutButton } from "@/components/sign-out-button";
 
 export default async function AdminHome() {
-  await requireRole("ADMIN");
+  const me = await requireRole("ADMIN");
   const [attendees, vendors, sessions, scansToday, subs, topBoothsRaw] = await Promise.all([
     prisma.user.count({ where: { role: "ATTENDEE" } }),
     prisma.vendor.count(),
@@ -28,7 +29,13 @@ export default async function AdminHome() {
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-6">
-      <h1 className="mb-4 text-2xl font-bold">Admin Dashboard</h1>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div>
+          <h1 className="font-display text-2xl font-bold">Admin Dashboard</h1>
+          <p className="text-sm text-slate-600">Signed in as {me.name}</p>
+        </div>
+        <SignOutButton compact />
+      </div>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
         <Stat label="Attendees" value={attendees} />
         <Stat label="Vendors" value={vendors} />
