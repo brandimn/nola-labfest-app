@@ -60,8 +60,8 @@ export default async function AdminUsersPage() {
 
       <ul className="space-y-1">
         {users.map((u) => (
-          <li key={u.id} className="card p-3 flex items-center justify-between gap-3">
-            <div className="min-w-0 flex-1">
+          <li key={u.id} className="card flex items-center justify-between gap-3 p-3">
+            <Link href={`/admin/users/${u.id}`} className="min-w-0 flex-1 hover:opacity-80">
               <div className="flex items-center gap-2 flex-wrap">
                 <p className="font-medium truncate">{u.name}</p>
                 <span className="text-[10px] rounded-full bg-slate-200 px-2 py-0.5 font-semibold uppercase tracking-wider">
@@ -82,7 +82,7 @@ export default async function AdminUsersPage() {
                 {u.email}
                 {u.company ? ` · ${u.company}` : ""}
               </p>
-            </div>
+            </Link>
             {u.role === "ATTENDEE" && emailReady && (
               <InviteButton userId={u.id} alreadyInvited={!!u.invitedAt} />
             )}
