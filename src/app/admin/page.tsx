@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
-import { Users, Store, Calendar, Bell, Trophy, Scan, Sparkles, Printer, Settings } from "lucide-react";
+import { Users, Store, Calendar, Bell, Trophy, Scan, Sparkles, Printer, Settings, Mail } from "lucide-react";
 import { SignOutButton } from "@/components/sign-out-button";
 
 export default async function AdminHome() {
@@ -54,6 +54,7 @@ export default async function AdminHome() {
         <AdminTile href="/admin/voting" icon={Sparkles} label="Booth Voting" />
         <AdminTile href="/admin/badges" icon={Printer} label="Print Badges" />
         <AdminTile href="/admin/settings" icon={Settings} label="Settings" />
+        <AdminTile href="/admin/email-preview" icon={Mail} label="Email Preview" />
       </div>
 
       <section>
