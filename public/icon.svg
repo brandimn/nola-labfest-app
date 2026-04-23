@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#0F172A"/>
+  <g fill="#FFB81C" transform="translate(256 230)">
+    <path d="M0 -140
+             C -18 -108, -52 -108, -52 -64
+             C -52 -38, -36 -20, -18 -10
+             C -36 0, -62 10, -62 46
+             C -62 82, -26 100, 0 100
+             C 26 100, 62 82, 62 46
+             C 62 10, 36 0, 18 -10
+             C 36 -20, 52 -38, 52 -64
+             C 52 -108, 18 -108, 0 -140 Z"/>
+    <rect x="-72" y="-28" width="144" height="18" rx="4"/>
+  </g>
+  <text x="50%" y="430" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="80" font-weight="900" fill="white" letter-spacing="4">NOLA</text>
+</svg>

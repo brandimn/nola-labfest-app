@@ -1,0 +1,149 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  // DEMO MODE: using sqlite for the local click-through.
+  // For production, change provider to "postgresql" and point DATABASE_URL at Neon.
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Role stored as string for sqlite compatibility (enum values: ATTENDEE | VENDOR | ADMIN)
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  password     String
+  name         String
+  role         String   @default("ATTENDEE")
+  phone        String?
+  company      String?
+  title        String?
+  badgeToken   String   @unique @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  ownedVendor       Vendor?           @relation("VendorOwner")
+  favorites         Favorite[]
+  boothScans        BoothScan[]
+  leadsAsAttendee   Lead[]            @relation("LeadAttendee")
+  pushSubscriptions PushSubscription[]
+  announcements     Announcement[]
+  boothVote         BoothVote?
+}
+
+model Vendor {
+  id           String   @id @default(cuid())
+  userId       String?  @unique
+  user         User?    @relation("VendorOwner", fields: [userId], references: [id], onDelete: SetNull)
+  name         String
+  boothNumber  String
+  logoUrl      String?
+  description  String?
+  website      String?
+  contactEmail String?
+  contactPhone String?
+  category     String?
+  boothToken   String   @unique @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  boothScans BoothScan[]
+  leads      Lead[]
+  boothVotes BoothVote[]
+
+  @@index([category])
+}
+
+model BoothVote {
+  id         String   @id @default(cuid())
+  attendeeId String   @unique
+  vendorId   String
+  votedAt    DateTime @default(now())
+
+  attendee User   @relation(fields: [attendeeId], references: [id], onDelete: Cascade)
+  vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@index([vendorId])
+}
+
+model Session {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  speaker     String?
+  location    String?
+  startsAt    DateTime
+  endsAt      DateTime
+  track       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  favorites Favorite[]
+
+  @@index([startsAt])
+}
+
+model Favorite {
+  userId    String
+  sessionId String
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  session Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@id([userId, sessionId])
+}
+
+model BoothScan {
+  id         String   @id @default(cuid())
+  attendeeId String
+  vendorId   String
+  scannedAt  DateTime @default(now())
+
+  attendee User   @relation(fields: [attendeeId], references: [id], onDelete: Cascade)
+  vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+
+  @@unique([attendeeId, vendorId])
+  @@index([vendorId])
+}
+
+model Lead {
+  id         String   @id @default(cuid())
+  vendorId   String
+  attendeeId String
+  notes      String?
+  tags       String?
+  scannedAt  DateTime @default(now())
+
+  vendor   Vendor @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  attendee User   @relation("LeadAttendee", fields: [attendeeId], references: [id], onDelete: Cascade)
+
+  @@unique([vendorId, attendeeId])
+  @@index([vendorId])
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model Announcement {
+  id         String   @id @default(cuid())
+  title      String
+  body       String
+  targetRole String?
+  sentById   String
+  sentAt     DateTime @default(now())
+
+  sentBy User @relation(fields: [sentById], references: [id])
+}
