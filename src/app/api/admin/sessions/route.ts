@@ -15,6 +15,7 @@ export async function POST(req: NextRequest) {
       title: body.title,
       description: body.description || null,
       speaker: body.speaker || null,
+      speakerId: body.speakerId || null,
       location: body.location || null,
       startsAt: new Date(body.startsAt),
       endsAt: new Date(body.endsAt),

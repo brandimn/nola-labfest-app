@@ -17,6 +17,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       title: body.title,
       description: body.description || null,
       speaker: body.speaker || null,
+      speakerId: body.speakerId || null,
       location: body.location || null,
       startsAt: body.startsAt ? new Date(body.startsAt) : undefined,
       endsAt: body.endsAt ? new Date(body.endsAt) : undefined,
