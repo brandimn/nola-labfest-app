@@ -25,6 +25,9 @@ export async function POST(req: NextRequest) {
       contactEmail: body.contactEmail || null,
       contactPhone: body.contactPhone || null,
       description: body.description || null,
+      sponsorTier: body.sponsorTier || null,
+      atLabFest: body.atLabFest !== false,
+      atLOTM: body.atLOTM === true,
     },
   });
   return NextResponse.json(v);

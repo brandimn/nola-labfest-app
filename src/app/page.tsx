@@ -17,8 +17,8 @@ import { PushPrompt } from "@/components/push-prompt";
 import { Countdown } from "@/components/countdown";
 import { SponsorTier } from "@/components/sponsor-tier";
 
-const EVENT_START_ISO = "2026-10-10T08:00:00-04:00";
-const EVENT_LABEL = "October 10–11, 2026 · New Orleans";
+const EVENT_START_ISO = "2026-10-15T08:00:00-05:00";
+const EVENT_LABEL = "October 15–17, 2026 · New Orleans";
 
 export default async function Home() {
   const user = await getUser();
@@ -105,6 +105,23 @@ export default async function Home() {
             </div>
           </div>
         )}
+
+        <Link
+          href="/lotm"
+          className="relative block rounded-xl p-4 mb-4 text-white shadow-md overflow-hidden"
+          style={{
+            background:
+              "linear-gradient(135deg, #0F172A 0%, #C7377A 45%, #FF5DA2 100%)",
+          }}
+        >
+          <p className="text-[10px] uppercase tracking-widest opacity-85 font-semibold">
+            Thursday Kickoff · Oct 15
+          </p>
+          <p className="mt-1 font-display text-xl font-bold">Ladies of the Mill →</p>
+          <p className="mt-0.5 text-xs italic opacity-90">
+            A lab summit like no other — designed by women
+          </p>
+        </Link>
 
         {nextSession && (
           <section className="mb-4">

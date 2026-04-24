@@ -3,17 +3,26 @@ import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/session";
 import { VendorSearch } from "@/components/vendor-search";
 import { SponsorTier } from "@/components/sponsor-tier";
+import { EventFilter } from "@/components/event-filter";
 
 const TIER_ORDER: Record<string, number> = { PLATINUM: 0, GOLD: 1, SILVER: 2, BRONZE: 3 };
 
 export default async function VendorsPage({
   searchParams,
 }: {
-  searchParams: { q?: string; category?: string };
+  searchParams: { q?: string; category?: string; event?: string };
 }) {
   await requireUser();
   const q = searchParams.q?.trim();
   const category = searchParams.category?.trim();
+  const eventFilter = searchParams.event?.trim(); // "labfest" | "lotm" | undefined (all)
+
+  const eventWhere =
+    eventFilter === "labfest"
+      ? { atLabFest: true }
+      : eventFilter === "lotm"
+        ? { atLOTM: true }
+        : {};
 
   const vendorsRaw = await prisma.vendor.findMany({
     where: {
@@ -28,6 +37,7 @@ export default async function VendorsPage({
             }
           : {},
         category ? { category } : {},
+        eventWhere,
       ],
     },
     orderBy: { name: "asc" },
@@ -48,7 +58,8 @@ export default async function VendorsPage({
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-6">
-      <h1 className="mb-4 font-display text-3xl font-bold">Vendors</h1>
+      <h1 className="mb-2 font-display text-3xl font-bold">Vendors</h1>
+      <EventFilter current={eventFilter} />
       <VendorSearch categories={categories} />
       {vendors.length === 0 ? (
         <p className="mt-6 text-center text-slate-500">No vendors match your search.</p>
@@ -68,9 +79,14 @@ export default async function VendorsPage({
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <p className="font-semibold truncate">{v.name}</p>
                     <SponsorTier tier={v.sponsorTier} />
+                    {v.atLOTM && (
+                      <span className="rounded-full bg-[#FF5DA2] text-white px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
+                        LOTM
+                      </span>
+                    )}
                   </div>
                   <p className="text-xs text-slate-500 truncate">
                     Booth {v.boothNumber}

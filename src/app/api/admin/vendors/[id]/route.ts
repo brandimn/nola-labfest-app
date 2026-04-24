@@ -23,6 +23,9 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       contactEmail: body.contactEmail || null,
       contactPhone: body.contactPhone || null,
       description: body.description || null,
+      sponsorTier: body.sponsorTier || null,
+      atLabFest: body.atLabFest !== false,
+      atLOTM: body.atLOTM === true,
     },
   });
   return NextResponse.json(v);

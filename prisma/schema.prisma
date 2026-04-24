@@ -47,6 +47,8 @@ model Vendor {
   contactPhone String?
   category     String?
   sponsorTier  String?  // PLATINUM | GOLD | SILVER | BRONZE | null
+  atLabFest    Boolean  @default(true)
+  atLOTM       Boolean  @default(false)
   boothToken   String   @unique @default(cuid())
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -81,6 +83,7 @@ model Session {
   startsAt    DateTime
   endsAt      DateTime
   track       String?
+  event       String   @default("LABFEST") // LABFEST | LOTM
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

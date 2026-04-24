@@ -13,6 +13,9 @@ type Vendor = {
   contactEmail: string | null;
   contactPhone: string | null;
   category: string | null;
+  sponsorTier: string | null;
+  atLabFest: boolean;
+  atLOTM: boolean;
 };
 
 export function VendorForm({ initial }: { initial?: Vendor }) {
@@ -27,12 +30,15 @@ export function VendorForm({ initial }: { initial?: Vendor }) {
       contactEmail: "",
       contactPhone: "",
       category: "",
+      sponsorTier: "",
+      atLabFest: true,
+      atLOTM: false,
     }
   );
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
-  function update<K extends keyof Vendor>(k: K, v: string) {
+  function update<K extends keyof Vendor>(k: K, v: Vendor[K]) {
     setForm((f) => ({ ...f, [k]: v }));
   }
 
@@ -67,6 +73,43 @@ export function VendorForm({ initial }: { initial?: Vendor }) {
     <div className="space-y-3">
       <div><label className="label">Name *</label><input className="input" value={form.name} onChange={(e) => update("name", e.target.value)} /></div>
       <div><label className="label">Booth Number *</label><input className="input" value={form.boothNumber} onChange={(e) => update("boothNumber", e.target.value)} /></div>
+      <div>
+        <label className="label">Appearing at</label>
+        <div className="flex flex-col gap-2 rounded-lg border border-slate-300 bg-white p-3">
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              className="h-4 w-4"
+              checked={form.atLabFest}
+              onChange={(e) => update("atLabFest", e.target.checked)}
+            />
+            NOLA LabFest (Fri–Sat)
+          </label>
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              className="h-4 w-4"
+              checked={form.atLOTM}
+              onChange={(e) => update("atLOTM", e.target.checked)}
+            />
+            LOTM — Ladies of the Mill (Thu)
+          </label>
+        </div>
+      </div>
+      <div>
+        <label className="label">Sponsor Tier</label>
+        <select
+          className="input"
+          value={form.sponsorTier ?? ""}
+          onChange={(e) => update("sponsorTier", e.target.value || null)}
+        >
+          <option value="">— none —</option>
+          <option value="PLATINUM">Platinum</option>
+          <option value="GOLD">Gold</option>
+          <option value="SILVER">Silver</option>
+          <option value="BRONZE">Bronze</option>
+        </select>
+      </div>
       <div><label className="label">Category</label><input className="input" value={form.category ?? ""} onChange={(e) => update("category", e.target.value)} /></div>
       <div><label className="label">Logo URL</label><input className="input" value={form.logoUrl ?? ""} onChange={(e) => update("logoUrl", e.target.value)} /></div>
       <div><label className="label">Website</label><input className="input" value={form.website ?? ""} onChange={(e) => update("website", e.target.value)} /></div>
