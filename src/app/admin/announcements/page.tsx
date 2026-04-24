@@ -2,6 +2,9 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
 import { AnnouncementForm } from "@/components/announcement-form";
+import { DeleteAnnouncementButton } from "@/components/delete-announcement-button";
+
+export const dynamic = "force-dynamic";
 
 export default async function AdminAnnouncementsPage() {
   await requireRole("ADMIN");
@@ -18,13 +21,16 @@ export default async function AdminAnnouncementsPage() {
       <h2 className="mt-6 mb-2 text-sm font-semibold uppercase tracking-wide text-slate-500">Recent</h2>
       <ul className="space-y-2">
         {announcements.map((a) => (
-          <li key={a.id} className="card p-3">
-            <p className="font-semibold">{a.title}</p>
-            <p className="text-sm text-slate-700">{a.body}</p>
-            <p className="mt-1 text-xs text-slate-400">
-              {new Date(a.sentAt).toLocaleString("en-US", { timeZone: "America/New_York" })}
-              {a.targetRole ? ` · ${a.targetRole} only` : ""}
-            </p>
+          <li key={a.id} className="card p-3 flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="font-semibold">{a.title}</p>
+              <p className="text-sm text-slate-700">{a.body}</p>
+              <p className="mt-1 text-xs text-slate-400">
+                {new Date(a.sentAt).toLocaleString("en-US", { timeZone: "America/New_York" })}
+                {a.targetRole ? ` · ${a.targetRole} only` : ""}
+              </p>
+            </div>
+            <DeleteAnnouncementButton id={a.id} title={a.title} />
           </li>
         ))}
       </ul>

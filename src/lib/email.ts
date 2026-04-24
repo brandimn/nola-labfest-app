@@ -40,16 +40,22 @@ export function buildInviteEmail({ to, name, password }: InviteArgs) {
       <p style="margin:0; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; opacity: 0.85;">You're invited</p>
       <h1 style="margin:6px 0 0; font-family: Georgia, 'Times New Roman', serif; font-size: 34px; line-height: 1.1; font-weight: 700;">NOLA LabFest</h1>
       <p style="margin:4px 0 0; font-size: 14px; opacity: 0.9; font-style: italic;">A Lab Innovation Summit with a New Orleans twist</p>
-      <p style="margin: 18px 0 0; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600;">October 10–11, 2026 · New Orleans</p>
+      <p style="margin: 18px 0 0; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600;">October 15–17, 2026 · New Orleans</p>
     </div>
 
     <div style="padding: 28px;">
       <h2 style="margin: 0 0 8px; font-family: Georgia, serif; font-size: 22px;">Welcome, ${escapeHtml(firstName)}</h2>
       <p style="margin: 0; font-size: 15px; line-height: 1.5; color: #334155;">
-        Your spot is confirmed. The NOLA LabFest app is where you'll find the full schedule, speaker bios, vendor directory, your personal QR badge, and the booth-scanning passport game.
+        Your spot is confirmed. The NOLA LabFest app has the schedule, speaker bios, vendor directory, your QR badge, and the booth-scanning passport game.
       </p>
 
-      <div style="text-align: center; margin: 24px 0;">
+      <div style="background: #FFF7ED; border: 1px solid #F5A547; border-radius: 12px; padding: 14px 16px; margin: 20px 0;">
+        <p style="margin: 0; font-size: 14px; color: #78350F; line-height: 1.5;">
+          <strong style="color:#9A3412;">📱 Don't skip ahead.</strong> Tap the button, then <strong>scroll down to install the app</strong> so you get push notifications for session reminders, announcements, and the prize drawing. It takes 10 seconds.
+        </p>
+      </div>
+
+      <div style="text-align: center; margin: 20px 0 24px;">
         <a href="${appUrl}" style="display:inline-block; background:#0F172A; color:#fff; text-decoration:none; padding: 14px 32px; border-radius: 10px; font-weight: 600; font-size: 15px;">Open the NOLA LabFest app →</a>
       </div>
 
@@ -61,36 +67,58 @@ export function buildInviteEmail({ to, name, password }: InviteArgs) {
         </div>
       </div>
 
-      <h3 style="margin: 28px 0 8px; font-family: Georgia, serif; font-size: 18px;">Save it to your phone (takes 10 seconds)</h3>
-      <p style="margin: 0 0 16px; color: #475569; font-size: 14px; line-height: 1.5;">
-        The app installs to your home screen like any other app — no App Store, no downloads. You'll open it with a tap, and it works offline during the event.
+      <h3 style="margin: 28px 0 4px; font-family: Georgia, serif; font-size: 20px;">Install it on your phone — pick your browser</h3>
+      <p style="margin: 0 0 14px; color: #475569; font-size: 14px; line-height: 1.5;">
+        No App Store, no downloads — the app lives on your home screen next to everything else.
       </p>
 
-      <table width="100%" cellpadding="0" cellspacing="0" style="margin: 8px 0 0; border-collapse: separate; border-spacing: 12px 0;">
-        <tr>
-          <td valign="top" style="background: #fff; border:1px solid #e2e8f0; border-radius: 12px; padding: 16px; width: 50%;">
-            <p style="margin: 0 0 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #B13E7D; font-weight: 700;">iPhone · Safari</p>
-            <ol style="margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.6; color: #0F172A;">
-              <li>Open the app in <strong>Safari</strong>.</li>
-              <li>Tap the <strong>Share</strong> icon <span style="display:inline-block; border:1px solid #cbd5e1; border-radius:4px; padding: 0 5px; font-size: 11px;">⬆︎</span> at the bottom.</li>
-              <li>Scroll and tap <strong>Add to Home Screen</strong>.</li>
-              <li>Tap <strong>Add</strong>.</li>
-            </ol>
-          </td>
-          <td valign="top" style="background: #fff; border:1px solid #e2e8f0; border-radius: 12px; padding: 16px; width: 50%;">
-            <p style="margin: 0 0 6px; font-size: 11px; text-transform: uppercase; letter-spacing: 2px; color: #F5A547; font-weight: 700;">Android · Chrome</p>
-            <ol style="margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.6; color: #0F172A;">
-              <li>Open the app in <strong>Chrome</strong>.</li>
-              <li>Tap the <strong>⋮ menu</strong> in the top right.</li>
-              <li>Tap <strong>Install app</strong> (or <strong>Add to Home screen</strong>).</li>
-              <li>Tap <strong>Install</strong>.</li>
-            </ol>
-          </td>
-        </tr>
-      </table>
+      <!-- iPhone Safari -->
+      <div style="background:#fff; border:1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px;">
+        <p style="margin: 0 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #B13E7D; font-weight: 700;">📱 iPhone — Safari</p>
+        <ol style="margin: 4px 0 0; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #0F172A;">
+          <li>Make sure you're in <strong>Safari</strong> (not Chrome — see below if you are).</li>
+          <li>Tap the <strong>Share</strong> button <span style="display:inline-block; border:1px solid #cbd5e1; border-radius:4px; padding: 0 6px; font-size: 12px;">⬆︎</span> at the bottom of the screen.</li>
+          <li>Scroll down and tap <strong>Add to Home Screen</strong>.</li>
+          <li>Tap <strong>Add</strong> in the top right.</li>
+        </ol>
+      </div>
 
-      <p style="margin: 20px 0 0; font-size: 12px; color: #94a3b8;">
-        Once installed, a NOLA LabFest icon shows up next to your other apps. Tap it to get right in — your login is saved.
+      <!-- iPhone Chrome -->
+      <div style="background:#fff; border:1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px;">
+        <p style="margin: 0 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #64748b; font-weight: 700;">📱 iPhone — Chrome</p>
+        <p style="margin: 4px 0 6px; font-size: 13px; color: #475569; line-height: 1.5;">
+          iPhones can only install apps through Safari, not Chrome. Do this first:
+        </p>
+        <ol style="margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #0F172A;">
+          <li>Tap the <strong>Share</strong> button <span style="display:inline-block; border:1px solid #cbd5e1; border-radius:4px; padding: 0 6px; font-size: 12px;">⬆︎</span> in Chrome.</li>
+          <li>Choose <strong>Open in Safari</strong>.</li>
+          <li>Once Safari opens, follow the iPhone · Safari steps above.</li>
+        </ol>
+      </div>
+
+      <!-- Android Chrome -->
+      <div style="background:#fff; border:1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px;">
+        <p style="margin: 0 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #F5A547; font-weight: 700;">📱 Android — Chrome</p>
+        <ol style="margin: 4px 0 0; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #0F172A;">
+          <li>Open the app in <strong>Chrome</strong>.</li>
+          <li>Tap the <strong>⋮ menu</strong> in the top right.</li>
+          <li>Tap <strong>Install app</strong> (or <strong>Add to Home screen</strong>).</li>
+          <li>Tap <strong>Install</strong>.</li>
+        </ol>
+      </div>
+
+      <!-- Desktop -->
+      <div style="background:#fff; border:1px solid #e2e8f0; border-radius: 12px; padding: 14px 16px; margin-bottom: 10px;">
+        <p style="margin: 0 0 4px; font-size: 12px; text-transform: uppercase; letter-spacing: 2px; color: #0E8C4B; font-weight: 700;">💻 Computer — Chrome or Edge</p>
+        <ol style="margin: 4px 0 0; padding-left: 20px; font-size: 14px; line-height: 1.6; color: #0F172A;">
+          <li>Open the app in <strong>Chrome</strong> or <strong>Edge</strong>.</li>
+          <li>Look for the <strong>install icon</strong> <span style="display:inline-block; border:1px solid #cbd5e1; border-radius:4px; padding: 0 6px; font-size: 12px;">⊕</span> on the right side of the address bar — or open the browser menu and choose <strong>Install NOLA LabFest</strong>.</li>
+          <li>Click <strong>Install</strong>.</li>
+        </ol>
+      </div>
+
+      <p style="margin: 16px 0 0; font-size: 13px; color: #64748b; line-height: 1.5;">
+        <strong>After you install:</strong> a NOLA LabFest icon appears next to your other apps. Tap it — your login is saved, and we can send you push notifications during the event.
       </p>
     </div>
 
@@ -101,11 +129,11 @@ export function buildInviteEmail({ to, name, password }: InviteArgs) {
 </div>`.trim();
 
   const text = `You're invited to NOLA LabFest — A Lab Innovation Summit
-October 10–11, 2026 · New Orleans
+October 15–17, 2026 · New Orleans
 
 Welcome, ${firstName}.
 
-Your spot is confirmed. The NOLA LabFest app has the full schedule, speaker bios, vendor directory, your personal QR badge, and the booth-scanning passport game.
+DON'T SKIP AHEAD: Tap the link below, then scroll down to install the app on your phone so you get push notifications for session reminders, announcements, and the prize drawing. Takes 10 seconds.
 
 Open the app: ${appUrl}
 
@@ -113,19 +141,30 @@ Your sign-in:
   Email: ${to}
   Password: ${password}
 
-SAVE IT TO YOUR PHONE (10 seconds, no App Store)
+INSTALL IT ON YOUR PHONE — PICK YOUR BROWSER
 
 iPhone (Safari):
-  1. Open the app in Safari
+  1. Open the app in Safari (not Chrome)
   2. Tap the Share icon at the bottom
-  3. Tap "Add to Home Screen"
+  3. Scroll down and tap "Add to Home Screen"
   4. Tap "Add"
+
+iPhone (Chrome):
+  iPhones can only install apps through Safari. First:
+  1. Tap the Share icon in Chrome
+  2. Choose "Open in Safari"
+  3. Then follow the iPhone (Safari) steps above
 
 Android (Chrome):
   1. Open the app in Chrome
-  2. Tap the ⋮ menu (top right)
+  2. Tap the menu (⋮) in the top right
   3. Tap "Install app" (or "Add to Home screen")
   4. Tap "Install"
+
+Computer (Chrome or Edge):
+  1. Open the app in Chrome or Edge
+  2. Click the install icon on the right of the address bar (or Menu → Install NOLA LabFest)
+  3. Click "Install"
 
 Questions? Reply to this email.`;
 
