@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
   });
 
   let emailStatus: { ok: boolean; reason?: string } | null = null;
-  if (sendEmail && role === "ATTENDEE" && emailConfigured()) {
+  if (sendEmail && emailConfigured()) {
     const send = await sendInviteEmail({
       to: email,
       name: created.name,

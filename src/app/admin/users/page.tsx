@@ -92,7 +92,7 @@ export default async function AdminUsersPage() {
                 {u.company ? ` · ${u.company}` : ""}
               </p>
             </Link>
-            {u.role === "ATTENDEE" && emailReady && (
+            {emailReady && (
               <InviteButton userId={u.id} alreadyInvited={!!u.invitedAt} />
             )}
           </li>

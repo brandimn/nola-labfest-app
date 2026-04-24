@@ -12,9 +12,17 @@ type User = {
   company: string;
   title: string;
   phone: string;
+  vendorId: string | null;
 };
 
-export function EditUserForm({ user }: { user: User }) {
+type VendorOption = {
+  id: string;
+  name: string;
+  boothNumber: string;
+  userId: string | null;
+};
+
+export function EditUserForm({ user, vendors = [] }: { user: User; vendors?: VendorOption[] }) {
   const router = useRouter();
   const [form, setForm] = useState(user);
   const [busy, setBusy] = useState(false);
@@ -22,7 +30,7 @@ export function EditUserForm({ user }: { user: User }) {
   const [savedMessage, setSavedMessage] = useState("");
   const [newPassword, setNewPassword] = useState<string | null>(null);
 
-  function update<K extends keyof User>(k: K, v: string) {
+  function update<K extends keyof User>(k: K, v: User[K]) {
     setForm((f) => ({ ...f, [k]: v }));
   }
 
@@ -117,6 +125,38 @@ export function EditUserForm({ user }: { user: User }) {
           <label className="label">Phone</label>
           <input type="tel" className="input" value={form.phone} onChange={(e) => update("phone", e.target.value)} />
         </div>
+
+        {form.role === "VENDOR" && (
+          <div>
+            <label className="label">Vendor profile</label>
+            <select
+              className="input"
+              value={form.vendorId ?? ""}
+              onChange={(e) => update("vendorId", e.target.value || null)}
+            >
+              <option value="">— None (they won't be able to scan badges) —</option>
+              {vendors.map((v) => {
+                const takenByOther =
+                  v.userId && v.userId !== user.id;
+                return (
+                  <option
+                    key={v.id}
+                    value={v.id}
+                    disabled={takenByOther ?? undefined}
+                  >
+                    {v.name} — Booth {v.boothNumber}
+                    {takenByOther ? " (already assigned)" : ""}
+                  </option>
+                );
+              })}
+            </select>
+            <p className="mt-1 text-xs text-slate-500">
+              Pick the booth this vendor represents. They'll be able to scan
+              attendee badges as this vendor, and leads will be captured to this
+              booth.
+            </p>
+          </div>
+        )}
 
         {savedMessage && <p className="text-sm text-green-700">{savedMessage}</p>}
         {error && <p className="text-sm text-red-600">{error}</p>}

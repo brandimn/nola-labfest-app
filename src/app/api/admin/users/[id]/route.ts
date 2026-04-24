@@ -66,6 +66,26 @@ export async function PATCH(
     data,
     select: { id: true, email: true, name: true, role: true },
   });
+
+  // Handle vendor assignment — only meaningful when role is VENDOR
+  if (body.vendorId !== undefined) {
+    const newVendorId: string | null = body.vendorId || null;
+
+    // Clear any vendor row currently pointing at this user.
+    await prisma.vendor.updateMany({
+      where: { userId: params.id },
+      data: { userId: null },
+    });
+
+    if (newVendorId) {
+      // Clear any other user that was linked to this vendor (one-to-one).
+      await prisma.vendor.update({
+        where: { id: newVendorId },
+        data: { userId: params.id },
+      });
+    }
+  }
+
   return NextResponse.json({ ok: true, user: updated });
 }
 

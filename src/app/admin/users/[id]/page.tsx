@@ -8,7 +8,17 @@ export const dynamic = "force-dynamic";
 
 export default async function EditUserPage({ params }: { params: { id: string } }) {
   await requireRole("ADMIN");
-  const user = await prisma.user.findUnique({ where: { id: params.id } });
+  const [user, vendors, currentVendor] = await Promise.all([
+    prisma.user.findUnique({ where: { id: params.id } }),
+    prisma.vendor.findMany({
+      orderBy: { name: "asc" },
+      select: { id: true, name: true, boothNumber: true, userId: true },
+    }),
+    prisma.vendor.findFirst({
+      where: { userId: params.id },
+      select: { id: true },
+    }),
+  ]);
   if (!user) notFound();
 
   return (
@@ -30,7 +40,9 @@ export default async function EditUserPage({ params }: { params: { id: string } 
           company: user.company ?? "",
           title: user.title ?? "",
           phone: user.phone ?? "",
+          vendorId: currentVendor?.id ?? null,
         }}
+        vendors={vendors}
       />
     </main>
   );
