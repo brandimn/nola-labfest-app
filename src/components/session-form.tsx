@@ -13,6 +13,7 @@ type S = {
   startsAt: string;
   endsAt: string;
   track: string | null;
+  event: string;
 };
 
 type SpeakerOption = { id: string; name: string };
@@ -34,7 +35,7 @@ export function SessionForm({
   const [form, setForm] = useState<S>(
     initial
       ? { ...initial, startsAt: toLocalInput(initial.startsAt), endsAt: toLocalInput(initial.endsAt) }
-      : { title: "", description: "", speaker: "", speakerId: "", location: "", track: "", startsAt: "", endsAt: "" }
+      : { title: "", description: "", speaker: "", speakerId: "", location: "", track: "", startsAt: "", endsAt: "", event: "LABFEST" }
   );
   const [err, setErr] = useState("");
   const [saving, setSaving] = useState(false);
@@ -91,10 +92,17 @@ export function SessionForm({
         </p>
       </div>
       <div><label className="label">Location</label><input className="input" value={form.location ?? ""} onChange={(e) => up("location", e.target.value)} /></div>
+      <div>
+        <label className="label">Event</label>
+        <select className="input" value={form.event} onChange={(e) => up("event", e.target.value)}>
+          <option value="LABFEST">NOLA LabFest</option>
+          <option value="LOTM">LOTM — Ladies of the Mill</option>
+        </select>
+      </div>
       <div><label className="label">Track</label>
         <select className="input" value={form.track ?? ""} onChange={(e) => up("track", e.target.value)}>
           <option value="">—</option>
-          <option>Clinical</option><option>Business</option><option>Technology</option><option>Social</option>
+          <option>Clinical</option><option>Business</option><option>Technology</option><option>Social</option><option>After Hours</option>
         </select>
       </div>
       <div className="grid grid-cols-2 gap-2">

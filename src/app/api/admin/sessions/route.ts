@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
       startsAt: new Date(body.startsAt),
       endsAt: new Date(body.endsAt),
       track: body.track || null,
+      event: body.event === "LOTM" ? "LOTM" : "LABFEST",
     },
   });
   return NextResponse.json(created);

@@ -22,6 +22,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       startsAt: body.startsAt ? new Date(body.startsAt) : undefined,
       endsAt: body.endsAt ? new Date(body.endsAt) : undefined,
       track: body.track || null,
+      event: body.event === "LOTM" ? "LOTM" : "LABFEST",
     },
   });
   return NextResponse.json(updated);

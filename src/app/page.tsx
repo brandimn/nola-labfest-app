@@ -114,13 +114,46 @@ export default async function Home() {
               "linear-gradient(135deg, #0F172A 0%, #C7377A 45%, #FF5DA2 100%)",
           }}
         >
-          <p className="text-[10px] uppercase tracking-widest opacity-85 font-semibold">
-            Thursday Kickoff · Oct 15
-          </p>
-          <p className="mt-1 font-display text-xl font-bold">Ladies of the Mill →</p>
-          <p className="mt-0.5 text-xs italic opacity-90">
-            A lab summit like no other — designed by women
-          </p>
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-[10px] uppercase tracking-widest opacity-85 font-semibold">
+                Thursday Kickoff · Oct 15
+              </p>
+              <p className="mt-1 font-display text-xl font-bold">Ladies of the Mill</p>
+              <p className="mt-0.5 text-xs italic opacity-90">
+                Ready to be inspired?
+              </p>
+            </div>
+            <span className="rounded-lg bg-white/25 backdrop-blur px-4 py-2 text-sm font-semibold hover:bg-white/35 flex-shrink-0">
+              Enter →
+            </span>
+          </div>
+        </Link>
+
+        <Link
+          href="/after-hours"
+          className="relative block rounded-xl p-4 mb-4 text-white shadow-md overflow-hidden"
+          style={{
+            background:
+              "linear-gradient(135deg, #5B2A86 0%, #0E8C4B 55%, #F5A547 100%)",
+          }}
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <p className="text-[10px] uppercase tracking-widest opacity-85 font-semibold">
+                After Hours · Fri + Sat Nights
+              </p>
+              <p className="mt-1 font-display text-xl font-bold">
+                Let the good times roll
+              </p>
+              <p className="mt-0.5 text-xs italic opacity-90">
+                Distillery tour · Masquerade party
+              </p>
+            </div>
+            <span className="rounded-lg bg-white/25 backdrop-blur px-4 py-2 text-sm font-semibold hover:bg-white/35 flex-shrink-0">
+              See →
+            </span>
+          </div>
         </Link>
 
         {nextSession && (
