@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { LogoUpload } from "@/components/logo-upload";
 
 type Vendor = {
   id?: string;
@@ -111,7 +112,11 @@ export function VendorForm({ initial }: { initial?: Vendor }) {
         </select>
       </div>
       <div><label className="label">Category</label><input className="input" value={form.category ?? ""} onChange={(e) => update("category", e.target.value)} /></div>
-      <div><label className="label">Logo URL</label><input className="input" value={form.logoUrl ?? ""} onChange={(e) => update("logoUrl", e.target.value)} /></div>
+      <LogoUpload
+        value={form.logoUrl}
+        onChange={(v) => update("logoUrl", v || null)}
+        label="Vendor logo"
+      />
       <div><label className="label">Website</label><input className="input" value={form.website ?? ""} onChange={(e) => update("website", e.target.value)} /></div>
       <div><label className="label">Contact Email</label><input className="input" type="email" value={form.contactEmail ?? ""} onChange={(e) => update("contactEmail", e.target.value)} /></div>
       <div><label className="label">Contact Phone</label><input className="input" value={form.contactPhone ?? ""} onChange={(e) => update("contactPhone", e.target.value)} /></div>
