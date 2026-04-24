@@ -23,6 +23,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       endsAt: body.endsAt ? new Date(body.endsAt) : undefined,
       track: body.track || null,
       event: body.event === "LOTM" ? "LOTM" : "LABFEST",
+      isFeatured: body.isFeatured === true,
     },
   });
   return NextResponse.json(updated);

@@ -85,6 +85,7 @@ model Session {
   endsAt      DateTime
   track       String?
   event       String   @default("LABFEST") // LABFEST | LOTM
+  isFeatured  Boolean  @default(false)     // "exclusive masterclass" treatment
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
       endsAt: new Date(body.endsAt),
       track: body.track || null,
       event: body.event === "LOTM" ? "LOTM" : "LABFEST",
+      isFeatured: body.isFeatured === true,
     },
   });
   return NextResponse.json(created);

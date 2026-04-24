@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/session";
 import { formatDay, formatTime } from "@/lib/utils";
 import { EventFilter } from "@/components/event-filter";
+import { FeaturedSessionCard } from "@/components/featured-session-card";
+import { Sparkles } from "lucide-react";
 
 const TRACK_COLORS: Record<string, string> = {
   Clinical: "bg-emerald-100 text-emerald-800",
@@ -30,14 +32,18 @@ export default async function SchedulePage({
   const sessions = await prisma.session.findMany({
     where: eventWhere,
     orderBy: { startsAt: "asc" },
+    include: { speakerRef: true },
   });
   const favorites = new Set(
     (await prisma.favorite.findMany({ where: { userId: user.id }, select: { sessionId: true } }))
       .map((f) => f.sessionId)
   );
 
-  const byDay: Record<string, typeof sessions> = {};
-  for (const s of sessions) {
+  const featured = sessions.filter((s) => s.isFeatured);
+  const regular = sessions.filter((s) => !s.isFeatured);
+
+  const byDay: Record<string, typeof regular> = {};
+  for (const s of regular) {
     const day = formatDay(s.startsAt);
     (byDay[day] ||= []).push(s);
   }
@@ -49,7 +55,22 @@ export default async function SchedulePage({
         <Link href="/agenda" className="text-sm text-[#0F172A] font-medium">My Agenda →</Link>
       </div>
       <EventFilter current={eventFilter} />
-      {Object.keys(byDay).length === 0 && (
+
+      {featured.length > 0 && (
+        <section className="mb-6">
+          <h2 className="mb-2 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-slate-900">
+            <Sparkles className="h-3.5 w-3.5" style={{ color: "#D4AF37" }} />
+            Exclusive
+          </h2>
+          <div className="space-y-3">
+            {featured.map((s) => (
+              <FeaturedSessionCard key={s.id} session={s} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {Object.keys(byDay).length === 0 && featured.length === 0 && (
         <p className="text-slate-500 mt-4">No sessions yet.</p>
       )}
       {Object.entries(byDay).map(([day, list]) => (

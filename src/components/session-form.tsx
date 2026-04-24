@@ -14,6 +14,7 @@ type S = {
   endsAt: string;
   track: string | null;
   event: string;
+  isFeatured: boolean;
 };
 
 type SpeakerOption = { id: string; name: string };
@@ -35,12 +36,12 @@ export function SessionForm({
   const [form, setForm] = useState<S>(
     initial
       ? { ...initial, startsAt: toLocalInput(initial.startsAt), endsAt: toLocalInput(initial.endsAt) }
-      : { title: "", description: "", speaker: "", speakerId: "", location: "", track: "", startsAt: "", endsAt: "", event: "LABFEST" }
+      : { title: "", description: "", speaker: "", speakerId: "", location: "", track: "", startsAt: "", endsAt: "", event: "LABFEST", isFeatured: false }
   );
   const [err, setErr] = useState("");
   const [saving, setSaving] = useState(false);
 
-  function up<K extends keyof S>(k: K, v: string) { setForm((f) => ({ ...f, [k]: v })); }
+  function up<K extends keyof S>(k: K, v: S[K]) { setForm((f) => ({ ...f, [k]: v })); }
 
   function pickSpeaker(id: string) {
     if (!id) {
@@ -98,6 +99,22 @@ export function SessionForm({
           <option value="LABFEST">NOLA LabFest</option>
           <option value="LOTM">LOTM — Ladies of the Mill</option>
         </select>
+      </div>
+      <div>
+        <label className="flex items-start gap-2 text-sm cursor-pointer rounded-lg border border-slate-300 bg-white p-3">
+          <input
+            type="checkbox"
+            className="h-4 w-4 mt-0.5"
+            checked={form.isFeatured}
+            onChange={(e) => up("isFeatured", e.target.checked)}
+          />
+          <span>
+            <strong>Mark as exclusive / masterclass.</strong>{" "}
+            <span className="text-xs text-slate-500">
+              Gets the black &amp; gold treatment on the schedule, appears in its own "Exclusive" section at the top.
+            </span>
+          </span>
+        </label>
       </div>
       <div><label className="label">Track</label>
         <select className="input" value={form.track ?? ""} onChange={(e) => up("track", e.target.value)}>
