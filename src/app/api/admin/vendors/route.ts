@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
       sponsorTier: body.sponsorTier || null,
       atLabFest: body.atLabFest !== false,
       atLOTM: body.atLOTM === true,
+      isLunchSponsor: body.isLunchSponsor === true,
     },
   });
   return NextResponse.json(v);

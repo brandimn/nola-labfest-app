@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/session";
 import { Calendar, MapPin, Mic, Store, ArrowLeft } from "lucide-react";
+import { VendorPills } from "@/components/vendor-pills";
 
 export const dynamic = "force-dynamic";
 
@@ -208,7 +209,10 @@ export default async function LotmHome() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold truncate">{v.name}</p>
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className="font-semibold truncate">{v.name}</p>
+                        <VendorPills vendor={v} omit={["lotm"]} />
+                      </div>
                       <p className="text-xs text-slate-500 truncate">
                         Booth {v.boothNumber}
                         {v.category ? ` · ${v.category}` : ""}

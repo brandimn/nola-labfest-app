@@ -17,6 +17,7 @@ type Vendor = {
   sponsorTier: string | null;
   atLabFest: boolean;
   atLOTM: boolean;
+  isLunchSponsor: boolean;
 };
 
 export function VendorForm({ initial }: { initial?: Vendor }) {
@@ -34,6 +35,7 @@ export function VendorForm({ initial }: { initial?: Vendor }) {
       sponsorTier: "",
       atLabFest: true,
       atLOTM: false,
+      isLunchSponsor: false,
     }
   );
   const [error, setError] = useState("");
@@ -94,6 +96,25 @@ export function VendorForm({ initial }: { initial?: Vendor }) {
               onChange={(e) => update("atLOTM", e.target.checked)}
             />
             LOTM — Ladies of the Mill (Thu)
+          </label>
+        </div>
+      </div>
+      <div>
+        <label className="label">Sponsorships</label>
+        <div className="flex flex-col gap-2 rounded-lg border border-slate-300 bg-white p-3">
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              className="h-4 w-4"
+              checked={form.isLunchSponsor}
+              onChange={(e) => update("isLunchSponsor", e.target.checked)}
+            />
+            <span>
+              Lunch sponsor{" "}
+              <span className="text-xs text-slate-500">
+                (shows a gold "Lunch Sponsor" pill next to the name)
+              </span>
+            </span>
           </label>
         </div>
       </div>

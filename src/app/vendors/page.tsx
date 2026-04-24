@@ -4,6 +4,7 @@ import { requireUser } from "@/lib/session";
 import { VendorSearch } from "@/components/vendor-search";
 import { SponsorTier } from "@/components/sponsor-tier";
 import { EventFilter } from "@/components/event-filter";
+import { VendorPills } from "@/components/vendor-pills";
 
 const TIER_ORDER: Record<string, number> = { PLATINUM: 0, GOLD: 1, SILVER: 2, BRONZE: 3 };
 
@@ -79,14 +80,10 @@ export default async function VendorsPage({
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     <p className="font-semibold truncate">{v.name}</p>
                     <SponsorTier tier={v.sponsorTier} />
-                    {v.atLOTM && (
-                      <span className="rounded-full bg-[#FF5DA2] text-white px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
-                        LOTM
-                      </span>
-                    )}
+                    <VendorPills vendor={v} />
                   </div>
                   <p className="text-xs text-slate-500 truncate">
                     Booth {v.boothNumber}

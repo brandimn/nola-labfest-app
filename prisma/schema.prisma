@@ -47,8 +47,9 @@ model Vendor {
   contactPhone String?
   category     String?
   sponsorTier  String?  // PLATINUM | GOLD | SILVER | BRONZE | null
-  atLabFest    Boolean  @default(true)
-  atLOTM       Boolean  @default(false)
+  atLabFest       Boolean  @default(true)
+  atLOTM          Boolean  @default(false)
+  isLunchSponsor  Boolean  @default(false)
   boothToken   String   @unique @default(cuid())
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

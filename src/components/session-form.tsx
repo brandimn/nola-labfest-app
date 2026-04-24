@@ -102,7 +102,17 @@ export function SessionForm({
       <div><label className="label">Track</label>
         <select className="input" value={form.track ?? ""} onChange={(e) => up("track", e.target.value)}>
           <option value="">—</option>
-          <option>Clinical</option><option>Business</option><option>Technology</option><option>Social</option><option>After Hours</option>
+          <option>Keynote</option>
+          <option>Motivational</option>
+          <option>Leadership</option>
+          <option>Wellness</option>
+          <option>Workshop</option>
+          <option>Panel</option>
+          <option>Clinical</option>
+          <option>Business</option>
+          <option>Technology</option>
+          <option>Social</option>
+          <option>After Hours</option>
         </select>
       </div>
       <div className="grid grid-cols-2 gap-2">

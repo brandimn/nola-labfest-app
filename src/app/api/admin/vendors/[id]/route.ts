@@ -26,6 +26,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
       sponsorTier: body.sponsorTier || null,
       atLabFest: body.atLabFest !== false,
       atLOTM: body.atLOTM === true,
+      isLunchSponsor: body.isLunchSponsor === true,
     },
   });
   return NextResponse.json(v);
