@@ -1,13 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { QRScanner } from "@/components/qr-scanner";
 import { Check, X } from "lucide-react";
 
 type Result = { ok: true; vendorName: string; alreadyScanned: boolean } | { ok: false; error: string };
 
-export default function ScanPage() {
+function ScanInner() {
   const params = useSearchParams();
   const router = useRouter();
   const [paused, setPaused] = useState(false);
@@ -16,28 +16,36 @@ export default function ScanPage() {
 
   const handleToken = useCallback(async (token: string) => {
     setPaused(true);
-    const res = await fetch("/api/scan/booth", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token }),
-    });
-    const data = await res.json();
-    if (!res.ok) setResult({ ok: false, error: data.error || "Invalid code" });
-    else setResult({ ok: true, vendorName: data.vendorName, alreadyScanned: data.alreadyScanned });
+    try {
+      const res = await fetch("/api/scan/booth", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) setResult({ ok: false, error: data.error || "Invalid code" });
+      else setResult({ ok: true, vendorName: data.vendorName, alreadyScanned: data.alreadyScanned });
+    } catch {
+      setResult({ ok: false, error: "Something went wrong — please try again." });
+    }
   }, []);
 
   useEffect(() => {
     if (autoToken) handleToken(autoToken);
   }, [autoToken, handleToken]);
 
-  function onDecode(text: string) {
-    try {
-      const url = new URL(text);
-      const t = url.searchParams.get("t");
-      if (t) return handleToken(t);
-    } catch {}
-    handleToken(text);
-  }
+  const onDecode = useCallback(
+    (text: string) => {
+      let token = text;
+      try {
+        const url = new URL(text);
+        const t = url.searchParams.get("t");
+        if (t) token = t;
+      } catch {}
+      handleToken(token);
+    },
+    [handleToken]
+  );
 
   function reset() {
     setResult(null);
@@ -51,6 +59,9 @@ export default function ScanPage() {
       <p className="mb-4 text-sm text-slate-600">Point your camera at the QR code at a vendor's booth to earn a stamp.</p>
 
       {!result && !autoToken && <QRScanner onDecode={onDecode} paused={paused} />}
+      {!result && autoToken && (
+        <p className="text-center text-sm text-slate-500">Checking in…</p>
+      )}
 
       {result && (
         <div className={`card p-5 text-center ${result.ok ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200"}`}>
@@ -73,5 +84,13 @@ export default function ScanPage() {
         </div>
       )}
     </main>
+  );
+}
+
+export default function ScanPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-center text-slate-500">Loading…</div>}>
+      <ScanInner />
+    </Suspense>
   );
 }

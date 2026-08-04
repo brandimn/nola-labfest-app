@@ -6,12 +6,15 @@ import { Check, X } from "lucide-react";
 
 type Attendee = { name: string; email: string; company: string | null; title: string | null; phone: string | null };
 type Result =
-  | { ok: true; attendee: Attendee; alreadyCaptured: boolean }
+  | { ok: true; leadId: string; attendee: Attendee; alreadyCaptured: boolean }
   | { ok: false; error: string };
 
 export default function VendorScanPage() {
   const [paused, setPaused] = useState(false);
   const [result, setResult] = useState<Result | null>(null);
+  const [note, setNote] = useState("");
+  const [savingNote, setSavingNote] = useState(false);
+  const [noteSaved, setNoteSaved] = useState(false);
 
   const onDecode = useCallback(async (text: string) => {
     setPaused(true);
@@ -28,13 +31,36 @@ export default function VendorScanPage() {
       body: JSON.stringify({ token }),
     });
     const data = await res.json();
-    if (!res.ok) setResult({ ok: false, error: data.error || "Invalid badge" });
-    else setResult({ ok: true, attendee: data.attendee, alreadyCaptured: data.alreadyCaptured });
+    if (!res.ok) {
+      setResult({ ok: false, error: data.error || "Invalid badge" });
+    } else {
+      setResult({ ok: true, leadId: data.leadId, attendee: data.attendee, alreadyCaptured: data.alreadyCaptured });
+      setNote(data.notes || "");
+      setNoteSaved(false);
+    }
   }, []);
+
+  async function saveNote() {
+    if (!result?.ok) return;
+    setSavingNote(true);
+    setNoteSaved(false);
+    try {
+      const res = await fetch(`/api/vendor/leads/${result.leadId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notes: note }),
+      });
+      if (res.ok) setNoteSaved(true);
+    } finally {
+      setSavingNote(false);
+    }
+  }
 
   function reset() {
     setResult(null);
     setPaused(false);
+    setNote("");
+    setNoteSaved(false);
   }
 
   return (
@@ -61,6 +87,28 @@ export default function VendorScanPage() {
                 <p className="text-sm">{result.attendee.email}</p>
                 {result.attendee.phone && <p className="text-sm">{result.attendee.phone}</p>}
               </div>
+
+              <div className="mt-4">
+                <label className="mb-1 block text-sm font-semibold text-slate-700">
+                  Your notes about this lead
+                </label>
+                <textarea
+                  value={note}
+                  onChange={(e) => {
+                    setNote(e.target.value);
+                    setNoteSaved(false);
+                  }}
+                  rows={3}
+                  placeholder="e.g. Interested in the zirconia line — follow up with pricing."
+                  className="input"
+                />
+                <div className="mt-2 flex items-center gap-3">
+                  <button onClick={saveNote} disabled={savingNote} className="btn-primary text-sm">
+                    {savingNote ? "Saving…" : "Save note"}
+                  </button>
+                  {noteSaved && <span className="text-sm font-medium text-emerald-700">Saved ✓</span>}
+                </div>
+              </div>
             </>
           ) : (
             <>
@@ -71,7 +119,7 @@ export default function VendorScanPage() {
               <p className="mt-2 text-slate-700">{result.error}</p>
             </>
           )}
-          <button onClick={reset} className="btn-primary mt-4">Scan next</button>
+          <button onClick={reset} className="btn-secondary mt-4 w-full">Scan next</button>
         </div>
       )}
     </main>

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
 import Link from "next/link";
+import { LeadNote } from "@/components/lead-note";
 
 export default async function VendorLeadsPage() {
   const user = await requireRole("VENDOR", "ADMIN");
@@ -48,7 +49,7 @@ export default async function VendorLeadsPage() {
                   {new Date(l.scannedAt).toLocaleString("en-US", { timeZone: "America/New_York" })}
                 </p>
               </div>
-              {l.notes && <p className="mt-2 text-sm text-slate-700 italic">{l.notes}</p>}
+              <LeadNote leadId={l.id} initialNotes={l.notes ?? ""} />
             </li>
           ))}
         </ul>
