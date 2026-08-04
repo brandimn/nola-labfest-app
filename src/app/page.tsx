@@ -76,10 +76,10 @@ export default async function Home() {
             Hi, {user.name.split(" ")[0]}
           </span>
         </div>
-        <p className="mt-4 font-display text-4xl font-extrabold uppercase leading-[0.95] tracking-tight drop-shadow-md sm:text-5xl">
-          🤓 Lab Nerds<br />Unite
+        <p className="mt-4 text-center font-display text-4xl font-extrabold uppercase leading-[0.95] tracking-tight drop-shadow-md sm:text-5xl">
+          🤓 Lab Nerds Unite
         </p>
-        <p className="mt-2 text-sm italic opacity-90">with a New Orleans twist</p>
+        <p className="mt-2 text-center text-sm italic opacity-90">with a New Orleans twist</p>
         <p className="mt-4 text-[11px] uppercase tracking-widest opacity-80">{EVENT_LABEL}</p>
         <div className="mt-1">
           <Countdown iso={EVENT_START_ISO} />
@@ -137,18 +137,19 @@ export default async function Home() {
 
         {nextSession && (
           <section className="mb-4">
-            <h2 className="mb-2 text-[11px] font-semibold uppercase tracking-widest text-slate-500">
-              Up next
+            <h2 className="mb-2 text-[11px] font-bold uppercase tracking-widest text-[#7C3AED]">
+              🎤 Up next
             </h2>
             <Link
               href={`/schedule/${nextSession.id}`}
-              className="card block p-4 hover:shadow-md transition"
+              className="block rounded-xl p-4 text-white shadow-md transition hover:-translate-y-0.5 hover:shadow-lg"
+              style={{ backgroundImage: "linear-gradient(135deg, #7C3AED 0%, #B13E7D 55%, #F5A547 135%)" }}
             >
               <p className="font-display text-lg font-bold leading-tight">{nextSession.title}</p>
               {nextSession.speaker && (
-                <p className="text-sm text-[#B13E7D] font-semibold">{nextSession.speaker}</p>
+                <p className="text-sm font-semibold text-white/90">{nextSession.speaker}</p>
               )}
-              <p className="mt-1 flex items-center gap-3 text-xs text-slate-500">
+              <p className="mt-1 flex items-center gap-3 text-xs text-white/85">
                 <span className="inline-flex items-center gap-1">
                   <Calendar className="h-3 w-3" />
                   {new Date(nextSession.startsAt).toLocaleString("en-US", {

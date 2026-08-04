@@ -148,7 +148,6 @@ function BadgeCard({
   background: string;
 }) {
   const type = attendee.badgeType ? TYPE_STYLE[attendee.badgeType] : null;
-  const sub = [attendee.company, attendee.state].filter(Boolean).join(" · ");
 
   return (
     <div
@@ -171,35 +170,46 @@ function BadgeCard({
         </span>
       )}
 
-      {/* Soft scrim so the name reads over the busy cityscape */}
+      {/* Soft scrim behind the name (kept right of the LabFest logo) */}
       <div
-        className="pointer-events-none absolute inset-x-0 top-0"
+        className="pointer-events-none absolute top-0"
         style={{
+          left: "34%",
+          right: 0,
           height: "74%",
           background:
-            "radial-gradient(ellipse 78% 46% at 50% 52%, rgba(0,0,0,0.45), rgba(0,0,0,0) 72%)",
+            "radial-gradient(ellipse 72% 52% at 58% 50%, rgba(0,0,0,0.45), rgba(0,0,0,0) 72%)",
         }}
       />
 
-      {/* Attendee name — big, centered over the city */}
+      {/* Attendee name — big, to the RIGHT of the logo so it never overlaps it */}
       <div
-        className="absolute inset-x-0 top-0 flex flex-col items-center justify-center px-5 text-center"
-        style={{ height: "74%" }}
+        className="absolute top-0 flex items-center justify-center px-2 text-center"
+        style={{ left: "35%", right: "4%", height: "74%" }}
       >
         <p
-          className="font-display font-bold leading-[1.05] text-white"
-          style={{ fontSize: "clamp(28px, 8.5vw, 52px)", textShadow: "0 2px 14px rgba(0,0,0,0.6)" }}
+          className="font-display font-bold leading-[1.03] text-white"
+          style={{ fontSize: "clamp(24px, 7vw, 46px)", textShadow: "0 2px 14px rgba(0,0,0,0.6)" }}
         >
           {attendee.name}
         </p>
-        {sub && (
-          <p
-            className="mt-1.5 font-semibold text-white"
-            style={{ fontSize: "15px", textShadow: "0 1px 8px rgba(0,0,0,0.65)" }}
-          >
-            {sub}
-          </p>
-        )}
+      </div>
+
+      {/* Blue band — lab name + state on the left, QR on the right */}
+      <div
+        className="absolute inset-x-0 bottom-0 flex items-center pl-5 pr-[1.35in]"
+        style={{ height: "26%" }}
+      >
+        <div className="min-w-0">
+          {attendee.company && (
+            <p className="font-display text-xl font-bold leading-tight text-white truncate">
+              {attendee.company}
+            </p>
+          )}
+          {attendee.state && (
+            <p className="text-sm font-medium text-white/85 truncate">{attendee.state}</p>
+          )}
+        </div>
       </div>
 
       {/* QR — tucked into the blue band, bottom-right */}
