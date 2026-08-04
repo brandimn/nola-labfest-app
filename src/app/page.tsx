@@ -76,10 +76,10 @@ export default async function Home() {
             Hi, {user.name.split(" ")[0]}
           </span>
         </div>
-        <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/20 backdrop-blur px-3 py-1 font-display text-sm font-extrabold uppercase tracking-wide">
-          🤓 Lab Nerds Unite
+        <p className="mt-4 font-display text-4xl font-extrabold uppercase leading-[0.95] tracking-tight drop-shadow-md sm:text-5xl">
+          🤓 Lab Nerds<br />Unite
         </p>
-        <p className="mt-1.5 text-xs italic opacity-90">with a New Orleans twist</p>
+        <p className="mt-2 text-sm italic opacity-90">with a New Orleans twist</p>
         <p className="mt-4 text-[11px] uppercase tracking-widest opacity-80">{EVENT_LABEL}</p>
         <div className="mt-1">
           <Countdown iso={EVENT_START_ISO} />
