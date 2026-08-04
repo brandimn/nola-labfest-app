@@ -48,7 +48,7 @@ export default async function SpeakerDetailPage({ params }: { params: { id: stri
             </a>
           )}
           {speaker.bio && (
-            <p className="mt-4 text-slate-700 leading-relaxed">{speaker.bio}</p>
+            <p className="mt-4 whitespace-pre-line text-slate-700 leading-relaxed">{speaker.bio}</p>
           )}
         </div>
       </section>
