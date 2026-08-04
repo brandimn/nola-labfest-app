@@ -18,6 +18,7 @@ export default async function SchedulePage() {
   const user = await requireUser();
 
   const sessions = await prisma.session.findMany({
+    where: { event: "LABFEST" },
     orderBy: { startsAt: "asc" },
     include: { speakerRef: true },
   });

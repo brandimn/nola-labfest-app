@@ -69,7 +69,7 @@ export default async function SpeakerDetailPage({ params }: { params: { id: stri
                       weekday: "short",
                       hour: "numeric",
                       minute: "2-digit",
-                      timeZone: "America/New_York",
+                      timeZone: "America/Chicago",
                     })}
                   </span>
                   {s.location && (

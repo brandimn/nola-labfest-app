@@ -26,7 +26,7 @@ export default async function AdminAnnouncementsPage() {
               <p className="font-semibold">{a.title}</p>
               <p className="text-sm text-slate-700">{a.body}</p>
               <p className="mt-1 text-xs text-slate-400">
-                {new Date(a.sentAt).toLocaleString("en-US", { timeZone: "America/New_York" })}
+                {new Date(a.sentAt).toLocaleString("en-US", { timeZone: "America/Chicago" })}
                 {a.targetRole ? ` · ${a.targetRole} only` : ""}
               </p>
             </div>

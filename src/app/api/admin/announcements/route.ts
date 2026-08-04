@@ -7,14 +7,17 @@ import { sendPush } from "@/lib/push";
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== "ADMIN") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  const body = await req.json();
-  if (!body.title || !body.body) return NextResponse.json({ error: "title and body required" }, { status: 400 });
+  const body = await req.json().catch(() => null);
+  if (!body?.title || !body?.body) return NextResponse.json({ error: "title and body required" }, { status: 400 });
+
+  const ROLES = ["ATTENDEE", "VENDOR", "ADMIN"];
+  const targetRole = ROLES.includes(body.targetRole) ? body.targetRole : null;
 
   const ann = await prisma.announcement.create({
     data: {
       title: body.title,
       body: body.body,
-      targetRole: body.targetRole || null,
+      targetRole,
       sentById: session.user.id,
     },
   });
@@ -24,7 +27,7 @@ export async function POST(req: NextRequest) {
       title: body.title,
       body: body.body,
       url: body.url || "/",
-      targetRole: body.targetRole || null,
+      targetRole,
     });
     return NextResponse.json({ ...result, announcementId: ann.id });
   } catch (e: any) {

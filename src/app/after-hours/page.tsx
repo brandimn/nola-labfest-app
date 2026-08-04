@@ -73,13 +73,13 @@ export default async function AfterHoursPage() {
                         <p className="text-[10px] uppercase tracking-widest opacity-85 font-semibold">
                           {new Date(s.startsAt).toLocaleDateString("en-US", {
                             weekday: "long",
-                            timeZone: "America/New_York",
+                            timeZone: "America/Chicago",
                           })}
                           {" · "}
                           {new Date(s.startsAt).toLocaleTimeString("en-US", {
                             hour: "numeric",
                             minute: "2-digit",
-                            timeZone: "America/New_York",
+                            timeZone: "America/Chicago",
                           })}
                         </p>
                         <p className="mt-1 font-display text-xl font-bold leading-tight">

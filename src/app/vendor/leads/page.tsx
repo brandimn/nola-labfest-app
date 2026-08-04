@@ -46,7 +46,7 @@ export default async function VendorLeadsPage() {
                   )}
                 </div>
                 <p className="text-xs text-slate-400">
-                  {new Date(l.scannedAt).toLocaleString("en-US", { timeZone: "America/New_York" })}
+                  {new Date(l.scannedAt).toLocaleString("en-US", { timeZone: "America/Chicago" })}
                 </p>
               </div>
               <LeadNote leadId={l.id} initialNotes={l.notes ?? ""} />

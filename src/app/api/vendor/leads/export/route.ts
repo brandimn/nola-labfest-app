@@ -5,7 +5,9 @@ import { prisma } from "@/lib/prisma";
 
 function csvEscape(v: string | null | undefined) {
   if (v == null) return "";
-  const s = String(v);
+  let s = String(v);
+  // Neutralize spreadsheet formula injection (=, +, -, @, tab, CR at start).
+  if (/^[=+\-@\t\r]/.test(s)) s = "'" + s;
   if (/[,"\r\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
   return s;
 }

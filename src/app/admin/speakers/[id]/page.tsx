@@ -53,7 +53,7 @@ export default async function EditSpeakerPage({ params }: { params: { id: string
                       weekday: "short",
                       hour: "numeric",
                       minute: "2-digit",
-                      timeZone: "America/New_York",
+                      timeZone: "America/Chicago",
                     })}
                   </p>
                 </Link>

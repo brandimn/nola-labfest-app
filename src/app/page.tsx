@@ -36,7 +36,7 @@ export default async function Home() {
   ] = await Promise.all([
     prisma.vendor.count(),
     prisma.session.findFirst({
-      where: { startsAt: { gte: new Date() } },
+      where: { startsAt: { gte: new Date() }, event: "LABFEST" },
       orderBy: { startsAt: "asc" },
     }),
     user.role === "ATTENDEE"
@@ -156,7 +156,7 @@ export default async function Home() {
                     weekday: "short",
                     hour: "numeric",
                     minute: "2-digit",
-                    timeZone: "America/New_York",
+                    timeZone: "America/Chicago",
                   })}
                 </span>
                 {nextSession.location && (
@@ -240,7 +240,7 @@ export default async function Home() {
                   <p className="text-sm text-slate-600">{a.body}</p>
                   <p className="mt-1 text-xs text-slate-400">
                     {new Date(a.sentAt).toLocaleString("en-US", {
-                      timeZone: "America/New_York",
+                      timeZone: "America/Chicago",
                     })}
                   </p>
                 </div>

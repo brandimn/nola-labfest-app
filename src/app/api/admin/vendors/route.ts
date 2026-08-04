@@ -21,7 +21,7 @@ export function normalizeCategories(input: unknown): string[] {
 
 export async function POST(req: NextRequest) {
   if (!(await requireAdmin())) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  const body = await req.json();
+  const body = await req.json().catch(() => null);
   if (!body?.name || !body?.boothNumber) {
     return NextResponse.json({ error: "Name and booth number required" }, { status: 400 });
   }
