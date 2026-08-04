@@ -3,27 +3,19 @@ import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/session";
 import { VendorSearch } from "@/components/vendor-search";
 import { SponsorTier } from "@/components/sponsor-tier";
-import { EventFilter } from "@/components/event-filter";
 import { VendorPills } from "@/components/vendor-pills";
+import { CategoryChips } from "@/components/category-chips";
 
 const TIER_ORDER: Record<string, number> = { PLATINUM: 0, GOLD: 1, SILVER: 2, BRONZE: 3 };
 
 export default async function VendorsPage({
   searchParams,
 }: {
-  searchParams: { q?: string; category?: string; event?: string };
+  searchParams: { q?: string; category?: string };
 }) {
   await requireUser();
   const q = searchParams.q?.trim();
   const category = searchParams.category?.trim();
-  const eventFilter = searchParams.event?.trim(); // "labfest" | "lotm" | undefined (all)
-
-  const eventWhere =
-    eventFilter === "labfest"
-      ? { atLabFest: true }
-      : eventFilter === "lotm"
-        ? { atLOTM: true }
-        : {};
 
   const vendorsRaw = await prisma.vendor.findMany({
     where: {
@@ -33,12 +25,11 @@ export default async function VendorsPage({
               OR: [
                 { name: { contains: q, mode: "insensitive" } },
                 { description: { contains: q, mode: "insensitive" } },
-                { category: { contains: q, mode: "insensitive" } },
+                { categories: { has: q } },
               ],
             }
           : {},
-        category ? { category } : {},
-        eventWhere,
+        category ? { categories: { has: category } } : {},
       ],
     },
     orderBy: { name: "asc" },
@@ -50,17 +41,14 @@ export default async function VendorsPage({
     return a.name.localeCompare(b.name);
   });
 
-  const categoriesRaw = await prisma.vendor.findMany({
-    where: { category: { not: null } },
-    select: { category: true },
-    distinct: ["category"],
-  });
-  const categories = categoriesRaw.map((c) => c.category!).filter(Boolean).sort();
+  const categoriesRaw = await prisma.vendor.findMany({ select: { categories: true } });
+  const categories = Array.from(
+    new Set(categoriesRaw.flatMap((v) => v.categories))
+  ).filter(Boolean).sort();
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-6">
-      <h1 className="mb-2 font-display text-3xl font-bold">Vendors</h1>
-      <EventFilter current={eventFilter} />
+      <h1 className="mb-2 font-display text-4xl font-extrabold gradient-text">Vendors</h1>
       <VendorSearch categories={categories} />
       {vendors.length === 0 ? (
         <p className="mt-6 text-center text-slate-500">No vendors match your search.</p>
@@ -85,10 +73,10 @@ export default async function VendorsPage({
                     <SponsorTier tier={v.sponsorTier} />
                     <VendorPills vendor={v} />
                   </div>
-                  <p className="text-xs text-slate-500 truncate">
-                    Booth {v.boothNumber}
-                    {v.category ? ` · ${v.category}` : ""}
-                  </p>
+                  <p className="text-xs text-slate-500">Booth {v.boothNumber}</p>
+                  <div className="mt-1">
+                    <CategoryChips categories={v.categories} />
+                  </div>
                 </div>
               </Link>
             </li>

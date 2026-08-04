@@ -142,7 +142,7 @@ export function EditUserForm({ user, vendors = [] }: { user: User; vendors?: Ven
                   <option
                     key={v.id}
                     value={v.id}
-                    disabled={takenByOther ?? undefined}
+                    disabled={!!takenByOther}
                   >
                     {v.name} — Booth {v.boothNumber}
                     {takenByOther ? " (already assigned)" : ""}

@@ -18,6 +18,8 @@ model User {
   phone        String?
   company      String?
   title        String?
+  state        String?
+  badgeType    String?  // LAB | VENDOR | SPEAKER | NOWAK | STUDENT — drives badge label/color
   badgeToken   String   @unique @default(cuid())
   invitedAt        DateTime?
   openedInviteAt   DateTime?
@@ -45,7 +47,8 @@ model Vendor {
   website      String?
   contactEmail String?
   contactPhone String?
-  category     String?
+  category     String?      // primary category (kept for existing displays)
+  categories   String[]     @default([])  // full set of categories a vendor fits
   sponsorTier  String?  // PLATINUM | GOLD | SILVER | BRONZE | null
   atLabFest       Boolean  @default(true)
   atLOTM          Boolean  @default(false)

@@ -1,11 +1,10 @@
 type Vendor = {
   atLabFest?: boolean | null;
-  atLOTM?: boolean | null;
   isLunchSponsor?: boolean | null;
 };
 
 /** Small tags that appear next to a vendor name indicating sponsorships/events.
- *  Order: LabFest → LOTM → Lunch Sponsor. */
+ *  Order: LabFest → Lunch Sponsor. */
 export function VendorPills({
   vendor,
   omit,
@@ -13,7 +12,7 @@ export function VendorPills({
 }: {
   vendor: Vendor;
   /** Events to hide — useful on event-specific pages so we don't repeat the page context. */
-  omit?: Array<"labfest" | "lotm" | "lunch">;
+  omit?: Array<"labfest" | "lunch">;
   size?: "sm" | "md";
 }) {
   const hidden = new Set(omit ?? []);
@@ -28,13 +27,6 @@ export function VendorPills({
           className={`rounded-full bg-[#0F172A] text-white ${cls} font-bold uppercase tracking-wider`}
         >
           LabFest
-        </span>
-      )}
-      {vendor.atLOTM && !hidden.has("lotm") && (
-        <span
-          className={`rounded-full bg-[#FF5DA2] text-white ${cls} font-bold uppercase tracking-wider`}
-        >
-          LOTM
         </span>
       )}
       {vendor.isLunchSponsor && !hidden.has("lunch") && (

@@ -5,6 +5,7 @@ import { requireUser } from "@/lib/session";
 import { QRDisplay } from "@/components/qr-display";
 import { Globe, Mail, Phone, MapPin } from "lucide-react";
 import { VendorPills } from "@/components/vendor-pills";
+import { CategoryChips } from "@/components/category-chips";
 
 export default async function VendorDetailPage({ params }: { params: { id: string } }) {
   const user = await requireUser();
@@ -36,13 +37,11 @@ export default async function VendorDetailPage({ params }: { params: { id: strin
             <p className="text-sm text-slate-600 flex items-center gap-1">
               <MapPin className="h-4 w-4" /> Booth {vendor.boothNumber}
             </p>
-            <div className="mt-1 flex flex-wrap items-center gap-1.5">
-              {vendor.category && (
-                <span className="rounded-full bg-slate-200 px-2 py-0.5 text-xs">
-                  {vendor.category}
-                </span>
-              )}
+            <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
               <VendorPills vendor={vendor} size="md" />
+            </div>
+            <div className="mt-1.5">
+              <CategoryChips categories={vendor.categories} size="md" />
             </div>
           </div>
         </div>

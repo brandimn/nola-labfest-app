@@ -2,7 +2,6 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/session";
 import { formatDay, formatTime } from "@/lib/utils";
-import { EventFilter } from "@/components/event-filter";
 import { FeaturedSessionCard } from "@/components/featured-session-card";
 import { Sparkles } from "lucide-react";
 
@@ -15,22 +14,10 @@ const TRACK_COLORS: Record<string, string> = {
 
 export const dynamic = "force-dynamic";
 
-export default async function SchedulePage({
-  searchParams,
-}: {
-  searchParams: { event?: string };
-}) {
+export default async function SchedulePage() {
   const user = await requireUser();
-  const eventFilter = searchParams.event?.trim();
-  const eventWhere =
-    eventFilter === "labfest"
-      ? { event: "LABFEST" }
-      : eventFilter === "lotm"
-        ? { event: "LOTM" }
-        : {};
 
   const sessions = await prisma.session.findMany({
-    where: eventWhere,
     orderBy: { startsAt: "asc" },
     include: { speakerRef: true },
   });
@@ -51,10 +38,9 @@ export default async function SchedulePage({
   return (
     <main className="mx-auto max-w-2xl px-4 py-6">
       <div className="flex items-center justify-between mb-2">
-        <h1 className="font-display text-3xl font-bold">Schedule</h1>
-        <Link href="/agenda" className="text-sm text-[#0F172A] font-medium">My Agenda →</Link>
+        <h1 className="font-display text-4xl font-extrabold gradient-text">Schedule</h1>
+        <Link href="/agenda" className="text-sm font-bold text-[#7C3AED]">My Agenda →</Link>
       </div>
-      <EventFilter current={eventFilter} />
 
       {featured.length > 0 && (
         <section className="mb-6">
@@ -84,11 +70,6 @@ export default async function SchedulePage({
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <p className="font-semibold">{s.title}</p>
-                        {s.event === "LOTM" && (
-                          <span className="rounded-full bg-[#F4EADB] text-[#8B6A4F] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">
-                            LOTM
-                          </span>
-                        )}
                       </div>
                       {s.speaker && <p className="text-xs text-slate-500">{s.speaker}</p>}
                       <p className="text-xs text-slate-500">

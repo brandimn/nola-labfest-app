@@ -7,15 +7,40 @@
   --brand-dark: #1F2937;
   --brand-accent: #FFB81C;
   --brand-green: #0E8C4B;
+  /* Mardi Gras — Lab Nerds Unite */
+  --purple: #7C3AED;
+  --magenta: #B13E7D;
+  --gold: #F5A547;
+  --green: #0E8C4B;
+  --sky: #0EA5E9;
 }
 
-html, body { background: #f8fafc; color: #0f172a; }
+html, body {
+  color: #0f172a;
+  background:
+    radial-gradient(1100px 500px at 100% -5%, rgba(124,58,237,0.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 8%, rgba(245,165,71,0.12), transparent 55%),
+    #f7f5fb;
+}
 
 .btn {
-  @apply inline-flex items-center justify-center rounded-lg px-4 py-2 font-medium transition disabled:opacity-50 disabled:cursor-not-allowed;
+  @apply inline-flex items-center justify-center rounded-lg px-4 py-2 font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed;
 }
 .btn-primary {
-  @apply btn bg-[#0F172A] text-white hover:bg-[#1F2937] active:scale-95;
+  @apply btn text-white active:scale-95 shadow-sm;
+  background-image: linear-gradient(135deg, var(--purple) 0%, var(--magenta) 55%, var(--gold) 130%);
+}
+.btn-primary:hover { filter: brightness(1.05); }
+
+/* Festive helpers */
+.gradient-text {
+  background-image: linear-gradient(100deg, var(--purple), var(--magenta) 55%, var(--gold));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.festive-bar {
+  background-image: linear-gradient(90deg, var(--purple), var(--green) 50%, var(--gold));
 }
 .btn-secondary {
   @apply btn border border-slate-300 bg-white text-slate-900 hover:bg-slate-100;

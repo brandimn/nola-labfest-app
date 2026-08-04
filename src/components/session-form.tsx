@@ -94,13 +94,6 @@ export function SessionForm({
       </div>
       <div><label className="label">Location</label><input className="input" value={form.location ?? ""} onChange={(e) => up("location", e.target.value)} /></div>
       <div>
-        <label className="label">Event</label>
-        <select className="input" value={form.event} onChange={(e) => up("event", e.target.value)}>
-          <option value="LABFEST">NOLA LabFest</option>
-          <option value="LOTM">LOTM — Ladies of the Mill</option>
-        </select>
-      </div>
-      <div>
         <label className="flex items-start gap-2 text-sm cursor-pointer rounded-lg border border-slate-300 bg-white p-3">
           <input
             type="checkbox"

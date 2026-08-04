@@ -76,7 +76,10 @@ export default async function Home() {
             Hi, {user.name.split(" ")[0]}
           </span>
         </div>
-        <p className="mt-3 text-xs italic opacity-90">with a New Orleans twist</p>
+        <p className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/20 backdrop-blur px-3 py-1 font-display text-sm font-extrabold uppercase tracking-wide">
+          🤓 Lab Nerds Unite
+        </p>
+        <p className="mt-1.5 text-xs italic opacity-90">with a New Orleans twist</p>
         <p className="mt-4 text-[11px] uppercase tracking-widest opacity-80">{EVENT_LABEL}</p>
         <div className="mt-1">
           <Countdown iso={EVENT_START_ISO} />
@@ -105,30 +108,6 @@ export default async function Home() {
             </div>
           </div>
         )}
-
-        <Link
-          href="/lotm"
-          className="relative block rounded-xl p-4 mb-4 text-white shadow-md overflow-hidden"
-          style={{
-            background:
-              "linear-gradient(135deg, #0F172A 0%, #C7377A 45%, #FF5DA2 100%)",
-          }}
-        >
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="text-[10px] uppercase tracking-widest opacity-85 font-semibold">
-                Thursday Kickoff · Oct 15
-              </p>
-              <p className="mt-1 font-display text-xl font-bold">Ladies of the Mill</p>
-              <p className="mt-0.5 text-xs italic opacity-90">
-                Ready to be inspired?
-              </p>
-            </div>
-            <span className="rounded-lg bg-white/25 backdrop-blur px-4 py-2 text-sm font-semibold hover:bg-white/35 flex-shrink-0">
-              Enter →
-            </span>
-          </div>
-        </Link>
 
         <Link
           href="/after-hours"
@@ -191,31 +170,26 @@ export default async function Home() {
         )}
 
         <div className="grid grid-cols-3 gap-2 mb-6">
-          <Tile href="/vendors" icon={Users} label="Vendors" />
-          <Tile href="/schedule" icon={Calendar} label="Schedule" />
-          <Tile href="/speakers" icon={Mic} label="Speakers" />
+          <Tile href="/vendors" icon={Users} label="Vendors" color="#7C3AED" />
+          <Tile href="/schedule" icon={Calendar} label="Schedule" color="#0EA5E9" />
+          <Tile href="/speakers" icon={Mic} label="Speakers" color="#B13E7D" />
           {user.role === "ATTENDEE" && (
             <>
-              <Tile href="/scan" icon={QrCode} label="Scan Booth" />
-              <Tile href="/badge" icon={IdCard} label="My Badge" />
-              <Tile
-                href="/vote"
-                icon={Sparkles}
-                label="Vote"
-                accent={myVote ? true : false}
-              />
+              <Tile href="/scan" icon={QrCode} label="Scan Booth" color="#0E8C4B" />
+              <Tile href="/badge" icon={IdCard} label="My Badge" color="#F59E0B" />
+              <Tile href="/vote" icon={Sparkles} label="Vote" color="#EC4899" accent={!!myVote} />
             </>
           )}
           {user.role === "VENDOR" && (
             <>
-              <Tile href="/vendor/scan" icon={QrCode} label="Scan Lead" />
-              <Tile href="/vendor/leads" icon={Trophy} label="My Leads" />
+              <Tile href="/vendor/scan" icon={QrCode} label="Scan Lead" color="#0E8C4B" />
+              <Tile href="/vendor/leads" icon={Trophy} label="My Leads" color="#F59E0B" />
             </>
           )}
           {user.role === "ADMIN" && (
             <>
-              <Tile href="/admin" icon={Trophy} label="Admin" />
-              <Tile href="/admin/announcements" icon={Bell} label="Announce" />
+              <Tile href="/admin" icon={Trophy} label="Admin" color="#F59E0B" />
+              <Tile href="/admin/announcements" icon={Bell} label="Announce" color="#7C3AED" />
             </>
           )}
         </div>
@@ -282,22 +256,28 @@ function Tile({
   href,
   icon: Icon,
   label,
+  color = "#7C3AED",
   accent,
 }: {
   href: string;
   icon: any;
   label: string;
+  color?: string;
   accent?: boolean;
 }) {
   return (
     <Link
       href={href}
-      className={`card flex flex-col items-center justify-center p-3 text-center hover:shadow-md transition active:scale-95 ${
-        accent ? "ring-2 ring-[#B13E7D]/40" : ""
-      }`}
+      className="card flex flex-col items-center justify-center gap-1.5 p-3 text-center transition hover:shadow-md hover:-translate-y-0.5 active:scale-95"
+      style={accent ? { boxShadow: `0 0 0 2px ${color}66` } : undefined}
     >
-      <Icon className={`h-5 w-5 mb-1 ${accent ? "text-[#B13E7D]" : "text-[#0F172A]"}`} />
-      <p className="text-xs font-semibold">{label}</p>
+      <span
+        className="flex h-10 w-10 items-center justify-center rounded-xl"
+        style={{ backgroundColor: `${color}1A`, color }}
+      >
+        <Icon className="h-5 w-5" />
+      </span>
+      <p className="text-xs font-bold text-slate-700">{label}</p>
     </Link>
   );
 }
