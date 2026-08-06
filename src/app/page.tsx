@@ -66,7 +66,7 @@ export default async function Home() {
         className="relative overflow-hidden rounded-b-3xl px-5 pt-6 pb-8 text-white shadow-md"
         style={{
           backgroundImage:
-            "linear-gradient(180deg, rgba(15,23,42,0.7) 0%, rgba(15,23,42,0.28) 45%, rgba(15,23,42,0.62) 100%), url('/nola-hero.jpg')",
+            "linear-gradient(180deg, rgba(15,23,42,0.7) 0%, rgba(15,23,42,0.28) 45%, rgba(15,23,42,0.62) 100%), url('/nola-hero-2.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
