@@ -12,6 +12,7 @@ import {
   Sparkles,
   Mic,
   MapPin,
+  UsersRound,
 } from "lucide-react";
 import { PushPrompt } from "@/components/push-prompt";
 import { Countdown } from "@/components/countdown";
@@ -174,6 +175,7 @@ export default async function Home() {
           <Tile href="/vendors" icon={Users} label="Vendors" color="#7C3AED" />
           <Tile href="/schedule" icon={Calendar} label="Schedule" color="#0EA5E9" />
           <Tile href="/speakers" icon={Mic} label="Speakers" color="#B13E7D" />
+          <Tile href="/team" icon={UsersRound} label="Nowak Team" color="#0057A3" />
           {user.role === "ATTENDEE" && (
             <>
               <Tile href="/scan" icon={QrCode} label="Scan Booth" color="#0E8C4B" />
