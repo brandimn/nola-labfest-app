@@ -257,15 +257,20 @@ export default async function Home() {
           </section>
         )}
 
-        <footer className="mt-8 flex flex-col items-center gap-2 border-t border-slate-200 pt-6">
-          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
-            Presented by
-          </p>
-          <img
-            src="/nowak-dental-logo.png"
-            alt="Nowak Dental Supplies"
-            className="h-16 w-auto"
-          />
+        <footer className="mt-8">
+          <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-md">
+            <div className="h-1.5 festive-bar" />
+            <div className="flex flex-col items-center gap-2 px-5 py-6 text-center">
+              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-[#0057A3]">
+                Proudly presented by
+              </p>
+              <img
+                src="/nowak-dental-logo.png"
+                alt="Nowak Dental Supplies"
+                className="h-auto w-full max-w-[260px]"
+              />
+            </div>
+          </div>
         </footer>
       </div>
     </main>
