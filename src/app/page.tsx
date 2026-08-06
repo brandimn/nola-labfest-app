@@ -71,18 +71,24 @@ export default async function Home() {
           backgroundPosition: "center",
         }}
       >
-        <div className="flex items-start justify-between gap-3">
-          <img src="/nola-lockup.png" alt="NOLA LabFest" className="h-14 w-auto brightness-0 invert" />
+        <div className="flex justify-end">
           <span className="rounded-full bg-white/15 backdrop-blur px-3 py-1 text-[10px] uppercase tracking-wider font-semibold">
             Hi, {user.name.split(" ")[0]}
           </span>
         </div>
-        <p className="mt-4 text-center font-display text-4xl font-extrabold uppercase leading-[0.95] tracking-tight drop-shadow-md sm:text-5xl">
-          🤓 Lab Nerds Unite
-        </p>
-        <p className="mt-2 text-center text-sm italic opacity-90">with a New Orleans twist</p>
-        <p className="mt-4 text-[11px] uppercase tracking-widest opacity-80">{EVENT_LABEL}</p>
-        <div className="mt-1">
+        <div className="mt-1 flex flex-col items-center text-center">
+          <img
+            src="/nola-lockup.png"
+            alt="NOLA LabFest"
+            className="h-24 w-auto brightness-0 invert drop-shadow-md sm:h-28"
+          />
+          <p className="mt-2 text-sm italic opacity-90">with a New Orleans twist</p>
+          <p className="mt-3 font-display text-2xl font-extrabold uppercase tracking-tight drop-shadow sm:text-3xl">
+            🤓 Lab Nerds Unite
+          </p>
+        </div>
+        <p className="mt-4 text-center text-[11px] uppercase tracking-widest opacity-80">{EVENT_LABEL}</p>
+        <div className="mt-1 flex justify-center">
           <Countdown iso={EVENT_START_ISO} />
         </div>
       </section>
@@ -250,6 +256,17 @@ export default async function Home() {
             </div>
           </section>
         )}
+
+        <footer className="mt-8 flex flex-col items-center gap-2 border-t border-slate-200 pt-6">
+          <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+            Presented by
+          </p>
+          <img
+            src="/nowak-dental-logo.png"
+            alt="Nowak Dental Supplies"
+            className="h-16 w-auto"
+          />
+        </footer>
       </div>
     </main>
   );
