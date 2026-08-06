@@ -80,7 +80,7 @@ export default async function Home() {
           <img
             src="/nola-lockup.png"
             alt="NOLA LabFest"
-            className="h-24 w-auto brightness-0 invert drop-shadow-md sm:h-28"
+            className="h-auto w-full max-w-[300px] brightness-0 invert drop-shadow-md sm:max-w-[360px]"
           />
           <p className="mt-2 text-sm italic opacity-90">with a New Orleans twist</p>
           <p className="mt-3 font-display text-2xl font-extrabold uppercase tracking-tight drop-shadow sm:text-3xl">
