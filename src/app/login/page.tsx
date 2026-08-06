@@ -37,7 +37,7 @@ function LoginInner() {
       className="min-h-screen flex items-center justify-center px-4 py-10 bg-cover bg-center"
       style={{
         backgroundImage:
-          "linear-gradient(135deg, rgba(61,30,80,0.85), rgba(177,62,125,0.75) 50%, rgba(245,165,71,0.75)), url('/nola-hero.png')",
+          "linear-gradient(135deg, rgba(61,30,80,0.85), rgba(177,62,125,0.75) 50%, rgba(245,165,71,0.75)), url('/nola-hero.jpg')",
       }}
     >
       <div className="w-full max-w-sm card p-6">

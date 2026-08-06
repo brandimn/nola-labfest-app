@@ -66,7 +66,7 @@ export default async function Home() {
         className="relative overflow-hidden rounded-b-3xl px-5 pt-6 pb-8 text-white shadow-md"
         style={{
           backgroundImage:
-            "linear-gradient(135deg, rgba(15,23,42,0.85), rgba(61,30,80,0.85) 35%, rgba(177,62,125,0.75) 65%, rgba(245,165,71,0.75)), url('/nola-hero.png')",
+            "linear-gradient(180deg, rgba(15,23,42,0.7) 0%, rgba(15,23,42,0.28) 45%, rgba(15,23,42,0.62) 100%), url('/nola-hero.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}
@@ -77,6 +77,11 @@ export default async function Home() {
           </span>
         </div>
         <div className="mt-1 flex flex-col items-center text-center">
+          <img
+            src="/nowak-logo-white.png"
+            alt="Nowak Dental Supplies"
+            className="mb-3 h-auto w-full max-w-[190px] drop-shadow"
+          />
           <img
             src="/nola-lockup.png"
             alt="NOLA LabFest"
