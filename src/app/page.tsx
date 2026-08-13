@@ -13,6 +13,7 @@ import {
   Mic,
   MapPin,
   UsersRound,
+  Images,
 } from "lucide-react";
 import { PushPrompt } from "@/components/push-prompt";
 import { Countdown } from "@/components/countdown";
@@ -60,6 +61,11 @@ export default async function Home() {
     prisma.speaker.count(),
   ]);
 
+  const vendorPacketUrl =
+    user.role === "VENDOR"
+      ? (await prisma.setting.findUnique({ where: { key: "vendorPacketUrl" } }))?.value || ""
+      : "";
+
   return (
     <main className="mx-auto max-w-2xl pb-6">
       <section
@@ -100,6 +106,43 @@ export default async function Home() {
 
       <div className="px-4 -mt-4 relative z-10">
         <PushPrompt />
+
+        {user.role === "VENDOR" &&
+          (vendorPacketUrl ? (
+            <a
+              href={vendorPacketUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="relative mb-4 block overflow-hidden rounded-xl p-4 text-white shadow-md"
+              style={{ background: "linear-gradient(135deg, #0057A3 0%, #7C3AED 100%)" }}
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest opacity-85">
+                    Got questions?
+                  </p>
+                  <p className="mt-1 font-display text-xl font-bold">Your Vendor Packet</p>
+                  <p className="mt-0.5 text-xs italic opacity-90">
+                    Everything you need for the show
+                  </p>
+                </div>
+                <span className="flex-shrink-0 rounded-lg bg-white/25 px-4 py-2 text-sm font-semibold backdrop-blur hover:bg-white/35">
+                  Open →
+                </span>
+              </div>
+            </a>
+          ) : (
+            <div
+              className="relative mb-4 block overflow-hidden rounded-xl p-4 text-white shadow-md"
+              style={{ background: "linear-gradient(135deg, #0057A3 0%, #7C3AED 100%)" }}
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-widest opacity-85">
+                Got questions?
+              </p>
+              <p className="mt-1 font-display text-xl font-bold">Your Vendor Packet</p>
+              <p className="mt-0.5 text-xs italic opacity-90">Coming soon — check back shortly.</p>
+            </div>
+          ))}
 
         {user.role === "ATTENDEE" && (
           <div className="rounded-xl p-4 mb-4 text-white shadow-md bg-gradient-to-r from-[#3D1E50] via-[#B13E7D] to-[#F5A547]">
@@ -187,6 +230,7 @@ export default async function Home() {
           <Tile href="/schedule" icon={Calendar} label="Schedule" color="#0EA5E9" />
           <Tile href="/speakers" icon={Mic} label="Speakers" color="#B13E7D" />
           <Tile href="/team" icon={UsersRound} label="Nowak Team" color="#0057A3" />
+          <Tile href="/gallery" icon={Images} label="Gallery" color="#DB2777" />
           {user.role === "ATTENDEE" && (
             <>
               <Tile href="/scan" icon={QrCode} label="Scan Booth" color="#0E8C4B" />

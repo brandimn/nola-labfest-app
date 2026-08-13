@@ -34,6 +34,7 @@ model User {
   pushSubscriptions PushSubscription[]
   announcements     Announcement[]
   boothVote         BoothVote?
+  galleryPhotos     GalleryPhoto[]
 }
 
 model Vendor {
@@ -168,6 +169,19 @@ model PushSubscription {
 model Setting {
   key   String @id
   value String @db.Text
+}
+
+model GalleryPhoto {
+  id           String   @id @default(cuid())
+  url          String   @db.Text        // resized JPEG data URL
+  caption      String?
+  uploaderId   String?
+  uploaderName String
+  createdAt    DateTime @default(now())
+
+  uploader User? @relation(fields: [uploaderId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
 }
 
 model TeamMember {
