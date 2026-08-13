@@ -66,6 +66,13 @@ export default async function Home() {
       ? (await prisma.setting.findUnique({ where: { key: "vendorPacketUrl" } }))?.value || ""
       : "";
 
+  const tileSettings = await prisma.setting.findMany({
+    where: { key: { startsWith: "tileImg:" } },
+  });
+  const tileImg: Record<string, string> = Object.fromEntries(
+    tileSettings.map((s) => [s.key.replace("tileImg:", ""), s.value])
+  );
+
   return (
     <main className="mx-auto max-w-2xl pb-6">
       <section
@@ -226,16 +233,16 @@ export default async function Home() {
         )}
 
         <div className="grid grid-cols-3 gap-2 mb-6">
-          <Tile href="/vendors" icon={Users} label="Vendors" color="#7C3AED" />
-          <Tile href="/schedule" icon={Calendar} label="Schedule" color="#0EA5E9" />
-          <Tile href="/speakers" icon={Mic} label="Speakers" color="#B13E7D" />
-          <Tile href="/team" icon={UsersRound} label="Nowak Team" color="#0057A3" />
-          <Tile href="/gallery" icon={Images} label="Gallery" color="#DB2777" />
+          <Tile href="/vendors" icon={Users} label="Vendors" color="#7C3AED" image={tileImg.vendors} />
+          <Tile href="/schedule" icon={Calendar} label="Schedule" color="#0EA5E9" image={tileImg.schedule} />
+          <Tile href="/speakers" icon={Mic} label="Speakers" color="#B13E7D" image={tileImg.speakers} />
+          <Tile href="/team" icon={UsersRound} label="Nowak Team" color="#0057A3" image={tileImg.team} />
+          <Tile href="/gallery" icon={Images} label="Photo Gallery" color="#DB2777" image={tileImg.gallery} />
           {user.role === "ATTENDEE" && (
             <>
-              <Tile href="/scan" icon={QrCode} label="Scan Booth" color="#0E8C4B" />
-              <Tile href="/badge" icon={IdCard} label="My Badge" color="#F59E0B" />
-              <Tile href="/vote" icon={Sparkles} label="Vote" color="#EC4899" accent={!!myVote} />
+              <Tile href="/scan" icon={QrCode} label="Scan Booth" color="#0E8C4B" image={tileImg.scan} />
+              <Tile href="/badge" icon={IdCard} label="My Badge" color="#F59E0B" image={tileImg.badge} />
+              <Tile href="/vote" icon={Sparkles} label="Vote" color="#EC4899" accent={!!myVote} image={tileImg.vote} />
             </>
           )}
           {user.role === "VENDOR" && (
@@ -332,13 +339,37 @@ function Tile({
   label,
   color = "#7C3AED",
   accent,
+  image,
 }: {
   href: string;
   icon: any;
   label: string;
   color?: string;
   accent?: boolean;
+  image?: string;
 }) {
+  if (image) {
+    return (
+      <Link
+        href={href}
+        className="relative flex aspect-square flex-col justify-end overflow-hidden rounded-xl shadow-sm transition hover:shadow-md hover:-translate-y-0.5 active:scale-95"
+      >
+        <img src={image} alt="" className="absolute inset-0 h-full w-full object-cover" />
+        <div
+          className="absolute inset-0"
+          style={{ background: "linear-gradient(to top, rgba(0,0,0,0.78), rgba(0,0,0,0.05) 62%)" }}
+        />
+        <span
+          className="absolute left-2 top-2 flex h-7 w-7 items-center justify-center rounded-lg bg-white/25 text-white backdrop-blur"
+        >
+          <Icon className="h-4 w-4" />
+        </span>
+        <p className="relative p-2 text-left text-xs font-bold leading-tight text-white drop-shadow">
+          {label}
+        </p>
+      </Link>
+    );
+  }
   return (
     <Link
       href={href}
