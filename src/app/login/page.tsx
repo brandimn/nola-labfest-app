@@ -34,17 +34,25 @@ function LoginInner() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center px-4 py-10 bg-cover bg-center"
+      className="flex min-h-screen flex-col items-center justify-center gap-6 bg-cover bg-center px-4 py-10"
       style={{
         backgroundImage:
-          "linear-gradient(135deg, rgba(61,30,80,0.85), rgba(177,62,125,0.75) 50%, rgba(245,165,71,0.75)), url('/nola-hero-2.jpg')",
+          "linear-gradient(160deg, rgba(15,23,42,0.72), rgba(124,58,237,0.72) 40%, rgba(177,62,125,0.7) 70%, rgba(245,165,71,0.7)), url('/nola-hero-2.jpg')",
       }}
     >
-      <div className="w-full max-w-sm card p-6">
-        <div className="mb-6 text-center">
-          <img src="/nola-lockup.png" alt="NOLA LabFest — A Lab Innovation Summit" className="mx-auto mb-3 h-20 w-auto" />
-          <p className="text-sm text-slate-600">Sign in to your account</p>
-        </div>
+      <div className="w-full max-w-sm text-center">
+        <img
+          src="/nola-lockup.png"
+          alt="NOLA LabFest"
+          className="mx-auto w-full max-w-[300px] brightness-0 invert drop-shadow-lg"
+        />
+        <p className="mt-3 font-display text-2xl font-extrabold uppercase tracking-tight text-white drop-shadow-md">
+          🤓 Lab Nerds Unite
+        </p>
+      </div>
+
+      <div className="w-full max-w-sm card p-6 shadow-xl">
+        <p className="mb-4 text-center text-sm font-semibold text-slate-500">Sign in to your account</p>
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
             <label className="label">Email</label>
