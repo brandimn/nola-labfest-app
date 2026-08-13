@@ -40,12 +40,17 @@ function LoginInner() {
           "linear-gradient(135deg, rgba(61,30,80,0.85), rgba(177,62,125,0.75) 50%, rgba(245,165,71,0.75)), url('/nola-hero-2.jpg')",
       }}
     >
-      <div className="w-full max-w-sm card p-6">
-        <div className="mb-6 text-center">
-          <img src="/nola-lockup.png" alt="NOLA LabFest — A Lab Innovation Summit" className="mx-auto mb-3 h-20 w-auto" />
+      <div className="w-full max-w-sm card overflow-hidden">
+        <img
+          src="/nola-tooth.jpg"
+          alt="NOLA LabFest 2026"
+          className="w-full"
+        />
+        <div className="px-6 pb-2 text-center">
           <p className="text-xs italic text-slate-600">with a New Orleans twist</p>
-          <p className="mt-3 text-sm text-slate-600">Sign in to your account</p>
+          <p className="mt-2 text-sm text-slate-600">Sign in to your account</p>
         </div>
+        <div className="px-6 pb-6 pt-3">
         <form onSubmit={onSubmit} className="space-y-4">
           <div>
             <label className="label">Email</label>
@@ -78,6 +83,7 @@ function LoginInner() {
           New attendee?{" "}
           <Link href="/register" className="text-[#0F172A] font-medium">Register</Link>
         </p>
+        </div>
       </div>
     </div>
   );
