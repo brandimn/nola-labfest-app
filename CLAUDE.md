@@ -1,99 +1,65 @@
-# Nowak Dental Trade Show PWA
+# NOLA LabFest Event App
 
-## Project Overview
-A Progressive Web App (PWA) for the Nowak Dental Supplies trade show in October 2026. Attendees install it to their phone home screen (no app store). Supports vendor directory, schedule, push notifications, a QR passport game, and vendor lead capture.
+## What this is
+A Progressive Web App (PWA) for the annual NOLA LabFest dental industry event hosted by Nowak Dental Supplies. Attendees install it on their phones and use it for the schedule, vendor list, speakers, and a passport game.
 
-## Business Context
-- **Owner:** Nowak Dental Supplies (Brandi Nowak Dalton)
-- **Event:** Annual trade show, October 2026
-- **Users:** ~200 attendees (dental practice staff, reps), ~30 vendors (exhibitors), small admin team
-- **Goal:** Replace paid apps like Whova with an in-house, branded experience. Drive booth traffic via gamification and give vendors an easy way to capture leads.
+## Owner
+Brandi Nowak Dalton, co-owner of Nowak Dental Supplies (GitHub: brandimn)
 
-## Tech Stack
-- **Frontend:** Next.js 14 App Router, React, Tailwind CSS, shadcn/ui
-- **Backend:** Next.js API routes / server actions
-- **Database:** PostgreSQL (Neon) with Prisma ORM
-- **Auth:** NextAuth.js (credentials + magic link)
-- **QR:** `html5-qrcode` for scanning, `qrcode` for generating
-- **Push:** Web Push API with VAPID keys (no Firebase)
-- **PWA:** `next-pwa` or manual service worker + manifest
-- **Hosting:** Vercel
+## Live URLs
+- Production: https://nola-labfest-app.vercel.app
+- GitHub repo: https://github.com/brandimn/nola-labfest-app.git
 
-## User Roles
-1. **Attendee** — logs in, views vendors/schedule, scans booth QR codes for the passport game, displays own QR badge for vendors to scan
-2. **Vendor** — logs in with a vendor account, scans attendee QR badges to collect leads, views/exports lead list, edits own booth profile
-3. **Admin** — Brandi + staff. Full control: add/edit vendors, manage schedule, send push notifications, view analytics, run prize drawing
+## Tech stack
+- Next.js (App Router)
+- Hosted on Vercel
+- Database: Neon Postgres
+- PWA enabled (service worker for offline support)
+- Push notifications via web-push (VAPID)
 
-## Core Features (Build Order)
+## Four user types
+1. **Attendee** - sees schedule, vendor list, speakers, plays the passport game
+2. **Vendor** - scans attendee badges to capture leads, edits their own booth listing
+3. **Speaker** - edits their own bio, photo, and LinkedIn
+4. **Admin** - creates badges, manages schedule, vendors, speakers, and sends push announcements
 
-### Phase 1: Foundation (scaffold + DB + auth)
-**Database schema:**
-- `User` — id, email (unique), password (hashed), name, role (ATTENDEE | VENDOR | ADMIN), phone, company, title, createdAt
-- `Vendor` — id, userId (FK, nullable — a User with role=VENDOR owns this), name, boothNumber, logoUrl, description, website, contactEmail, contactPhone, category, createdAt
-- `Session` — id, title, description, speaker, location, startsAt, endsAt, track (string)
-- `Favorite` — userId, sessionId (personal agenda)
-- `BoothScan` — id, attendeeId, vendorId, scannedAt (passport game — attendee scanned a vendor's booth)
-- `Lead` — id, vendorId, attendeeId, scannedAt, notes (vendor captures attendee contact)
-- `PushSubscription` — id, userId, endpoint, p256dh, auth, createdAt
-- `Announcement` — id, title, body, sentAt, sentById, targetRole (null = everyone)
+A single login can be both a vendor and a speaker (Rob Nazzal is). Access is decided by what
+they own (Vendor.userId / Speaker.userId), not by role alone.
 
-**Auth:** NextAuth with credentials provider. Attendees self-register; vendors/admin accounts created by admin.
+## Target launch
+October 2026 LabFest in New Orleans, ~200 attendees expected. Internal deadline: August 2026 so we have time to test.
 
-### Phase 2: Vendor Directory
-- `/vendors` — grid of 30 vendor cards (logo, name, booth #, category)
-- Search + filter by category
-- `/vendors/[id]` — detail page with description, website, contact, "Scan this booth" QR (vendor's own QR for attendees)
+## Brand & voice
+- Friendly, warm, Southern with a New Orleans twist
+- Bayou mascot characters: C.Zir the Crawfish, Gumbeaux the Gator, Ollie the Oyster, Remi the Turtle
+- Avoid hyphens and em dashes in user-facing copy
 
-### Phase 3: Schedule
-- `/schedule` — list grouped by day, then time. Color-coded by track.
-- Tap session → detail page → "Add to my agenda" (favorite)
-- `/agenda` — logged-in user's favorited sessions
+## Must-have features still to build (in priority order)
+1. Fix VAPID push notification keys
+2. Live admin announcements that push to all user types (attendees, vendors, admins)
+3. ~~Forgot password flow~~ DONE
+4. Vendor notes field when scanning badges, with Hot/Warm/Cold tag
+5. Vendor lead CSV export
+6. Offline caching for schedule, vendor, and speaker pages (stale-while-revalidate)
+7. Floor map / venue map page
 
-### Phase 4: QR Passport Game
-- Every Vendor row has a QR token (UUID). Print as signs for booths.
-- Attendee's app has a "Scan Booth" button → opens camera → scans QR → creates a `BoothScan`
-- `/game` shows progress: "12 of 30 booths visited", grid of stamps, leaderboard (top 10 by scans)
-- Hit threshold (e.g., 20 of 30) → entered in prize drawing
-- Admin `/admin/drawing` — randomly pick a winner from eligible attendees
+## Nice to have (after must-haves)
+- Vendor coupons and giveaways
 
-### Phase 5: Vendor Lead Capture
-- Every attendee has a personal QR token (UUID) shown on `/badge`
-- Vendors have a "Scan Attendee" button (only visible to role=VENDOR) → scans attendee → creates a `Lead` row with attendee's contact info
-- Vendor dashboard `/vendor/leads` — list of leads, add notes, export CSV
-- Prevent duplicate leads per vendor/attendee pair (upsert)
+## Roster import
+`/admin/import-roster` loads vendors and speakers from `src/data/roster.json`, which was built
+from the "APP Email Addresses " tab of the 2026 event workbook. That tab is the source of truth
+for who gets a login. The "Vendor Exhibitors" tab is a prospect list and includes companies that
+never signed up, so use it only to look up a name for an email already on the app tab.
+Everyone starts with the shared password Labfest26 and is asked to pick their own on first login.
+The import never sends email. Re-running it is safe.
 
-### Phase 6: Push Notifications
-- Service worker handles `push` events
-- User subscribes on first login (prompt for permission)
-- `PushSubscription` saved to DB
-- Admin `/admin/announcements` — compose + send to all / by role
-- Server uses `web-push` library with VAPID keys
+## Deploys
+`npm run build` runs `prisma db push`, so deploying applies schema changes to the live database.
+Prisma refuses destructive changes without a flag, so additive changes are safe, but be careful
+with renames and column removals.
 
-### Phase 7: PWA install
-- `manifest.json` — name, icons (192, 512), theme color, display: standalone, start_url
-- Service worker registered in layout
-- "Install app" prompt banner on first visit
-
-### Phase 8: Admin Dashboard
-- `/admin` — stats: total attendees, scans today, top booths, push subscribers
-- `/admin/vendors` — CRUD vendors
-- `/admin/schedule` — CRUD sessions
-- `/admin/users` — list users, impersonate, reset password
-- `/admin/drawing` — prize drawing
-
-## Design Guidelines
-- **Brand colors:** Nowak blue (#0057A3 — confirm with Brandi), white background, clean
-- **Font:** Inter or system sans
-- **Mobile-first** — this is primarily used on phones at the show. Desktop should also look good.
-- Big tap targets, bottom nav bar on mobile (Home / Vendors / Schedule / Scan / Me)
-- Floating camera button for QR scanning
-- Use shadcn/ui for all components
-
-## Important Rules
-- **Env vars only**, never hardcode secrets. `.env` for local, Vercel dashboard for prod.
-- **Timezone:** America/New_York for all session times (show is in the US).
-- **Error handling:** graceful toasts for scan errors (camera denied, invalid QR, already scanned).
-- **Pagination defaults:** 20 per page.
-- **Security:** hash passwords with bcrypt, protect all API routes with NextAuth session, role checks on admin/vendor routes.
-- **QR tokens:** use UUIDs, never expose user.id in QR. Separate `badgeToken` and `boothToken` columns.
-- **Duplicate scan protection:** same attendee scanning same booth → return existing row, don't error. Show "already stamped" message.
+## Working style notes
+- Brandi gets one prompt at a time, test between each change
+- When making changes, always tell her if env variables need to be added to Vercel dashboard separately from local .env
+- Keep explanations clear and non-technical when possible.

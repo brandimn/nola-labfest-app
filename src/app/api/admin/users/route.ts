@@ -39,7 +39,9 @@ export async function POST(req: NextRequest) {
   const hashed = await bcrypt.hash(plainPassword, 10);
   const sendEmail = body.sendEmail !== false; // default on
   const role =
-    body.role === "VENDOR" || body.role === "ADMIN" ? body.role : "ATTENDEE";
+    body.role === "VENDOR" || body.role === "SPEAKER" || body.role === "ADMIN"
+      ? body.role
+      : "ATTENDEE";
 
   const created = await prisma.user.create({
     data: {

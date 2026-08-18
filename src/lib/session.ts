@@ -2,7 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 
-type Role = "ATTENDEE" | "VENDOR" | "ADMIN";
+type Role = "ATTENDEE" | "VENDOR" | "SPEAKER" | "ADMIN";
 
 export async function requireUser() {
   const session = await getServerSession(authOptions);

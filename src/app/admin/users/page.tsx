@@ -15,6 +15,7 @@ export default async function AdminUsersPage() {
   });
   const counts = {
     ATTENDEE: users.filter((u) => u.role === "ATTENDEE").length,
+    SPEAKER: users.filter((u) => u.role === "SPEAKER").length,
     VENDOR: users.filter((u) => u.role === "VENDOR").length,
     ADMIN: users.filter((u) => u.role === "ADMIN").length,
     invited: users.filter((u) => u.invitedAt).length,
@@ -30,7 +31,7 @@ export default async function AdminUsersPage() {
         <div>
           <h1 className="font-display text-2xl font-bold">Users</h1>
           <p className="text-sm text-slate-600">
-            {counts.ATTENDEE} attendees · {counts.VENDOR} vendors · {counts.ADMIN} admins
+            {counts.ATTENDEE} attendees · {counts.VENDOR} vendors · {counts.SPEAKER} speakers · {counts.ADMIN} admins
           </p>
           <p className="mt-1 flex items-center gap-3 text-xs text-slate-500 flex-wrap">
             <span className="inline-flex items-center gap-1">

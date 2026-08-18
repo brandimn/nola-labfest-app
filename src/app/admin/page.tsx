@@ -1,15 +1,16 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
-import { Users, Store, Calendar, Bell, Trophy, Scan, Sparkles, Printer, Settings, Mail } from "lucide-react";
+import { Users, Store, Calendar, Bell, Trophy, Scan, Sparkles, Printer, Settings, Mail, Mic, Upload } from "lucide-react";
 import { SignOutButton } from "@/components/sign-out-button";
 
 export default async function AdminHome() {
   const me = await requireRole("ADMIN");
-  const [attendees, vendors, sessions, scansToday, subs, topBoothsRaw] = await Promise.all([
+  const [attendees, vendors, sessions, speakers, scansToday, subs, topBoothsRaw] = await Promise.all([
     prisma.user.count({ where: { role: "ATTENDEE" } }),
     prisma.vendor.count(),
     prisma.session.count(),
+    prisma.speaker.count(),
     prisma.boothScan.count({
       where: { scannedAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } },
     }),
@@ -40,6 +41,7 @@ export default async function AdminHome() {
         <Stat label="Attendees" value={attendees} />
         <Stat label="Vendors" value={vendors} />
         <Stat label="Sessions" value={sessions} />
+        <Stat label="Speakers" value={speakers} />
         <Stat label="Scans (24h)" value={scansToday} />
         <Stat label="Push subs" value={subs} />
       </div>
@@ -47,6 +49,7 @@ export default async function AdminHome() {
       <div className="grid grid-cols-2 gap-3 mb-6">
         <AdminTile href="/admin/vendors" icon={Store} label="Vendors" />
         <AdminTile href="/admin/schedule" icon={Calendar} label="Schedule" />
+        <AdminTile href="/admin/speakers" icon={Mic} label="Speakers" />
         <AdminTile href="/admin/users" icon={Users} label="Users" />
         <AdminTile href="/admin/announcements" icon={Bell} label="Announcements" />
         <AdminTile href="/admin/drawing" icon={Trophy} label="Prize Drawing" />
@@ -55,6 +58,7 @@ export default async function AdminHome() {
         <AdminTile href="/admin/badges" icon={Printer} label="Print Badges" />
         <AdminTile href="/admin/settings" icon={Settings} label="Settings" />
         <AdminTile href="/admin/email-preview" icon={Mail} label="Email Preview" />
+        <AdminTile href="/admin/import-roster" icon={Upload} label="Import Roster" />
       </div>
 
       <section>

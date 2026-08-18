@@ -132,6 +132,73 @@ Questions? Reply to this email.`;
   return { subject, html, text };
 }
 
+type ResetArgs = {
+  to: string;
+  name: string;
+  resetUrl: string;
+};
+
+export function buildPasswordResetEmail({ to, name, resetUrl }: ResetArgs) {
+  const firstName = name.split(" ")[0] || name;
+  const subject = "Reset your NOLA LabFest password";
+
+  const html = `
+<div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background:#f8fafc; padding: 24px; color:#0F172A;">
+  <div style="max-width:560px; margin: 0 auto; background:#fff; border-radius: 16px; overflow:hidden; border:1px solid #e2e8f0;">
+    <div style="background: linear-gradient(135deg, #3D1E50 0%, #B13E7D 55%, #F5A547 100%); padding: 28px; color:#fff;">
+      <p style="margin:0; font-size: 11px; letter-spacing: 3px; text-transform: uppercase; opacity: 0.85;">Password reset</p>
+      <h1 style="margin:6px 0 0; font-family: Georgia, 'Times New Roman', serif; font-size: 28px; line-height: 1.1; font-weight: 700;">NOLA LabFest</h1>
+    </div>
+    <div style="padding: 28px;">
+      <h2 style="margin: 0 0 10px; font-family: Georgia, serif; font-size: 20px;">Hey ${escapeHtml(firstName)},</h2>
+      <p style="margin: 0 0 14px; font-size: 15px; line-height: 1.5; color: #334155;">
+        You don't want to miss a thing, so let's get you back in. Tap the button below to pick a new password. This link is good for one hour.
+      </p>
+      <div style="text-align: center; margin: 24px 0;">
+        <a href="${resetUrl}" style="display:inline-block; background:#0F172A; color:#fff; text-decoration:none; padding: 14px 32px; border-radius: 10px; font-weight: 600; font-size: 15px;">Reset my password &rarr;</a>
+      </div>
+      <p style="margin: 0; font-size: 12px; line-height: 1.5; color: #94a3b8;">
+        Didn't ask for this? You can ignore the email, your password stays the same.
+      </p>
+    </div>
+    <div style="padding: 16px 28px; background:#f8fafc; border-top:1px solid #e2e8f0; font-size:12px; color:#94a3b8; text-align: center;">
+      Questions? Just reply to this email.
+    </div>
+  </div>
+</div>`.trim();
+
+  const text = `Hey ${firstName},
+
+You don't want to miss a thing, so let's get you back in. Open the link below to pick a new password. It's good for one hour.
+
+${resetUrl}
+
+Didn't ask for this? You can ignore the email, your password stays the same.`;
+
+  return { subject, html, text };
+}
+
+export async function sendPasswordResetEmail(args: ResetArgs) {
+  const resend = client();
+  if (!resend) {
+    return { ok: false as const, reason: "RESEND_API_KEY not set" };
+  }
+  const { subject, html, text } = buildPasswordResetEmail(args);
+  try {
+    const res = await resend.emails.send({
+      from: fromAddress,
+      to: args.to,
+      subject,
+      html,
+      text,
+    });
+    if (res.error) return { ok: false as const, reason: res.error.message };
+    return { ok: true as const, id: res.data?.id };
+  } catch (e: any) {
+    return { ok: false as const, reason: e.message || "send failed" };
+  }
+}
+
 export async function sendInviteEmail(args: InviteArgs) {
   const resend = client();
   if (!resend) {

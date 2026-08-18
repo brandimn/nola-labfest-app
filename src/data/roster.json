@@ -1,0 +1,420 @@
+{
+ "password": "Labfest26",
+ "vendors": [
+  {
+   "email": "jeff.bachey@kulzer-dental.com",
+   "name": "Jeff Bachey",
+   "company": "Kulzer"
+  },
+  {
+   "email": "laguirre@rolanddga.com",
+   "name": "Lisa Aguirre",
+   "company": "Roland"
+  },
+  {
+   "email": "martin.niedermaier@dekema.com",
+   "name": "Martin Niedermaier",
+   "company": "Dekema"
+  },
+  {
+   "email": "bill.grondin@gc.dental",
+   "name": "Bill Grondin",
+   "company": "GC"
+  },
+  {
+   "email": "ericadimanna@aidite.com",
+   "name": "Erica DiManna",
+   "company": "Aidite"
+  },
+  {
+   "email": "cfrye@whipmix.com",
+   "name": "Chris Frye",
+   "company": "WhipMix"
+  },
+  {
+   "email": "pgalante@whipmix.com",
+   "name": "Patrick Galante",
+   "company": "WhipMix"
+  },
+  {
+   "email": "dlasso@exocad.com",
+   "name": "Denisse Lasso",
+   "company": "Exocad"
+  },
+  {
+   "email": "bcollington@exocad.com",
+   "name": "Beth Collington",
+   "company": "Exocad"
+  },
+  {
+   "email": "mconnelly@exocad.com",
+   "name": "Maria Connelly",
+   "company": "Exocad"
+  },
+  {
+   "email": "cory@asiga.com",
+   "name": "Cory Lambertson",
+   "company": "Asiga"
+  },
+  {
+   "email": "hall@cimsystem.com",
+   "name": "Eric Hall",
+   "company": "CimSystem"
+  },
+  {
+   "email": "berger@cimsystem.com",
+   "name": "Alex Berger",
+   "company": "CimSystem"
+  },
+  {
+   "email": "rruble@keystoneind.com",
+   "name": "R. Ruble",
+   "company": "Keystone"
+  },
+  {
+   "email": "dkeene@keystoneind.com",
+   "name": "Derek Keene",
+   "company": "Keystone"
+  },
+  {
+   "email": "veronika.perrone@detax.de",
+   "name": "Veronika Perrone",
+   "company": "Detax"
+  },
+  {
+   "email": "stuart.steinbock@gmail.com",
+   "name": "Stuart Steinbock",
+   "company": "Digital Dental"
+  },
+  {
+   "email": "stuart@digitaldental.com",
+   "name": "Stuart Steinbock",
+   "company": "Digital Dental"
+  },
+  {
+   "email": "arlene@pivotdigitaldentalsolutions.com",
+   "name": "Arlene",
+   "company": "Digital Dental"
+  },
+  {
+   "email": "mark.castanheiro@quatroair.com",
+   "name": "Mark Castanheiro",
+   "company": "Quatro Air"
+  },
+  {
+   "email": "jordan.greenberg@fm-dental.com",
+   "name": "Jordan Greenberg",
+   "company": "HyperDENT"
+  },
+  {
+   "email": "mbarry@l3fs.com",
+   "name": "Mac Barry",
+   "company": "Level 3 (CC Company)"
+  },
+  {
+   "email": "info@voicesfromthebench.com",
+   "name": "Voices from the Bench",
+   "company": "Voices from the Bench"
+  },
+  {
+   "email": "barbwarner@knightdentalgroup.com",
+   "name": "Barbara Warner",
+   "company": "Voices from the Bench"
+  },
+  {
+   "email": "mries@ransom-randolph.com",
+   "name": "Mark Ries",
+   "company": "Ransom & Randolph"
+  },
+  {
+   "email": "arichard@ransom-randolph.com",
+   "name": "Allison Richard",
+   "company": "Ransom & Randolph"
+  },
+  {
+   "email": "imraz@ransom-randolph.com",
+   "name": "Izzy Mraz",
+   "company": "Ransom & Randolph"
+  },
+  {
+   "email": "carl.horrocks@3shape.com",
+   "name": "Carl Horrocks",
+   "company": "3Shape"
+  },
+  {
+   "email": "mtravis@burtcollect.com",
+   "name": "Matt Travis",
+   "company": "Burt and Assoc"
+  },
+  {
+   "email": "timbertram@bertramdental.com",
+   "name": "Tim Bertram",
+   "company": "Bertram Dental Lab"
+  },
+  {
+   "email": "prudence@icortica.com",
+   "name": "Prudence",
+   "company": "icortica"
+  },
+  {
+   "email": "tamara@icortica.com",
+   "name": "Tamara",
+   "company": "icortica"
+  },
+  {
+   "email": "andrew.fukui@pac-dent.com",
+   "name": "Andrew Fukui",
+   "company": "PacDent"
+  },
+  {
+   "email": "sara.qu@pac-dent.com",
+   "name": "Sara Qu",
+   "company": "PacDent"
+  },
+  {
+   "email": "travis.bedwell@dentsplysirona.com",
+   "name": "Travis Bedwell",
+   "company": "Dentsply"
+  },
+  {
+   "email": "amy.bird@dentsplysirona.com",
+   "name": "Amy Bird",
+   "company": "Dentsply"
+  },
+  {
+   "email": "preston.primm@dentsplysirona.com",
+   "name": "Preston Primm",
+   "company": "Dentsply"
+  },
+  {
+   "email": "robert.nickoloff@dreve-america.com",
+   "name": "Robert Nickoloff",
+   "company": "Dreve"
+  },
+  {
+   "email": "jim.ruchie@dreve-america.com",
+   "name": "Jim Ruchie",
+   "company": "Dreve"
+  },
+  {
+   "email": "mark.schwer@kuraray.com",
+   "name": "Mark Schwer",
+   "company": "Kuraray"
+  },
+  {
+   "email": "scott.bender@3dsystems.com",
+   "name": "Scott Bender",
+   "company": "3D Systems"
+  },
+  {
+   "email": "f.jung@scheftner.dental",
+   "name": "F Jung",
+   "company": "Scheftner"
+  },
+  {
+   "email": "d.tan@scheftner.dental",
+   "name": "D Tan",
+   "company": "Scheftner"
+  },
+  {
+   "email": "sean.sexton@ivoclar.com",
+   "name": "Sean Sexton",
+   "company": "Sagemax"
+  },
+  {
+   "email": "michael.reina@sprintray.com",
+   "name": "Michael Reina",
+   "company": "Sprint Ray"
+  },
+  {
+   "email": "ted.smudde@sprintray.com",
+   "name": "Ted Smudde",
+   "company": "Sprint Ray"
+  },
+  {
+   "email": "mitch.heimbuch@sprintray.com",
+   "name": "Mitch Heimbuch",
+   "company": "Sprint Ray"
+  },
+  {
+   "email": "darin.lockaby@dess-usa.com",
+   "name": "Darin Lockaby",
+   "company": "Dess/CPC"
+  },
+  {
+   "email": "julie.pickert@dess-usa.com",
+   "name": "Julie Pickert",
+   "company": "Dess/CPC"
+  },
+  {
+   "email": "e.noltensmeier@sungmbh.de",
+   "name": "E Noltensmeier",
+   "company": "Sun"
+  },
+  {
+   "email": "jwilliams@gpsdental.com",
+   "name": "Joshua Williams",
+   "company": "GPS Dental"
+  },
+  {
+   "email": "aperricone@gpsdental.com",
+   "name": "Andrew Perricone",
+   "company": "GPS Dental"
+  },
+  {
+   "email": "kim.solomon@greatlabdental.com",
+   "name": "Kim Solomon",
+   "company": "Great Lab Software"
+  },
+  {
+   "email": "per.claesson@greatlabdental.com",
+   "name": "Per Claesson",
+   "company": "Great Lab Software"
+  },
+  {
+   "email": "ronan@greatlabdental.com",
+   "name": "Ronan Barrett",
+   "company": "Great Lab Software"
+  },
+  {
+   "email": "chenaw@xianton.com",
+   "name": "Orway Chen",
+   "company": "Xtcera"
+  },
+  {
+   "email": "rose@xianton.com",
+   "name": "Rose",
+   "company": "Xtcera"
+  },
+  {
+   "email": "ella@xianton.com",
+   "name": "Ella",
+   "company": "Xtcera"
+  },
+  {
+   "email": "kain@xianton.com",
+   "name": "Kain",
+   "company": "Xtcera"
+  },
+  {
+   "email": "caiqh@xianton.com",
+   "name": "",
+   "company": "Xtcera"
+  },
+  {
+   "email": "scott@2onelab.com",
+   "name": "Scott",
+   "company": "2onelab"
+  },
+  {
+   "email": "dwight.blair@imes-icore.com",
+   "name": "Dwight Blair",
+   "company": "imes"
+  },
+  {
+   "email": "jorge@shining3d.us",
+   "name": "Jorge",
+   "company": "Shining 3D"
+  },
+  {
+   "email": "rickladuca@blackstoneind.com",
+   "name": "Rick LaDuca",
+   "company": "Handler"
+  },
+  {
+   "email": "rob@icortica.com",
+   "name": "Rob Nazzal",
+   "company": "icortica"
+  }
+ ],
+ "speakers": [
+  {
+   "name": "Rob Nazzal",
+   "email": "rob@icortica.com",
+   "company": "icortica",
+   "talk": "Culture by Design: Building Teams and Labs That Actually Thrive"
+  },
+  {
+   "name": "Jude Grayson",
+   "email": "executeandkillit@gmail.com",
+   "company": "",
+   "talk": "Pivot or Plateau: Are You Majoring in the Minor?"
+  },
+  {
+   "name": "Blake Hibray",
+   "email": "blake.hibray@sevaredent.com",
+   "company": "Sevaredent",
+   "talk": "From Bench to Boardroom: The DSO Shift Reshaping Dental Labs"
+  },
+  {
+   "name": "John Wilson",
+   "email": "john@sunrisedentallaboratory.com",
+   "company": "Sunrise Dental Laboratory",
+   "talk": "Small Target, Big Growth: How Niching Down Fuels Scale"
+  },
+  {
+   "name": "Bernard Ory",
+   "email": "orybernard@gmail.com",
+   "company": "",
+   "talk": "Turn Followers Into Customers: Converting Social Media Into Revenue"
+  },
+  {
+   "name": "David Jackson",
+   "email": "david@midsouthdentallab.com",
+   "company": "Mid South Dental Lab",
+   "talk": "Beyond the Bench: Building a Lab That Runs Like a Business"
+  },
+  {
+   "name": "Bennett Napier",
+   "email": "bennett@executiveoffice.org",
+   "company": "Executive Office",
+   "talk": "The Talent Advantage: Winning the War for Great People"
+  },
+  {
+   "name": "Brandi Nowak",
+   "email": "brandi@nowakdental.com",
+   "company": "Nowak Dental Supplies",
+   "talk": "You don't need to be tech savvy to use AI"
+  }
+ ],
+ "companies": [
+  "2onelab",
+  "3D Systems",
+  "3Shape",
+  "Aidite",
+  "Asiga",
+  "Bertram Dental Lab",
+  "Burt and Assoc",
+  "CimSystem",
+  "Dekema",
+  "Dentsply",
+  "Dess/CPC",
+  "Detax",
+  "Digital Dental",
+  "Dreve",
+  "Exocad",
+  "GC",
+  "GPS Dental",
+  "Great Lab Software",
+  "Handler",
+  "HyperDENT",
+  "Keystone",
+  "Kulzer",
+  "Kuraray",
+  "Level 3 (CC Company)",
+  "PacDent",
+  "Quatro Air",
+  "Ransom & Randolph",
+  "Roland",
+  "Sagemax",
+  "Scheftner",
+  "Shining 3D",
+  "Sprint Ray",
+  "Sun",
+  "Voices from the Bench",
+  "WhipMix",
+  "Xtcera",
+  "icortica",
+  "imes"
+ ]
+}

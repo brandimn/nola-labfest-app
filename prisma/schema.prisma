@@ -26,6 +26,7 @@ model User {
   updatedAt    DateTime @updatedAt
 
   ownedVendor       Vendor?           @relation("VendorOwner")
+  ownedSpeaker      Speaker?          @relation("SpeakerOwner")
   favorites         Favorite[]
   boothScans        BoothScan[]
   leadsAsAttendee   Lead[]            @relation("LeadAttendee")
@@ -92,6 +93,8 @@ model Session {
 
 model Speaker {
   id        String    @id @default(cuid())
+  userId    String?   @unique
+  user      User?     @relation("SpeakerOwner", fields: [userId], references: [id], onDelete: SetNull)
   name      String
   title     String?
   company   String?
@@ -171,4 +174,15 @@ model Announcement {
   sentAt     DateTime @default(now())
 
   sentBy User @relation(fields: [sentById], references: [id])
+}
+
+model PasswordReset {
+  id        String    @id @default(cuid())
+  userId    String
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
 }
