@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && prisma db push && node scripts/backfill-booth-details.mjs && node scripts/sync-agenda.mjs && next build",
+    "build": "prisma generate && prisma db push && node scripts/restore-lost-data.mjs && node scripts/backfill-booth-details.mjs && node scripts/sync-agenda.mjs && next build",
     "start": "next start",
     "postinstall": "prisma generate",
     "db:push": "prisma db push",

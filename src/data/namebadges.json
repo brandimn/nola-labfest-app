@@ -1,0 +1,530 @@
+[
+ {
+  "name": "Carrie Ling",
+  "company": "Lifelike",
+  "state": "Texas",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Chris Ling",
+  "company": "Lifelike",
+  "state": "Texas",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Derek Keene",
+  "company": "Keystone",
+  "state": "New Jersey",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Veronika Perrone",
+  "company": "Detax",
+  "state": "California",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Stefan Schueller",
+  "company": "Detax",
+  "state": "California",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Mark Castanheiro",
+  "company": "Quatro Air",
+  "state": "Canada",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Loreta Chichinskas",
+  "company": "Quatro Air",
+  "state": "Canada",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "David Garceau",
+  "company": "Quatro Air",
+  "state": "Canada",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Shanelle Francis",
+  "company": "Miracle Dental Lab",
+  "state": "Texas",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Robert Teachout",
+  "company": "Patriot Dental Lab",
+  "state": "Michigan",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Crystal Teachout",
+  "company": "Patriot Dental Lab",
+  "state": "Michigan",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Chad Matthews",
+  "company": "Patriot Dental Lab",
+  "state": "Michigan",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Miranda Belmonte",
+  "company": "Patriot Dental Lab",
+  "state": "Michigan",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Shawn",
+  "company": "Nowak",
+  "state": "Mississippi",
+  "badgeType": "NOWAK"
+ },
+ {
+  "name": "Brandi",
+  "company": "Nowak",
+  "state": "Louisiana",
+  "badgeType": "NOWAK"
+ },
+ {
+  "name": "Jeff",
+  "company": "Nowak",
+  "state": "Louisiana",
+  "badgeType": "NOWAK"
+ },
+ {
+  "name": "Kimmie",
+  "company": "Nowak",
+  "state": "Mississippi",
+  "badgeType": "NOWAK"
+ },
+ {
+  "name": "MB",
+  "company": "Nowak",
+  "state": "Missouri",
+  "badgeType": "NOWAK"
+ },
+ {
+  "name": "Haijin",
+  "company": "Nowak",
+  "state": "Massachusetts",
+  "badgeType": "NOWAK"
+ },
+ {
+  "name": "Brett",
+  "company": "Nowak",
+  "state": "South Carolina",
+  "badgeType": "NOWAK"
+ },
+ {
+  "name": "Jude Grayson",
+  "company": "Execute & Kill It",
+  "state": "Misissippi",
+  "badgeType": "SPEAKER"
+ },
+ {
+  "name": "Shannon Grayson",
+  "company": "Execute & Kill It",
+  "state": "Mississippi",
+  "badgeType": "NOWAK"
+ },
+ {
+  "name": "Bernard Ory",
+  "company": "",
+  "state": "Louisiana",
+  "badgeType": "SPEAKER"
+ },
+ {
+  "name": "Vinci Ory",
+  "company": "",
+  "state": "Louisiana",
+  "badgeType": "NOWAK"
+ },
+ {
+  "name": "TBD",
+  "company": "Dreve America",
+  "state": "Minnesota",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "TBD",
+  "company": "Dreve America",
+  "state": "",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "TBD",
+  "company": "Dreve America",
+  "state": "",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Mark Schwer",
+  "company": "Kuraray",
+  "state": "New York",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Claudia Fernandez",
+  "company": "Kuraray",
+  "state": "New York",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Maurice Munoz",
+  "company": "Kuraray",
+  "state": "New York",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Duff Wilson",
+  "company": "Wilson Dental Lab",
+  "state": "South Carolina",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Kim Wilson",
+  "company": "Wilson Dental Lab",
+  "state": "South Carolina",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Izzy Mraz",
+  "company": "R+R",
+  "state": "Ohio",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Mark Reis",
+  "company": "R+R",
+  "state": "Florida",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Tom Heusing",
+  "company": "Aidite",
+  "state": "California",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Melody Wang",
+  "company": "Aidite",
+  "state": "California",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Sara Xu",
+  "company": "Aidite",
+  "state": "California",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Jordan Greenberg",
+  "company": "Follow-Me Tech",
+  "state": "New Hampshire",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Joseph Oliveira",
+  "company": "Elos Medtech",
+  "state": "Tennessee",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Dell Dine",
+  "company": "Weiss Advisors",
+  "state": "Indiana",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Jess Gray",
+  "company": "FLX Dental Arts",
+  "state": "New York",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Jen Rodgers",
+  "company": "FLX Dental Arts",
+  "state": "New York",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Morris Fucarino",
+  "company": "Majestic Dental Arts",
+  "state": "Florida",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Paula Fucarino",
+  "company": "Majestic Dental Arts",
+  "state": "Florida",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Mandy Arena",
+  "company": "D3 Implant Solutions",
+  "state": "Missouri",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Kyle Strum",
+  "company": "Dental Art & Design",
+  "state": "Missouri",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Larry Strum",
+  "company": "Dental Art & Design",
+  "state": "Missouri",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Cole Strum",
+  "company": "Dental Art & Design",
+  "state": "Missouri",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Anne Koelzer",
+  "company": "AMK Dental Lab",
+  "state": "Nebraska",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Mark Anderson",
+  "company": "Image Dental Arts",
+  "state": "North Carolina",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Jennifer Anderson",
+  "company": "Image Dental Arts",
+  "state": "North Carolina",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Billy Goddard",
+  "company": "Premier Dental Arts",
+  "state": "Tennessee",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Jessica Goddard",
+  "company": "Premier Dental Arts",
+  "state": "Tennessee",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Lori Margiotta",
+  "company": "Bookeeper for Dentists",
+  "state": "Ontario Canada",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Darin Lockaby",
+  "company": "Dess/Cajun Pros Com",
+  "state": "Florida",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Julie Pickert",
+  "company": "Dess/Cajun Pros Com",
+  "state": "Florida",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Eric hall",
+  "company": "Cim Systems",
+  "state": "Indiana",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Alex Berger",
+  "company": "Cim Systems",
+  "state": "Indiana",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Ronan Barrett",
+  "company": "Great Lab Dental",
+  "state": "California",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Per Claesson",
+  "company": "Great Lab Dental",
+  "state": "California",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "TBD",
+  "company": "Great Lab Dental",
+  "state": "California",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Ty Prim",
+  "company": "Dentsply Sirona",
+  "state": "Alabama",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Travs Bedwell",
+  "company": "Dentsply Sirona",
+  "state": "",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Amy Bird",
+  "company": "Dentsply Sirona",
+  "state": "",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Erin Gordon",
+  "company": "Eastside Dental Lab",
+  "state": "North Carolina",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Kathleen Ramsey",
+  "company": "Eastside Dental Lab",
+  "state": "North Carolina",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Preet Sahota",
+  "company": "Indiana University",
+  "state": "Indiana",
+  "badgeType": "STUDENT"
+ },
+ {
+  "name": "Grady Crosslin",
+  "company": "Crosslin's Creative Ceramics",
+  "state": "Florida",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "James Neuber",
+  "company": "Ocean Ceramics",
+  "state": "British Columbia",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Linda Faircloth",
+  "company": "Nola-Blackburn Dental Lab",
+  "state": "Louisiana",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Gerry Setton",
+  "company": "NolaBlackburn Dental Lab",
+  "state": "Louisiana",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Austin Heath",
+  "company": "Elite Dental Manufacturing",
+  "state": "Georgia",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Teeka Heath",
+  "company": "Elite Dental Manufacturing",
+  "state": "Georgia",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Josh Fitzgerald",
+  "company": "Fitzgerald Dental Studio, LLC",
+  "state": "North Carolina",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Tara Fitzgerald",
+  "company": "Fitzgerald Dental Studio, LLC",
+  "state": "North Carolina",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Jenny Abbott-Cole",
+  "company": "LMT Magazine",
+  "state": "Connecticut",
+  "badgeType": null
+ },
+ {
+  "name": "Josh Throndson",
+  "company": "Throndson Dental Technologies",
+  "state": "Tennessee",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Darin Throndson",
+  "company": "Throndson Dental Technologies",
+  "state": "Tennessee",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Chris Urist",
+  "company": "Primotec USA",
+  "state": "Connecticut",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Danny Horelik",
+  "company": "Primotec USA",
+  "state": "Connecticut",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Ruben Mesia",
+  "company": "Dental Specialty Group of Pinellas",
+  "state": "Florida",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Heather Voss",
+  "company": "Bonadent Dental Laboratories",
+  "state": "New York",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Sarah Thibodeaux",
+  "company": "Bayou Crown & Bridge",
+  "state": "Louisiana",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Marcelle Meche",
+  "company": "Bayou Crown & Bridge",
+  "state": "Louisiana",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Carol Calhoun",
+  "company": "Bayou Crown & Bridge",
+  "state": "Louisiana",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Nate Kirkwood",
+  "company": "Hermitage Dental Lab",
+  "state": "Tennessee",
+  "badgeType": "LAB"
+ },
+ {
+  "name": "Andrew Fukui",
+  "company": "Pac-Dent",
+  "state": "California",
+  "badgeType": "VENDOR"
+ },
+ {
+  "name": "Ryan Solorzano, CDT",
+  "company": "Pac-Dent",
+  "state": "California",
+  "badgeType": "VENDOR"
+ }
+]
