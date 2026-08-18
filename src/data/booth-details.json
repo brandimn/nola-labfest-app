@@ -1,32 +1,127 @@
 {
-  "3Shape":                { "logoUrl": "/vendor-logos/3shape.png",      "website": "https://www.3shape.com/" },
-  "Aidite":                { "logoUrl": "/vendor-logos/aidite.png",      "website": "https://www.aidite.com/" },
-  "Asiga":                 { "website": "https://www.asiga.com/" },
-  "Burt and Assoc":        { "logoUrl": "/vendor-logos/burt.png" },
-  "CimSystem":             { "logoUrl": "/vendor-logos/cimsystem.png",   "website": "https://www.cimsystem.com/" },
-  "Dekema":                { "logoUrl": "/vendor-logos/dekema.png",      "website": "https://www.dekema.com/en" },
-  "Dentsply":              { "logoUrl": "/vendor-logos/dentsply.png" },
-  "Dess/CPC":              { "logoUrl": "/vendor-logos/dess.png" },
-  "Detax":                 { "logoUrl": "/vendor-logos/detax.png",       "website": "https://www.detax.com/dental" },
-  "Digital Dental":        { "logoUrl": "/vendor-logos/digitaldental.png","website": "https://www.digitaldental.com/" },
-  "Dreve":                 { "logoUrl": "/vendor-logos/dreve.png" },
-  "Exocad":                { "logoUrl": "/vendor-logos/exocad.svg",      "website": "https://exocad.com/" },
-  "Great Lab Software":    { "logoUrl": "/vendor-logos/greatlab.png" },
-  "HyperDENT":             { "logoUrl": "/vendor-logos/hyperdent.png",   "website": "https://www.follow-me-tech.com/" },
-  "Keystone":              { "logoUrl": "/vendor-logos/keystone.png",    "website": "https://keystoneindustries.com/" },
-  "Kulzer":                { "logoUrl": "/vendor-logos/kulzer.png",      "website": "https://kulzerus.com" },
-  "Level 3 (CC Company)":  { "logoUrl": "/vendor-logos/level3.png",      "website": "https://level-3processing.com/" },
-  "PacDent":               { "logoUrl": "/vendor-logos/pacdent.png" },
-  "Quatro Air":            { "logoUrl": "/vendor-logos/quatroair.svg",   "website": "https://quatroair.com/" },
-  "Ransom & Randolph":     { "logoUrl": "/vendor-logos/ransom.png",      "website": "https://www.ransom-randolph.com/" },
-  "Roland":                { "logoUrl": "/vendor-logos/roland.png",      "website": "https://www.rolanddga.com/" },
-  "Sagemax":               { "logoUrl": "/vendor-logos/sagemax.png" },
-  "Scheftner":             { "logoUrl": "/vendor-logos/scheftner.png" },
-  "Shining 3D":            { "logoUrl": "/vendor-logos/shining3d.png" },
-  "Sprint Ray":            { "logoUrl": "/vendor-logos/sprintray.png" },
-  "Sun":                   { "logoUrl": "/vendor-logos/sun.png" },
-  "Voices from the Bench": { "website": "https://www.voicesfromthebench.com/" },
-  "WhipMix":               { "logoUrl": "/vendor-logos/whipmix.png",     "website": "https://whipmix.com/" },
-  "icortica":              { "logoUrl": "/vendor-logos/icortica.png" },
-  "imes":                  { "logoUrl": "/vendor-logos/imes.png" }
+ "3Shape": {
+  "logoUrl": "/vendor-logos/3shape.png",
+  "website": "https://www.3shape.com/"
+ },
+ "Aidite": {
+  "logoUrl": "/vendor-logos/aidite.png",
+  "website": "https://www.aidite.com/"
+ },
+ "Asiga": {
+  "website": "https://www.asiga.com/",
+  "description": "Australian made professional 3D printers built for dental labs, including the MAX and PRO families. Known for open material choice, so you are not locked into one resin supplier."
+ },
+ "Burt and Assoc": {
+  "logoUrl": "/vendor-logos/burt.png"
+ },
+ "CimSystem": {
+  "logoUrl": "/vendor-logos/cimsystem.png",
+  "website": "https://www.cimsystem.com/"
+ },
+ "Dekema": {
+  "logoUrl": "/vendor-logos/dekema.png",
+  "website": "https://www.dekema.com/en"
+ },
+ "Dentsply": {
+  "logoUrl": "/vendor-logos/dentsply.png"
+ },
+ "Dess/CPC": {
+  "logoUrl": "/vendor-logos/dess.png"
+ },
+ "Detax": {
+  "logoUrl": "/vendor-logos/detax.png",
+  "website": "https://www.detax.com/dental"
+ },
+ "Digital Dental": {
+  "logoUrl": "/vendor-logos/digitaldental.png",
+  "website": "https://www.digitaldental.com/"
+ },
+ "Dreve": {
+  "logoUrl": "/vendor-logos/dreve.png"
+ },
+ "Exocad": {
+  "logoUrl": "/vendor-logos/exocad.svg",
+  "website": "https://exocad.com/"
+ },
+ "Great Lab Software": {
+  "logoUrl": "/vendor-logos/greatlab.png"
+ },
+ "HyperDENT": {
+  "logoUrl": "/vendor-logos/hyperdent.png",
+  "website": "https://www.follow-me-tech.com/"
+ },
+ "Keystone": {
+  "logoUrl": "/vendor-logos/keystone.png",
+  "website": "https://keystoneindustries.com/"
+ },
+ "Kulzer": {
+  "logoUrl": "/vendor-logos/kulzer.png",
+  "website": "https://kulzerus.com"
+ },
+ "Level 3 (CC Company)": {
+  "logoUrl": "/vendor-logos/level3.png",
+  "website": "https://level-3processing.com/"
+ },
+ "PacDent": {
+  "logoUrl": "/vendor-logos/pacdent.png"
+ },
+ "Quatro Air": {
+  "logoUrl": "/vendor-logos/quatroair.svg",
+  "website": "https://quatroair.com/"
+ },
+ "Ransom & Randolph": {
+  "logoUrl": "/vendor-logos/ransom.png",
+  "website": "https://www.ransom-randolph.com/"
+ },
+ "Roland": {
+  "logoUrl": "/vendor-logos/roland.png",
+  "website": "https://www.rolanddga.com/"
+ },
+ "Sagemax": {
+  "logoUrl": "/vendor-logos/sagemax.png"
+ },
+ "Scheftner": {
+  "logoUrl": "/vendor-logos/scheftner.png"
+ },
+ "Shining 3D": {
+  "logoUrl": "/vendor-logos/shining3d.png"
+ },
+ "Sprint Ray": {
+  "logoUrl": "/vendor-logos/sprintray.png"
+ },
+ "Sun": {
+  "logoUrl": "/vendor-logos/sun.png"
+ },
+ "Voices from the Bench": {
+  "website": "https://www.voicesfromthebench.com/",
+  "description": "The podcast for dental technicians, hosted by Elvis Dahl and Barb Warner. Conversations with the people and labs shaping the industry."
+ },
+ "icortica": {
+  "logoUrl": "/vendor-logos/icortica.png"
+ },
+ "imes": {
+  "logoUrl": "/vendor-logos/imes.png"
+ },
+ "Whip Mix": {
+  "logoUrl": "/vendor-logos/whipmix.png",
+  "website": "https://whipmix.com/"
+ },
+ "3D Systems": {
+  "description": "One of the original names in 3D printing, with the NextDent range of dental resins and printers for models, splints, dentures and surgical guides."
+ },
+ "GC": {
+  "description": "Japanese manufacturer of dental materials, from the Initial ceramic line to composites, glass ionomers and impression materials. A fixture in labs worldwide for decades."
+ },
+ "Kuraray": {
+  "description": "Kuraray Noritake Dental, makers of the Panavia cement family and Katana zirconia. Strong reputation in adhesives and bonding."
+ },
+ "Handler": {
+  "description": "Bench equipment for the dental lab: model trimmers, polishing lathes, dust collectors and handpieces. Built by Blackstone Industries in the USA."
+ },
+ "Xtcera": {
+  "description": "CAD/CAM equipment and materials for the digital lab, spanning milling machines, sintering furnaces and zirconia blanks."
+ },
+ "Bertram Dental Lab": {
+  "description": "A full service dental laboratory serving dentists with crown and bridge, implant and removable restorations."
+ }
 }
