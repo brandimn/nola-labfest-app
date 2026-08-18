@@ -5,7 +5,10 @@ import { prisma } from "@/lib/prisma";
 import roster from "@/data/roster.json";
 import details from "@/data/booth-details.json";
 
-const KNOWN: Record<string, { logoUrl?: string; website?: string }> = details;
+const KNOWN: Record<
+  string,
+  { logoUrl?: string; website?: string; description?: string; categories?: string[] }
+> = details;
 
 // Merging touches several tables, so give the function room beyond the default.
 export const maxDuration = 60;
