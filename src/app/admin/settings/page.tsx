@@ -8,9 +8,10 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminSettingsPage() {
   await requireRole("ADMIN");
-  const [bg, packet] = await Promise.all([
+  const [bg, packet, speakerPacket] = await Promise.all([
     prisma.setting.findUnique({ where: { key: "badgeBackgroundUrl" } }),
     prisma.setting.findUnique({ where: { key: "vendorPacketUrl" } }),
+    prisma.setting.findUnique({ where: { key: "speakerPacketUrl" } }),
   ]);
   return (
     <main className="mx-auto max-w-2xl px-4 py-6">
@@ -41,6 +42,22 @@ export default async function AdminSettingsPage() {
         <SettingTextForm
           settingKey="vendorPacketUrl"
           initialValue={packet?.value ?? ""}
+          placeholder="https://…"
+        />
+      </section>
+
+      <section className="mb-6">
+        <h2 className="mb-1 text-sm font-semibold uppercase tracking-wider text-slate-500">
+          Speaker packet link
+        </h2>
+        <p className="mb-3 text-sm text-slate-600">
+          Paste the link to the speaker packet (a PDF, Google Drive, or web page). It shows up as a
+          &ldquo;Your Speaker Packet&rdquo; button for speakers on their home screen. Leave blank to show a
+          &ldquo;coming soon&rdquo; note instead.
+        </p>
+        <SettingTextForm
+          settingKey="speakerPacketUrl"
+          initialValue={speakerPacket?.value ?? ""}
           placeholder="https://…"
         />
       </section>

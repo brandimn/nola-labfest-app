@@ -61,10 +61,21 @@ export default async function Home() {
     prisma.speaker.count(),
   ]);
 
-  const vendorPacketUrl =
-    user.role === "VENDOR"
-      ? (await prisma.setting.findUnique({ where: { key: "vendorPacketUrl" } }))?.value || ""
-      : "";
+  const me = await prisma.user.findUnique({
+    where: { id: user.id },
+    select: { vendorId: true, ownedVendor: { select: { id: true } }, ownedSpeaker: { select: { id: true } } },
+  });
+  const hasBooth = !!(me?.vendorId || me?.ownedVendor);
+  const isSpeaker = !!me?.ownedSpeaker;
+
+  const [vendorPacketUrl, speakerPacketUrl] = await Promise.all([
+    hasBooth
+      ? prisma.setting.findUnique({ where: { key: "vendorPacketUrl" } }).then((r) => r?.value || "")
+      : Promise.resolve(""),
+    isSpeaker
+      ? prisma.setting.findUnique({ where: { key: "speakerPacketUrl" } }).then((r) => r?.value || "")
+      : Promise.resolve(""),
+  ]);
 
   const tileSettings = await prisma.setting.findMany({
     where: { key: { startsWith: "tileImg:" } },
@@ -114,7 +125,7 @@ export default async function Home() {
       <div className="px-4 -mt-4 relative z-10">
         <PushPrompt />
 
-        {user.role === "VENDOR" &&
+        {hasBooth &&
           (vendorPacketUrl ? (
             <a
               href={vendorPacketUrl}
@@ -148,6 +159,43 @@ export default async function Home() {
               </p>
               <p className="mt-1 font-display text-xl font-bold">Your Vendor Packet</p>
               <p className="mt-0.5 text-xs italic opacity-90">Coming soon — check back shortly.</p>
+            </div>
+          ))}
+
+        {isSpeaker &&
+          (speakerPacketUrl ? (
+            <a
+              href={speakerPacketUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="relative mb-4 block overflow-hidden rounded-xl p-4 text-white shadow-md"
+              style={{ background: "linear-gradient(135deg, #3D1E50 0%, #B13E7D 100%)" }}
+            >
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-widest opacity-85">
+                    Speaking with us?
+                  </p>
+                  <p className="mt-1 font-display text-xl font-bold">Your Speaker Packet</p>
+                  <p className="mt-0.5 text-xs italic opacity-90">
+                    Everything you need for your session
+                  </p>
+                </div>
+                <span className="flex-shrink-0 rounded-lg bg-white/25 px-4 py-2 text-sm font-semibold backdrop-blur hover:bg-white/35">
+                  Open →
+                </span>
+              </div>
+            </a>
+          ) : (
+            <div
+              className="relative mb-4 block overflow-hidden rounded-xl p-4 text-white shadow-md"
+              style={{ background: "linear-gradient(135deg, #3D1E50 0%, #B13E7D 100%)" }}
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-widest opacity-85">
+                Speaking with us?
+              </p>
+              <p className="mt-1 font-display text-xl font-bold">Your Speaker Packet</p>
+              <p className="mt-0.5 text-xs italic opacity-90">Coming soon, check back shortly.</p>
             </div>
           ))}
 
