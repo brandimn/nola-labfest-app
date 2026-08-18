@@ -61,24 +61,45 @@ export function BoothCleanup() {
   }
 
   async function mergeAll() {
-    if (!confirm(`Merge all ${data?.duplicates.length} pairs?\n\nEach one keeps the fuller booth and folds the empty copy into it. Staff, leads and scans move across first.`)) return;
+    const pairs = data?.duplicates ?? [];
+    if (!pairs.length) return;
+    if (!confirm(`Merge all ${pairs.length} pairs?\n\nEach one keeps the fuller booth and folds the empty copy into it. Staff, leads and scans move across first.`)) return;
+
     setBusy("mergeAll"); setError(""); setNote("");
-    const r = await fetch("/api/admin/booth-cleanup", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "MERGE_ALL" }),
-    });
-    const d = await r.json().catch(() => ({ error: "The server did not send back a readable answer" }));
+    const done: string[] = [];
+    const failed: string[] = [];
+
+    // One request per pair. Merging all of them in a single call can run past
+    // the server time limit, and that kind of failure never reaches our own
+    // error handling, so it surfaces as an unhelpful generic error.
+    for (let i = 0; i < pairs.length; i++) {
+      const p = pairs[i];
+      setNote(`Merging ${i + 1} of ${pairs.length}: ${p.keep.name}…`);
+      try {
+        const r = await fetch("/api/admin/booth-cleanup", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "MERGE", keepId: p.keep.id, removeId: p.remove.id }),
+        });
+        const text = await r.text();
+        let d: any = null;
+        try { d = JSON.parse(text); } catch { /* not JSON: server or gateway error */ }
+        if (!r.ok || !d?.ok) {
+          failed.push(`${p.keep.name} + ${p.remove.name} — ${d?.error ?? `HTTP ${r.status} ${text.slice(0, 120)}`}`);
+          continue;
+        }
+        done.push(
+          `${d.merged.kept}${d.merged.gained.length ? ` — got back ${d.merged.gained.join(", ")}` : " — nothing to recover"}`
+        );
+      } catch (e) {
+        failed.push(`${p.keep.name} + ${p.remove.name} — ${e instanceof Error ? e.message : "request never completed"}`);
+      }
+    }
+
     setBusy("");
-    if (!r.ok) { setError(d.error || "Merge failed"); return; }
-    const lines = d.merged.map((m: any) =>
-      `${m.kept}${m.gained.length ? ` — got back ${m.gained.join(", ")}` : " — nothing to recover"}`
-    );
     setNote(
-      `Merged ${d.count} ${d.count === 1 ? "pair" : "pairs"}.\n` + lines.join("\n") +
-      (d.failed?.length
-        ? `\n\nCould not merge ${d.failed.length}:\n` +
-          d.failed.map((f: any) => `${f.pair} — ${f.reason}`).join("\n")
-        : "")
+      `Merged ${done.length} of ${pairs.length}.\n` + done.join("\n") +
+      (failed.length ? `\n\nCould not merge ${failed.length}:\n` + failed.join("\n") : "")
     );
     load();
   }

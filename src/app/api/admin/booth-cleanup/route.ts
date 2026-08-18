@@ -7,6 +7,9 @@ import details from "@/data/booth-details.json";
 
 const KNOWN: Record<string, { logoUrl?: string; website?: string }> = details;
 
+// Merging touches several tables, so give the function room beyond the default.
+export const maxDuration = 60;
+
 async function requireAdmin() {
   const s = await getServerSession(authOptions);
   if (!s?.user || s.user.role !== "ADMIN") return null;
