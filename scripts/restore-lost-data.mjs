@@ -62,6 +62,33 @@ async function main() {
   await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
 }
 
+// The remaining three team members, named by Brandi. No headshots survived for
+// them, so they go in without a photo and one can be uploaded from the admin
+// team screen.
+async function addRemainingTeam() {
+  const KEY = "team-add-remaining-v1";
+  if (await prisma.setting.findUnique({ where: { key: KEY } })) {
+    console.log("[restore] remaining team: already done, skipped");
+    return;
+  }
+  const MORE = [
+    { name: "Kimmie Nowak", sortOrder: 5 },
+    { name: "Jeff Dalton",  sortOrder: 6 },
+    { name: "Haijin Yang",  sortOrder: 7 },
+  ];
+  const added = [];
+  for (const m of MORE) {
+    const exists = await prisma.teamMember.findFirst({ where: { name: m.name } });
+    if (exists) continue;
+    await prisma.teamMember.create({ data: m });
+    added.push(m.name);
+  }
+  console.log(`[restore] team members added (${added.length}): ${added.join(", ") || "none, already there"}`);
+  const total = await prisma.teamMember.count();
+  console.log(`[restore] Nowak team is now ${total} people`);
+  await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
+}
+
 // Everyone imported from the roster postdates the workbook's Namebadges tab, so
 // there is no row to match. Their badge type follows from what they are.
 async function badgeTypeFromRole() {
@@ -99,5 +126,6 @@ async function badgeTypeFromRole() {
 
 main()
   .then(badgeTypeFromRole)
+  .then(addRemainingTeam)
   .catch((e) => console.error("[restore] skipped:", e?.message ?? e))
   .finally(() => prisma.$disconnect());
