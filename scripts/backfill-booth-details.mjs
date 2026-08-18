@@ -34,6 +34,7 @@ async function main() {
   const addedLogos = [];
   const addedSites = [];
   const addedDescs = [];
+  const addedCats = [];
 
   for (const b of booths) {
     const data = {};
@@ -51,6 +52,13 @@ async function main() {
     // Starter copy only. A vendor editing their own booth overwrites it, and we
     // never touch a description someone has already written.
     if (k?.description && !b.description) { data.description = k.description; addedDescs.push(b.name); }
+    // Only when the booth has no category at all, in either field. Keeps the
+    // older single field in step so both the filter and the pages agree.
+    if (k?.categories?.length && !b.categories?.length && !b.category) {
+      data.categories = k.categories;
+      data.category = k.categories[0];
+      addedCats.push(`${b.name} (${k.categories.join(", ")})`);
+    }
 
     if (Object.keys(data).length) {
       await prisma.vendor.update({ where: { id: b.id }, data });
@@ -62,6 +70,7 @@ async function main() {
   console.log(`[booth-backfill] logos added (${addedLogos.length}): ${addedLogos.join(", ") || "none needed"}`);
   console.log(`[booth-backfill] websites added (${addedSites.length}): ${addedSites.join(", ") || "none needed"}`);
   console.log(`[booth-backfill] descriptions added (${addedDescs.length}): ${addedDescs.join(", ") || "none needed"}`);
+  console.log(`[booth-backfill] categories set (${addedCats.length}): ${addedCats.join(" | ") || "none needed"}`);
   console.log(`[booth-backfill] renamed (${renamed.length}): ${renamed.join(" | ") || "none needed"}`);
 
   // Report what is still blank so it is visible without digging in the app.

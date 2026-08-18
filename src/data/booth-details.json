@@ -9,7 +9,10 @@
  },
  "Asiga": {
   "website": "https://www.asiga.com/",
-  "description": "Australian made professional 3D printers built for dental labs, including the MAX and PRO families. Known for open material choice, so you are not locked into one resin supplier."
+  "description": "Australian made professional 3D printers built for dental labs, including the MAX and PRO families. Known for open material choice, so you are not locked into one resin supplier.",
+  "categories": [
+   "3D Printing"
+  ]
  },
  "Burt and Assoc": {
   "logoUrl": "/vendor-logos/burt.png"
@@ -94,7 +97,10 @@
  },
  "Voices from the Bench": {
   "website": "https://www.voicesfromthebench.com/",
-  "description": "The podcast for dental technicians, hosted by Elvis Dahl and Barb Warner. Conversations with the people and labs shaping the industry."
+  "description": "The podcast for dental technicians, hosted by Elvis Dahl and Barb Warner. Conversations with the people and labs shaping the industry.",
+  "categories": [
+   "Business & Services"
+  ]
  },
  "icortica": {
   "logoUrl": "/vendor-logos/icortica.png"
@@ -107,21 +113,43 @@
   "website": "https://whipmix.com/"
  },
  "3D Systems": {
-  "description": "One of the original names in 3D printing, with the NextDent range of dental resins and printers for models, splints, dentures and surgical guides."
+  "description": "One of the original names in 3D printing, with the NextDent range of dental resins and printers for models, splints, dentures and surgical guides.",
+  "categories": [
+   "3D Printing"
+  ]
  },
  "GC": {
-  "description": "Japanese manufacturer of dental materials, from the Initial ceramic line to composites, glass ionomers and impression materials. A fixture in labs worldwide for decades."
+  "description": "Japanese manufacturer of dental materials, from the Initial ceramic line to composites, glass ionomers and impression materials. A fixture in labs worldwide for decades.",
+  "categories": [
+   "Lab Materials"
+  ]
  },
  "Kuraray": {
   "description": "Kuraray Noritake Dental, makers of the Panavia cement family and Katana zirconia. Strong reputation in adhesives and bonding."
  },
  "Handler": {
-  "description": "Bench equipment for the dental lab: model trimmers, polishing lathes, dust collectors and handpieces. Built by Blackstone Industries in the USA."
+  "description": "Bench equipment for the dental lab: model trimmers, polishing lathes, dust collectors and handpieces. Built by Blackstone Industries in the USA.",
+  "categories": [
+   "Lab Equipment"
+  ]
  },
  "Xtcera": {
-  "description": "CAD/CAM equipment and materials for the digital lab, spanning milling machines, sintering furnaces and zirconia blanks."
+  "description": "CAD/CAM equipment and materials for the digital lab, spanning milling machines, sintering furnaces and zirconia blanks.",
+  "categories": [
+   "Milling & CAM",
+   "Zirconia & Ceramics"
+  ]
  },
  "Bertram Dental Lab": {
-  "description": "A full service dental laboratory serving dentists with crown and bridge, implant and removable restorations."
+  "description": "A full service dental laboratory serving dentists with crown and bridge, implant and removable restorations.",
+  "categories": [
+   "Business & Services"
+  ]
+ },
+ "2onelab": {
+  "description": "Metal 3D printing for the dental lab, so frameworks, partials and bars can be produced in house instead of being sent out.",
+  "categories": [
+   "3D Printing"
+  ]
  }
 }
