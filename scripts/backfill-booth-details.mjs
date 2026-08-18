@@ -96,6 +96,28 @@ async function main() {
     console.log("[booth-backfill] Amann removal: already done, skipped");
   }
 
+  // Second round of removals Brandi confirmed. Own key so it runs once.
+  const DROP2 = ["3D Systems", "3DSystems"];
+  const DROP2_KEY = "booths-dropped-round-2";
+  const drop2Done = await prisma.setting.findUnique({ where: { key: DROP2_KEY } });
+  if (!drop2Done) {
+    const out = [];
+    for (const name of DROP2) {
+      const booth = await prisma.vendor.findFirst({
+        where: { name: { equals: name, mode: "insensitive" } },
+        include: { _count: { select: { staff: true, leads: true, boothScans: true } } },
+      });
+      if (!booth) continue;
+      const c = booth._count;
+      await prisma.vendor.delete({ where: { id: booth.id } });
+      out.push(`${booth.name} (${c.staff} staff, ${c.leads} leads, ${c.boothScans} scans went with it)`);
+    }
+    await prisma.setting.create({ data: { key: DROP2_KEY, value: new Date().toISOString() } });
+    console.log(`[booth-backfill] round 2 removals: ${out.join(" | ") || "none found"}`);
+  } else {
+    console.log("[booth-backfill] round 2 removals: already done, skipped");
+  }
+
   const renamed = [];
   for (const [from, to] of Object.entries(RENAMES)) {
     const old = booths.find((b) => b.name === from);

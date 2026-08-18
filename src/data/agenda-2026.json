@@ -1,0 +1,29 @@
+{
+  "note": "Taken from nolalabfest.com/agenda. Times are Central (CDT, -05:00) for New Orleans, written explicitly so the build server timezone cannot shift them.",
+  "sessions": [
+    { "title": "Vendor Set-Up", "track": "LOGISTICS", "startsAt": "2026-10-15T10:00:00-05:00", "endsAt": "2026-10-15T17:00:00-05:00" },
+    { "title": "RRRPPPRRR: The REAPER Method for Business Growth and Operational Mastery", "speaker": "Jude Grayson", "track": "WORKSHOP", "isFeatured": true, "description": "Sponsored by Aidite, Dreve, HyperDent, Kuraray, Roland and Scheftner", "startsAt": "2026-10-15T13:00:00-05:00", "endsAt": "2026-10-15T17:00:00-05:00" },
+    { "title": "Seven Three Distillery Tour", "track": "SOCIAL", "description": "Sponsored by Scheftner. Drinks and hors d'oeuvres.", "startsAt": "2026-10-15T18:30:00-05:00", "endsAt": "2026-10-15T20:30:00-05:00" },
+
+    { "title": "Registration", "track": "LOGISTICS", "startsAt": "2026-10-16T07:30:00-05:00", "endsAt": "2026-10-16T08:30:00-05:00" },
+    { "title": "Continental Breakfast & Vendor Hall", "track": "MEAL", "startsAt": "2026-10-16T07:30:00-05:00", "endsAt": "2026-10-16T08:30:00-05:00" },
+    { "title": "Opening Remarks", "startsAt": "2026-10-16T08:30:00-05:00", "endsAt": "2026-10-16T08:45:00-05:00" },
+    { "title": "AI Unlocked: You Don't Have to be Tech-Savvy to Use AI in Your Business", "speaker": "Brandi Nowak", "startsAt": "2026-10-16T08:45:00-05:00", "endsAt": "2026-10-16T09:45:00-05:00" },
+    { "title": "Pivot or Plateau: Are You Majoring in the Minor?", "speaker": "Jude Grayson", "startsAt": "2026-10-16T10:00:00-05:00", "endsAt": "2026-10-16T11:30:00-05:00" },
+    { "title": "Lunch & Vendor Hall", "track": "MEAL", "description": "Sponsored by Aidite", "startsAt": "2026-10-16T11:30:00-05:00", "endsAt": "2026-10-16T13:30:00-05:00" },
+    { "title": "LabFest Feud", "track": "GAME", "startsAt": "2026-10-16T13:30:00-05:00", "endsAt": "2026-10-16T14:30:00-05:00" },
+    { "title": "Culture by Design: Building Teams and Labs that Actually Thrive", "speaker": "Rob Nazzal", "startsAt": "2026-10-16T14:30:00-05:00", "endsAt": "2026-10-16T15:00:00-05:00" },
+    { "title": "From Bench to Boardroom: The DSO Shift Reshaping Dental Labs", "speaker": "Blake Hibray", "startsAt": "2026-10-16T15:00:00-05:00", "endsAt": "2026-10-16T16:00:00-05:00" },
+    { "title": "Mardi Gras World", "track": "MASQUERADE", "description": "Dinner, drinks and dancing. Masquerade theme, bring your mask!", "startsAt": "2026-10-16T18:30:00-05:00", "endsAt": "2026-10-16T21:00:00-05:00" },
+
+    { "title": "Kickoff", "startsAt": "2026-10-17T08:30:00-05:00", "endsAt": "2026-10-17T08:45:00-05:00" },
+    { "title": "Beyond the Bench: Building a Lab That Runs Like a Business", "speaker": "David Jackson", "startsAt": "2026-10-17T08:45:00-05:00", "endsAt": "2026-10-17T09:45:00-05:00" },
+    { "title": "Small Target, Big Growth: How Niching Down Fuels Scale", "speaker": "John Wilson", "startsAt": "2026-10-17T10:00:00-05:00", "endsAt": "2026-10-17T11:00:00-05:00" },
+    { "title": "Brunch & Vendor Hall", "track": "MEAL", "startsAt": "2026-10-17T11:00:00-05:00", "endsAt": "2026-10-17T13:00:00-05:00" },
+    { "title": "Turn Followers into Customers: Converting Social Media Into Revenue", "speaker": "Bernard Ory", "startsAt": "2026-10-17T13:00:00-05:00", "endsAt": "2026-10-17T14:00:00-05:00" },
+    { "title": "The Talent Advantage: Winning the War for Great People", "speaker": "Bennett Napier", "startsAt": "2026-10-17T14:30:00-05:00", "endsAt": "2026-10-17T15:30:00-05:00" },
+    { "title": "LabFest Feud", "track": "GAME", "startsAt": "2026-10-17T15:30:00-05:00", "endsAt": "2026-10-17T16:00:00-05:00" },
+    { "title": "Closing Remarks", "startsAt": "2026-10-17T16:00:00-05:00", "endsAt": "2026-10-17T16:30:00-05:00" }
+  ],
+  "lunchSponsors": ["Aidite"]
+}
