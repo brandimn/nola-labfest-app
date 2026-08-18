@@ -18,6 +18,7 @@ type Data = {
   notOnRoster: Booth[];
   gaps: Gap[];
   autoFillable: number;
+  needsCategoryBackfill: number;
 };
 
 function Tags({ b }: { b: Booth }) {
@@ -114,6 +115,19 @@ export function BoothCleanup() {
     load();
   }
 
+  async function backfillCategories() {
+    setBusy("backfill"); setError(""); setNote("");
+    const r = await fetch("/api/admin/booth-cleanup", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "BACKFILL_CATEGORIES" }),
+    });
+    const d = await r.json().catch(() => ({ error: "Unreadable answer from the server" }));
+    setBusy("");
+    if (!r.ok) { setError(d.error || "Could not backfill"); return; }
+    setNote(`Restored categories on ${d.fixed.length} ${d.fixed.length === 1 ? "booth" : "booths"}.\n` + d.fixed.join("\n"));
+    load();
+  }
+
   async function fill() {
     setBusy("fill"); setError(""); setNote("");
     const r = await fetch("/api/admin/booth-cleanup", {
@@ -207,6 +221,19 @@ export function BoothCleanup() {
 
       <section>
         <h2 className="mb-2 font-semibold">Missing information ({data.gaps.length})</h2>
+        {data.needsCategoryBackfill > 0 && (
+          <div className="card mb-3 p-4">
+            <p className="mb-2 text-sm">
+              <strong>{data.needsCategoryBackfill}</strong>{" "}
+              {data.needsCategoryBackfill === 1 ? "booth has a category" : "booths have categories"}{" "}
+              saved in the app&apos;s older single-category field, which the vendor pages and the
+              category filter no longer read. This copies them across. Nothing is overwritten.
+            </p>
+            <button onClick={backfillCategories} disabled={busy === "backfill"} className="btn-primary text-sm">
+              {busy === "backfill" ? "Restoring…" : "Restore these categories"}
+            </button>
+          </div>
+        )}
         {data.autoFillable > 0 && (
           <div className="card mb-3 p-4">
             <p className="mb-2 text-sm">

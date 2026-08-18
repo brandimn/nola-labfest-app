@@ -41,7 +41,7 @@ type BoothRow = {
 function richness(v: BoothRow) {
   return [
     v.logoUrl, v.description, v.website, v.sponsorTier,
-    v.categories?.length ? "cats" : null,
+    v.categories?.length || v.category ? "cats" : null,
     v.isLunchSponsor ? "lunch" : null,
     v.atLOTM ? "lotm" : null,
   ].filter(Boolean).length;
@@ -165,7 +165,7 @@ export async function GET() {
       missing: [
         !b.logoUrl && "logo",
         !b.website && "website",
-        (!b.categories || b.categories.length === 0) && "category",
+        !b.categories?.length && !b.category && "category",
         !b.description && "description",
       ].filter(Boolean) as string[],
       canAutoFill: !!(
@@ -187,6 +187,7 @@ export async function GET() {
       .map(shape),
     gaps,
     autoFillable: gaps.filter((g) => g.canAutoFill).length,
+    needsCategoryBackfill: booths.filter((b) => !!b.category && !b.categories?.length).length,
   });
   } catch (e) {
     // Without this the page just white-screens into the app's generic error box
@@ -228,6 +229,23 @@ export async function POST(req: NextRequest) {
         }
       }
       return NextResponse.json({ ok: true, count: merged.length, merged, failed });
+    }
+
+    if (body?.action === "BACKFILL_CATEGORIES") {
+      const stale = await prisma.vendor.findMany({
+        where: { category: { not: null } },
+        select: { id: true, name: true, category: true, categories: true },
+      });
+      const fixed: string[] = [];
+      for (const v of stale) {
+        if (v.categories?.length || !v.category) continue;
+        await prisma.vendor.update({
+          where: { id: v.id },
+          data: { categories: [v.category] },
+        });
+        fixed.push(`${v.name} — ${v.category}`);
+      }
+      return NextResponse.json({ ok: true, fixed });
     }
 
     if (body?.action === "FILL") {
