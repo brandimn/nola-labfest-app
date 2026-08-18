@@ -66,7 +66,7 @@ async function main() {
 
   // Report what is still blank so it is visible without digging in the app.
   const after = await prisma.vendor.findMany({
-    select: { name: true, logoUrl: true, website: true, categories: true, category: true, description: true },
+    select: { id: true, name: true, logoUrl: true, website: true, categories: true, category: true, description: true },
     orderBy: { name: "asc" },
   });
   const stillMissing = after
@@ -79,6 +79,24 @@ async function main() {
       return m.length ? `${v.name}: no ${m.join(", no ")}` : null;
     })
     .filter(Boolean);
+  // Report any booths that still look like the same company under two names,
+  // so leftovers are visible in the log without opening the app.
+  const squash = (n) => n.toLowerCase().replace(/\(.*?\)/g, "").replace(/[^a-z0-9]/g, "");
+  const dupes = [];
+  for (let i = 0; i < after.length; i++) {
+    for (let j = i + 1; j < after.length; j++) {
+      const a = squash(after[i].name), b = squash(after[j].name);
+      if (!a || !b) continue;
+      const short = a.length < b.length ? a : b;
+      const long = a.length < b.length ? b : a;
+      if (a === b || (short.length >= 4 && long.startsWith(short))) {
+        dupes.push(`${after[i].name} <-> ${after[j].name}`);
+      }
+    }
+  }
+  console.log(`[booth-backfill] total booths now: ${after.length}`);
+  console.log(`[booth-backfill] possible duplicates remaining (${dupes.length}): ${dupes.join(" | ") || "none"}`);
+
   console.log(`[booth-backfill] still incomplete (${stillMissing.length}):`);
   for (const line of stillMissing) console.log(`[booth-backfill]   ${line}`);
 }
