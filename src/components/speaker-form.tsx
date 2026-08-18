@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Trash2, Upload, X } from "lucide-react";
+import { shrinkImage, readFileAsDataUrl } from "@/lib/shrink-image";
 
 type Speaker = {
   id?: string;
@@ -14,14 +15,6 @@ type Speaker = {
   photoUrl: string;
 };
 
-async function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
 
 export function SpeakerForm({
   initial,
@@ -46,12 +39,10 @@ export function SpeakerForm({
   async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) {
-      setError("Photo too large — keep it under 2 MB. Try resizing on your phone first.");
-      return;
-    }
+
     setError("");
-    const dataUrl = await fileToDataUrl(file);
+    const raw = await readFileAsDataUrl(file);
+    const dataUrl = file.type === "image/svg+xml" ? raw : await shrinkImage(raw);
     setForm((f) => ({ ...f, photoUrl: dataUrl }));
     setSaved(false);
   }

@@ -2,42 +2,7 @@
 
 import { useState } from "react";
 import { Upload, Trash2 } from "lucide-react";
-
-async function fileToDataUrl(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
-
-// Photos taken or screenshotted on a phone are routinely several megabytes,
-// which is far more than a logo needs. Shrink to fit rather than rejecting it
-// and making someone go find an image editor.
-async function shrink(dataUrl: string, maxSide = 512): Promise<string> {
-  const img = document.createElement("img");
-  await new Promise<void>((resolve, reject) => {
-    img.onload = () => resolve();
-    img.onerror = () => reject(new Error("Could not read that image"));
-    img.src = dataUrl;
-  });
-  const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
-  if (scale === 1 && dataUrl.length < 900_000) return dataUrl;
-
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.round(img.width * scale);
-  canvas.height = Math.round(img.height * scale);
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return dataUrl;
-  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-
-  // PNG first so a logo keeps its transparent background; fall back to JPEG
-  // only if PNG is still too heavy.
-  const png = canvas.toDataURL("image/png");
-  if (png.length < 900_000) return png;
-  return canvas.toDataURL("image/jpeg", 0.9);
-}
+import { shrinkImage, readFileAsDataUrl } from "@/lib/shrink-image";
 
 export function LogoUpload({
   value,
@@ -59,9 +24,9 @@ export function LogoUpload({
     setError("");
     setBusy(true);
     try {
-      const raw = await fileToDataUrl(file);
+      const raw = await readFileAsDataUrl(file);
       // SVG is already small and does not survive a canvas round trip.
-      const out = file.type === "image/svg+xml" ? raw : await shrink(raw);
+      const out = file.type === "image/svg+xml" ? raw : await shrinkImage(raw);
       if (out.length > 1_400_000) {
         setError("That image is still too big even after shrinking. Try a smaller one.");
         return;
