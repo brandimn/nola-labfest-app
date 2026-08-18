@@ -18,8 +18,15 @@ export async function POST(req: NextRequest) {
   const me = await prisma.user.findUnique({ where: { id: session.user.id } });
   if (!me) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
-  const ok = await bcrypt.compare(current, me.password);
-  if (!ok) return NextResponse.json({ error: "Your current password is not right" }, { status: 400 });
+  // Someone forced onto this screen has just signed in with the shared LabFest
+  // password, which everyone already knows. Asking them to type it again proves
+  // nothing, so only require it for a voluntary change later on.
+  if (!me.mustChangePassword) {
+    const ok = await bcrypt.compare(current, me.password);
+    if (!ok) {
+      return NextResponse.json({ error: "Your current password is not right" }, { status: 400 });
+    }
+  }
 
   const same = await bcrypt.compare(next, me.password);
   if (same) {

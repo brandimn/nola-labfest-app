@@ -33,7 +33,9 @@ export function ChangePasswordForm({ forced = false }: { forced?: boolean }) {
 
   return (
     <div className="space-y-3">
-      <div><label className="label">Current password</label><input className="input" type="password" value={current} onChange={(e) => setCurrent(e.target.value)} /></div>
+      {!forced && (
+        <div><label className="label">Current password</label><input className="input" type="password" value={current} onChange={(e) => setCurrent(e.target.value)} /></div>
+      )}
       <div><label className="label">New password</label><input className="input" type="password" value={next} onChange={(e) => setNext(e.target.value)} /></div>
       <div><label className="label">New password again</label><input className="input" type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} /></div>
       <p className="text-xs text-slate-500">At least 8 characters.</p>
