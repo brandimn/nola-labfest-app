@@ -86,8 +86,15 @@ async function main() {
 
   // Sponsorship tags taken from the agenda page. Applied once so that editing
   // or clearing them in the admin screen afterwards is not undone by a deploy.
-  const TAGS = { "Scheftner": ["Distillery Sponsor"] };
-  const TAGS_KEY = "vendor-sponsorship-tags-v1";
+  const TAGS = {
+    "Scheftner": ["Distillery Sponsor", "Workshop Sponsor"],
+    "Aidite":    ["Workshop Sponsor"],
+    "Dreve":     ["Workshop Sponsor"],
+    "HyperDENT": ["Workshop Sponsor"],
+    "Kuraray":   ["Workshop Sponsor"],
+    "Roland":    ["Workshop Sponsor"],
+  };
+  const TAGS_KEY = "vendor-sponsorship-tags-v2";
   const tagsDone = await prisma.setting.findUnique({ where: { key: TAGS_KEY } });
   if (!tagsDone) {
     const out = [];
