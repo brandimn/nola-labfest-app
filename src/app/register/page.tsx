@@ -59,7 +59,7 @@ export default function RegisterPage() {
           <img
             src="/nola-lockup.png"
             alt="NOLA LabFest"
-            className="mx-auto mb-3 h-16 w-auto brightness-0 invert drop-shadow-lg"
+            className="mx-auto mb-3 h-16 w-auto"
           />
           <h1 className="text-xl font-bold">Create account</h1>
           <p className="text-sm text-slate-600">Join NOLA LabFest</p>

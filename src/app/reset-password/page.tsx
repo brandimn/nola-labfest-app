@@ -55,7 +55,7 @@ export default function ResetPasswordPage() {
           <img
             src="/nola-lockup.png"
             alt="NOLA LabFest"
-            className="mx-auto mb-3 h-20 w-auto brightness-0 invert drop-shadow-lg"
+            className="mx-auto mb-3 h-20 w-auto"
           />
           <p className="mt-3 text-sm text-slate-600">Pick a new password</p>
         </div>
