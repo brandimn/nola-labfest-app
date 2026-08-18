@@ -38,6 +38,41 @@ async function main() {
     `[booth-backfill] booth numbers reset to TBD: ${alreadyReset ? "already done, skipped" : resetCount}`
   );
 
+  // Companies Brandi confirmed are not coming. Runs once, tracked in Setting,
+  // so re-adding any of them later is not undone by a later deploy. Anything
+  // with people or leads attached is left alone and reported instead.
+  const DROP = [
+    "Amann", "Amann Girrbach", "Rapid Shape", "Elos", "Elos Medtech",
+    "Nola Smiles", "Novenda", "Novenda Technologies", "Shenpaz", "Medit", "VHF",
+  ];
+  const DROP_KEY = "booths-dropped-2026-08-18";
+  const alreadyDropped = await prisma.setting.findUnique({ where: { key: DROP_KEY } });
+  const dropped = [];
+  const keptBack = [];
+  if (!alreadyDropped) {
+    for (const name of DROP) {
+      const booth = await prisma.vendor.findFirst({
+        where: { name: { equals: name, mode: "insensitive" } },
+        include: { _count: { select: { staff: true, leads: true, boothScans: true } } },
+      });
+      if (!booth) continue;
+      const { staff, leads, boothScans } = booth._count;
+      if (staff || leads || boothScans) {
+        keptBack.push(`${booth.name} (${staff} staff, ${leads} leads, ${boothScans} scans)`);
+        continue;
+      }
+      await prisma.vendor.delete({ where: { id: booth.id } });
+      dropped.push(booth.name);
+    }
+    await prisma.setting.create({ data: { key: DROP_KEY, value: new Date().toISOString() } });
+  }
+  console.log(
+    `[booth-backfill] booths removed: ${alreadyDropped ? "already done, skipped" : (dropped.join(", ") || "none found")}`
+  );
+  if (keptBack.length) {
+    console.log(`[booth-backfill] NOT removed, had people or data attached: ${keptBack.join(" | ")}`);
+  }
+
   const renamed = [];
   for (const [from, to] of Object.entries(RENAMES)) {
     const old = booths.find((b) => b.name === from);
