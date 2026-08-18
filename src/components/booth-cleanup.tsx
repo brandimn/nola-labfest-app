@@ -115,6 +115,45 @@ export function BoothCleanup() {
     load();
   }
 
+  async function fixSafeStuff() {
+    setBusy("safe"); setError(""); setNote("");
+    const lines: string[] = [];
+    try {
+      for (const action of ["BACKFILL_CATEGORIES", "FILL"]) {
+        const r = await fetch("/api/admin/booth-cleanup", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action }),
+        });
+        const text = await r.text();
+        let d: any = null;
+        try { d = JSON.parse(text); } catch {
+          lines.push(`Could not finish (HTTP ${r.status})`);
+          continue;
+        }
+        if (!r.ok) { lines.push(d.error || "Something went wrong"); continue; }
+        if (action === "BACKFILL_CATEGORIES") {
+          lines.push(
+            d.fixed.length
+              ? `Categories put back on ${d.fixed.length} ${d.fixed.length === 1 ? "booth" : "booths"}:\n  ` + d.fixed.join("\n  ")
+              : "Categories: nothing needed restoring."
+          );
+        } else {
+          lines.push(
+            d.filled.length
+              ? `Logos and websites added to ${d.filled.length} ${d.filled.length === 1 ? "booth" : "booths"}:\n  ` +
+                d.filled.map((f: any) => `${f.name} (${f.set.join(" + ")})`).join("\n  ")
+              : "Logos and websites: nothing was missing that I have on file."
+          );
+        }
+      }
+    } catch (e) {
+      lines.push(e instanceof Error ? e.message : "The request never completed");
+    }
+    setBusy("");
+    setNote(lines.join("\n\n"));
+    load();
+  }
+
   async function backfillCategories() {
     setBusy("backfill"); setError(""); setNote("");
     const r = await fetch("/api/admin/booth-cleanup", {
@@ -152,6 +191,20 @@ export function BoothCleanup() {
   return (
     <div className="space-y-6">
       {note && <pre className="card whitespace-pre-wrap p-3 text-sm text-green-800">{note}</pre>}
+
+      <div className="card p-5">
+        <h2 className="mb-1 font-semibold">Fix everything safe to fix</h2>
+        <p className="mb-3 text-sm text-slate-600">
+          Puts back categories saved in the app&apos;s older field, and adds the logos and
+          websites already on file. Nothing is overwritten and nothing is deleted, so this is
+          always safe to press. Merging duplicates stays separate, further down, because that one
+          removes a booth.
+        </p>
+        <button onClick={fixSafeStuff} disabled={busy === "safe"} className="btn-primary">
+          {busy === "safe" ? "Working…" : "Fix everything safe to fix"}
+        </button>
+      </div>
+
       <p className="text-sm text-slate-600">{data.totalBooths} booths in the app.</p>
 
       <section>
