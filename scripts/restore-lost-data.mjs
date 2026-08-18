@@ -108,6 +108,32 @@ async function reorderTeam() {
   await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
 }
 
+// Team email addresses, given by Brandi. These were lost with the table and
+// could not be derived from anything on disk.
+async function teamEmails() {
+  const KEY = "team-emails-v1";
+  if (await prisma.setting.findUnique({ where: { key: KEY } })) {
+    console.log("[restore] team emails: already done, skipped");
+    return;
+  }
+  const EMAILS = {
+    "Brandi Nowak":   "brandi@nowakdental.com",
+    "Shawn Nowak":    "shawn@nowakdental.com",
+    "Brett Hovis":    "brett.hovis@nowakdental.com",
+    "Marybeth Starr": "marybeth@nowakdental.com",
+    "Haijin Yang":    "haijin@nowakdental.com",
+    "Kimmie Nowak":   "kimberly@nowakdental.com",
+    "Jeff Dalton":    "jeff@nowakdental.com",
+  };
+  const set = [];
+  for (const [name, email] of Object.entries(EMAILS)) {
+    const r = await prisma.teamMember.updateMany({ where: { name }, data: { email } });
+    set.push(r.count ? `${name} -> ${email}` : `${name} -> NOT FOUND`);
+  }
+  console.log(`[restore] team emails: ${set.join(" | ")}`);
+  await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
+}
+
 // Everyone imported from the roster postdates the workbook's Namebadges tab, so
 // there is no row to match. Their badge type follows from what they are.
 async function badgeTypeFromRole() {
@@ -147,5 +173,6 @@ main()
   .then(badgeTypeFromRole)
   .then(addRemainingTeam)
   .then(reorderTeam)
+  .then(teamEmails)
   .catch((e) => console.error("[restore] skipped:", e?.message ?? e))
   .finally(() => prisma.$disconnect());
