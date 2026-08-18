@@ -60,7 +60,7 @@ export function NewUserForm({ emailConfigured }: { emailConfigured: boolean }) {
         ) : (
           <p className="mt-1 text-sm text-slate-600">
             {emailConfigured
-              ? "No email sent (you unchecked the box or the user is a vendor/admin)."
+              ? "No email sent (you unchecked the box)."
               : "No email was sent — add RESEND_API_KEY in Vercel to enable invitations."}
           </p>
         )}

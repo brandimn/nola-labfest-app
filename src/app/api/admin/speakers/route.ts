@@ -3,27 +3,27 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-async function requireAdmin() {
-  const s = await getServerSession(authOptions);
-  if (!s?.user || s.user.role !== "ADMIN") return null;
-  return s.user;
-}
-
 export async function POST(req: NextRequest) {
-  if (!(await requireAdmin())) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  const body = await req.json();
-  if (!body?.name?.trim()) {
-    return NextResponse.json({ error: "Name required" }, { status: 400 });
+  const session = await getServerSession(authOptions);
+  if (session?.user?.role !== "ADMIN") {
+    return NextResponse.json({ error: "Admin only" }, { status: 403 });
   }
-  const s = await prisma.speaker.create({
+  const body = await req.json().catch(() => null);
+  if (!body?.name?.trim()) {
+    return NextResponse.json({ error: "Name is required" }, { status: 400 });
+  }
+
+  const speaker = await prisma.speaker.create({
     data: {
       name: body.name.trim(),
-      title: body.title || null,
-      company: body.company || null,
-      bio: body.bio || null,
+      title: body.title?.trim() || null,
+      company: body.company?.trim() || null,
+      bio: body.bio?.trim() || null,
+      linkedIn: body.linkedIn?.trim() || null,
       photoUrl: body.photoUrl || null,
-      linkedIn: body.linkedIn || null,
     },
+    select: { id: true, name: true },
   });
-  return NextResponse.json(s);
+
+  return NextResponse.json(speaker);
 }

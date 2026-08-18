@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { LogoUpload } from "@/components/logo-upload";
 
 type Vendor = {
   id?: string;
@@ -13,6 +14,10 @@ type Vendor = {
   contactEmail: string | null;
   contactPhone: string | null;
   category: string | null;
+  categories: string[];
+  sponsorTier: string | null;
+  atLabFest: boolean;
+  isLunchSponsor: boolean;
 };
 
 export function VendorForm({ initial }: { initial?: Vendor }) {
@@ -27,12 +32,16 @@ export function VendorForm({ initial }: { initial?: Vendor }) {
       contactEmail: "",
       contactPhone: "",
       category: "",
+      categories: [],
+      sponsorTier: "",
+      atLabFest: true,
+      isLunchSponsor: false,
     }
   );
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
-  function update<K extends keyof Vendor>(k: K, v: string) {
+  function update<K extends keyof Vendor>(k: K, v: Vendor[K]) {
     setForm((f) => ({ ...f, [k]: v }));
   }
 
@@ -67,8 +76,59 @@ export function VendorForm({ initial }: { initial?: Vendor }) {
     <div className="space-y-3">
       <div><label className="label">Name *</label><input className="input" value={form.name} onChange={(e) => update("name", e.target.value)} /></div>
       <div><label className="label">Booth Number *</label><input className="input" value={form.boothNumber} onChange={(e) => update("boothNumber", e.target.value)} /></div>
-      <div><label className="label">Category</label><input className="input" value={form.category ?? ""} onChange={(e) => update("category", e.target.value)} /></div>
-      <div><label className="label">Logo URL</label><input className="input" value={form.logoUrl ?? ""} onChange={(e) => update("logoUrl", e.target.value)} /></div>
+      <div>
+        <label className="label">Sponsorships</label>
+        <div className="flex flex-col gap-2 rounded-lg border border-slate-300 bg-white p-3">
+          <label className="flex items-center gap-2 text-sm cursor-pointer">
+            <input
+              type="checkbox"
+              className="h-4 w-4"
+              checked={form.isLunchSponsor}
+              onChange={(e) => update("isLunchSponsor", e.target.checked)}
+            />
+            <span>
+              Lunch sponsor{" "}
+              <span className="text-xs text-slate-500">
+                (shows a gold "Lunch Sponsor" pill next to the name)
+              </span>
+            </span>
+          </label>
+        </div>
+      </div>
+      <div>
+        <label className="label">Sponsor Tier</label>
+        <select
+          className="input"
+          value={form.sponsorTier ?? ""}
+          onChange={(e) => update("sponsorTier", e.target.value || null)}
+        >
+          <option value="">— none —</option>
+          <option value="PLATINUM">Platinum</option>
+          <option value="GOLD">Gold</option>
+          <option value="SILVER">Silver</option>
+          <option value="BRONZE">Bronze</option>
+        </select>
+      </div>
+      <div>
+        <label className="label">Categories</label>
+        <input
+          className="input"
+          value={form.categories.join(", ")}
+          onChange={(e) =>
+            update(
+              "categories",
+              e.target.value.split(",").map((c) => c.trim()).filter(Boolean)
+            )
+          }
+          placeholder="e.g. 3D Printing, Lab Materials"
+        />
+        <p className="mt-1 text-xs text-slate-500">Comma-separated. A vendor can be in several categories.</p>
+      </div>
+      <LogoUpload
+        value={form.logoUrl}
+        onChange={(v) => update("logoUrl", v || null)}
+        label="Vendor logo"
+      />
       <div><label className="label">Website</label><input className="input" value={form.website ?? ""} onChange={(e) => update("website", e.target.value)} /></div>
       <div><label className="label">Contact Email</label><input className="input" type="email" value={form.contactEmail ?? ""} onChange={(e) => update("contactEmail", e.target.value)} /></div>
       <div><label className="label">Contact Phone</label><input className="input" value={form.contactPhone ?? ""} onChange={(e) => update("contactPhone", e.target.value)} /></div>

@@ -11,40 +11,58 @@ export function QRScanner({
 }) {
   const containerId = useRef(`qr-reader-${Math.random().toString(36).slice(2)}`).current;
   const scannerRef = useRef<any>(null);
+  // Keep the latest onDecode in a ref so the camera never restarts on parent re-renders.
+  const onDecodeRef = useRef(onDecode);
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
+    onDecodeRef.current = onDecode;
+  }, [onDecode]);
+
+  // Start the camera exactly once (on mount), stop it once (on unmount).
+  useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { Html5Qrcode } = await import("html5-qrcode");
-      if (cancelled) return;
-      const scanner = new Html5Qrcode(containerId);
-      scannerRef.current = scanner;
       try {
+        const { Html5Qrcode } = await import("html5-qrcode");
+        if (cancelled) return;
+        const scanner = new Html5Qrcode(containerId);
+        scannerRef.current = scanner;
         await scanner.start(
           { facingMode: "environment" },
           { fps: 10, qrbox: { width: 240, height: 240 } },
-          (decoded: string) => onDecode(decoded),
+          (decoded: string) => onDecodeRef.current(decoded),
           () => {}
         );
       } catch (e: any) {
-        setError(e?.message || "Camera error — please allow camera permission and refresh.");
+        if (!cancelled) {
+          setError(e?.message || "Camera error — please allow camera permission and refresh.");
+        }
       }
     })();
     return () => {
       cancelled = true;
       const s = scannerRef.current;
+      scannerRef.current = null;
       if (s) {
-        s.stop().catch(() => {}).finally(() => s.clear?.());
+        try {
+          s.stop().catch(() => {}).finally(() => {
+            try {
+              s.clear?.();
+            } catch {}
+          });
+        } catch {}
       }
     };
-  }, [containerId, onDecode]);
+  }, [containerId]);
 
   useEffect(() => {
     const s = scannerRef.current;
     if (!s) return;
-    if (paused) s.pause?.(true);
-    else s.resume?.();
+    try {
+      if (paused) s.pause?.(true);
+      else s.resume?.();
+    } catch {}
   }, [paused]);
 
   return (

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
-import { Users, Store, Calendar, Bell, Trophy, Scan, Sparkles, Printer, Settings, Mail, Mic, Upload } from "lucide-react";
+import { Users, Store, Calendar, Bell, Trophy, Scan, Sparkles, Printer, Settings, Mail, Mic, QrCode, Contact, LayoutGrid, Upload } from "lucide-react";
 import { SignOutButton } from "@/components/sign-out-button";
 
 export default async function AdminHome() {
@@ -50,12 +50,15 @@ export default async function AdminHome() {
         <AdminTile href="/admin/vendors" icon={Store} label="Vendors" />
         <AdminTile href="/admin/schedule" icon={Calendar} label="Schedule" />
         <AdminTile href="/admin/speakers" icon={Mic} label="Speakers" />
+        <AdminTile href="/admin/team" icon={Contact} label="Nowak Team" />
         <AdminTile href="/admin/users" icon={Users} label="Users" />
         <AdminTile href="/admin/announcements" icon={Bell} label="Announcements" />
         <AdminTile href="/admin/drawing" icon={Trophy} label="Prize Drawing" />
         <AdminTile href="/admin/leads" icon={Scan} label="All Leads" />
         <AdminTile href="/admin/voting" icon={Sparkles} label="Booth Voting" />
         <AdminTile href="/admin/badges" icon={Printer} label="Print Badges" />
+        <AdminTile href="/admin/booth-qr" icon={QrCode} label="Booth QR Codes" />
+        <AdminTile href="/admin/tiles" icon={LayoutGrid} label="Home Tile Photos" />
         <AdminTile href="/admin/settings" icon={Settings} label="Settings" />
         <AdminTile href="/admin/email-preview" icon={Mail} label="Email Preview" />
         <AdminTile href="/admin/import-roster" icon={Upload} label="Import Roster" />

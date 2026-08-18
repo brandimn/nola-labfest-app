@@ -15,9 +15,9 @@ export default async function SpeakersPage() {
   return (
     <main className="mx-auto max-w-2xl px-4 py-6">
       <header className="mb-6">
-        <h1 className="font-display text-3xl font-bold">Speakers</h1>
+        <h1 className="font-display text-4xl font-extrabold gradient-text">Speakers</h1>
         <p className="text-sm text-slate-600">
-          {speakers.length} experts presenting at NOLA LabFest
+          {speakers.length} wonderful speakers who cannot wait to share some knowledge with the lab nerds
         </p>
       </header>
 

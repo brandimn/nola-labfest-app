@@ -6,19 +6,25 @@ import { prisma } from "@/lib/prisma";
 export async function POST(req: NextRequest) {
   const s = await getServerSession(authOptions);
   if (s?.user?.role !== "ADMIN") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  const body = await req.json();
-  if (!body.title || !body.startsAt || !body.endsAt) {
+  const body = await req.json().catch(() => null);
+  if (!body || !body.title || !body.startsAt || !body.endsAt) {
     return NextResponse.json({ error: "title, startsAt, endsAt required" }, { status: 400 });
+  }
+  if (isNaN(Date.parse(body.startsAt)) || isNaN(Date.parse(body.endsAt))) {
+    return NextResponse.json({ error: "Invalid start/end date" }, { status: 400 });
   }
   const created = await prisma.session.create({
     data: {
       title: body.title,
       description: body.description || null,
       speaker: body.speaker || null,
+      speakerId: body.speakerId || null,
       location: body.location || null,
       startsAt: new Date(body.startsAt),
       endsAt: new Date(body.endsAt),
       track: body.track || null,
+      event: body.event === "LOTM" ? "LOTM" : "LABFEST",
+      isFeatured: body.isFeatured === true,
     },
   });
   return NextResponse.json(created);

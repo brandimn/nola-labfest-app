@@ -21,16 +21,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "No vendor profile found for your account" }, { status: 400 });
   }
 
-  const existing = await prisma.lead.findUnique({
+  let lead = await prisma.lead.findUnique({
     where: { vendorId_attendeeId: { vendorId: vendor.id, attendeeId: attendee.id } },
   });
-  const alreadyCaptured = !!existing;
-  if (!existing) {
-    await prisma.lead.create({
+  const alreadyCaptured = !!lead;
+  if (!lead) {
+    lead = await prisma.lead.create({
       data: { vendorId: vendor.id, attendeeId: attendee.id },
     });
   }
   return NextResponse.json({
+    leadId: lead.id,
+    notes: lead.notes ?? "",
     alreadyCaptured,
     attendee: {
       name: attendee.name,

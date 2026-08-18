@@ -18,6 +18,8 @@ model User {
   phone        String?
   company      String?
   title        String?
+  state        String?
+  badgeType    String?  // LAB | VENDOR | SPEAKER | NOWAK | STUDENT — drives badge label/color
   badgeToken   String   @unique @default(cuid())
   invitedAt        DateTime?
   openedInviteAt   DateTime?
@@ -33,6 +35,7 @@ model User {
   pushSubscriptions PushSubscription[]
   announcements     Announcement[]
   boothVote         BoothVote?
+  galleryPhotos     GalleryPhoto[]
 }
 
 model Vendor {
@@ -46,8 +49,12 @@ model Vendor {
   website      String?
   contactEmail String?
   contactPhone String?
-  category     String?
+  category     String?      // primary category (kept for existing displays)
+  categories   String[]     @default([])  // full set of categories a vendor fits
   sponsorTier  String?  // PLATINUM | GOLD | SILVER | BRONZE | null
+  atLabFest       Boolean  @default(true)
+  atLOTM          Boolean  @default(false)
+  isLunchSponsor  Boolean  @default(false)
   boothToken   String   @unique @default(cuid())
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -82,6 +89,8 @@ model Session {
   startsAt    DateTime
   endsAt      DateTime
   track       String?
+  event       String   @default("LABFEST") // LABFEST | LOTM
+  isFeatured  Boolean  @default(false)     // "exclusive masterclass" treatment
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -163,6 +172,33 @@ model PushSubscription {
 model Setting {
   key   String @id
   value String @db.Text
+}
+
+model GalleryPhoto {
+  id           String   @id @default(cuid())
+  url          String   @db.Text        // resized JPEG data URL
+  caption      String?
+  uploaderId   String?
+  uploaderName String
+  createdAt    DateTime @default(now())
+
+  uploader User? @relation(fields: [uploaderId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+}
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  name      String
+  title     String?
+  email     String?
+  phone     String?
+  photoUrl  String?  @db.Text
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sortOrder])
 }
 
 model Announcement {

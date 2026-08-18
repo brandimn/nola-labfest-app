@@ -6,6 +6,18 @@ import { Printer, ArrowLeft } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
+const DEFAULT_BG = "/badge-bg-nola.jpg";
+
+// Badge type → label + pill colors. Drives the small role tag on each badge.
+const TYPE_STYLE: Record<string, { label: string; bg: string; fg: string }> = {
+  LAB: { label: "Lab", bg: "#B13E7D", fg: "#ffffff" },
+  VENDOR: { label: "Vendor", bg: "#0F172A", fg: "#ffffff" },
+  SPEAKER: { label: "Speaker", bg: "#F5A547", fg: "#3D1E50" },
+  NOWAK: { label: "Nowak Team", bg: "#0E8C4B", fg: "#ffffff" },
+  STUDENT: { label: "Student", bg: "#6B7280", fg: "#ffffff" },
+  VIP: { label: "Crew", bg: "#EC4899", fg: "#ffffff" },
+};
+
 async function qrFor(token: string) {
   return QRCode.toDataURL(token, {
     width: 280,
@@ -25,11 +37,11 @@ export default async function AdminBadgesPage({
   const bgSetting = await prisma.setting.findUnique({
     where: { key: "badgeBackgroundUrl" },
   });
-  const customBg = bgSetting?.value || null;
+  const background = bgSetting?.value || DEFAULT_BG;
 
   const attendees = await prisma.user.findMany({
     where: {
-      role: "ATTENDEE",
+      badgeType: { not: null },
       ...(q
         ? {
             OR: [
@@ -46,6 +58,8 @@ export default async function AdminBadgesPage({
       name: true,
       company: true,
       title: true,
+      state: true,
+      badgeType: true,
       badgeToken: true,
     },
   });
@@ -91,7 +105,7 @@ export default async function AdminBadgesPage({
       ) : (
         <div className="badge-grid">
           {badges.map((b) => (
-            <BadgeCard key={b.id} attendee={b} background={customBg} />
+            <BadgeCard key={b.id} attendee={b} background={background} />
           ))}
         </div>
       )}
@@ -109,9 +123,9 @@ export default async function AdminBadgesPage({
           @page { size: letter; margin: 0.3in; }
           body { background: white !important; }
           .badge-grid { gap: 0.25in; }
-          .badge-card { break-inside: avoid; page-break-inside: avoid; }
+          .badge-card { break-inside: avoid; page-break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
           nav, .print\\:hidden { display: none !important; }
-          .badge-card { box-shadow: none !important; border-color: #cbd5e1 !important; }
+          .badge-card { box-shadow: none !important; }
         }
       `}</style>
       <PrintButtonScript />
@@ -123,83 +137,87 @@ function BadgeCard({
   attendee,
   background,
 }: {
-  attendee: { name: string; company: string | null; title: string | null; qr: string };
-  background: string | null;
+  attendee: {
+    name: string;
+    company: string | null;
+    title: string | null;
+    state: string | null;
+    badgeType: string | null;
+    qr: string;
+  };
+  background: string;
 }) {
-  if (background) {
-    return (
-      <div
-        className="badge-card relative overflow-hidden rounded-2xl border border-slate-200 shadow-sm"
-        style={{
-          aspectRatio: "4 / 3",
-          minHeight: "3in",
-          backgroundImage: `url('${background}')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-gradient-to-t from-white/85 via-white/0 to-transparent" />
-        <div className="relative flex h-full flex-col justify-end px-5 pb-4 pt-3">
-          <div className="grid grid-cols-[1fr,auto] items-end gap-3">
-            <div className="min-w-0 rounded-lg bg-white/90 backdrop-blur px-3 py-2 shadow-sm">
-              <p className="font-display text-2xl font-bold leading-tight truncate">
-                {attendee.name}
-              </p>
-              {attendee.title && (
-                <p className="text-sm text-slate-700 truncate">{attendee.title}</p>
-              )}
-              {attendee.company && (
-                <p className="text-sm font-semibold text-[#B13E7D] truncate">
-                  {attendee.company}
-                </p>
-              )}
-            </div>
-            <img
-              src={attendee.qr}
-              alt={`${attendee.name} QR badge`}
-              className="h-28 w-28 flex-shrink-0 rounded-md border border-slate-200 bg-white p-1 shadow-sm"
-            />
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const type = attendee.badgeType ? TYPE_STYLE[attendee.badgeType] : null;
 
   return (
     <div
-      className="badge-card relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
-      style={{ aspectRatio: "4 / 3", minHeight: "3in" }}
+      className="badge-card relative overflow-hidden rounded-2xl border border-slate-200 shadow-sm"
+      style={{
+        aspectRatio: "4 / 3",
+        minHeight: "3in",
+        backgroundImage: `url('${background}')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
     >
-      <div className="h-6 w-full bg-gradient-to-r from-[#3D1E50] via-[#B13E7D] to-[#F5A547]" />
-      <div className="flex items-center justify-between px-4 pt-3">
-        <img src="/nola-logo.png" alt="NOLA LabFest" className="h-10 w-auto" />
-        <span className="text-[10px] uppercase tracking-widest text-slate-500 font-semibold">
-          Attendee
+      {/* Role tag, top-right over the photo */}
+      {type && (
+        <span
+          className="absolute right-3 top-3 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest shadow-sm"
+          style={{ backgroundColor: type.bg, color: type.fg }}
+        >
+          {type.label}
         </span>
+      )}
+
+      {/* Soft scrim behind the name (kept right of the LabFest logo) */}
+      <div
+        className="pointer-events-none absolute top-0"
+        style={{
+          left: "34%",
+          right: 0,
+          height: "74%",
+          background:
+            "radial-gradient(ellipse 72% 52% at 58% 50%, rgba(0,0,0,0.45), rgba(0,0,0,0) 72%)",
+        }}
+      />
+
+      {/* Attendee name — big, to the RIGHT of the logo so it never overlaps it */}
+      <div
+        className="absolute top-0 flex items-center justify-center px-2 text-center"
+        style={{ left: "35%", right: "4%", height: "74%" }}
+      >
+        <p
+          className="font-display font-bold leading-[1.03] text-white"
+          style={{ fontSize: "clamp(24px, 7vw, 46px)", textShadow: "0 2px 14px rgba(0,0,0,0.6)" }}
+        >
+          {attendee.name}
+        </p>
       </div>
-      <div className="grid grid-cols-[1fr,auto] gap-3 px-4 pb-4 pt-2 items-end">
+
+      {/* Blue band — lab name + state on the left, QR on the right */}
+      <div
+        className="absolute inset-x-0 bottom-0 flex items-center pl-5 pr-[1.35in]"
+        style={{ height: "26%" }}
+      >
         <div className="min-w-0">
-          <p className="font-display text-2xl font-bold leading-tight truncate">
-            {attendee.name}
-          </p>
-          {attendee.title && (
-            <p className="text-sm text-slate-600 truncate">{attendee.title}</p>
-          )}
           {attendee.company && (
-            <p className="text-sm font-semibold text-[#B13E7D] truncate">
+            <p className="font-display text-xl font-bold leading-tight text-white truncate">
               {attendee.company}
             </p>
           )}
-          <p className="mt-3 text-[10px] uppercase tracking-wider text-slate-400">
-            Scan for lead capture
-          </p>
+          {attendee.state && (
+            <p className="text-sm font-medium text-white/85 truncate">{attendee.state}</p>
+          )}
         </div>
-        <img
-          src={attendee.qr}
-          alt={`${attendee.name} QR badge`}
-          className="h-28 w-28 flex-shrink-0 rounded-md border border-slate-200 bg-white p-1"
-        />
       </div>
+
+      {/* QR — tucked into the blue band, bottom-right */}
+      <img
+        src={attendee.qr}
+        alt={`${attendee.name} QR badge`}
+        className="absolute bottom-[0.16in] right-[0.2in] h-[1in] w-[1in] rounded-md border border-white bg-white p-1 shadow-md"
+      />
     </div>
   );
 }

@@ -8,11 +8,16 @@ type S = {
   title: string;
   description: string | null;
   speaker: string | null;
+  speakerId: string | null;
   location: string | null;
   startsAt: string;
   endsAt: string;
   track: string | null;
+  event: string;
+  isFeatured: boolean;
 };
+
+type SpeakerOption = { id: string; name: string };
 
 function toLocalInput(d: Date | string) {
   const dt = typeof d === "string" ? new Date(d) : d;
@@ -20,17 +25,32 @@ function toLocalInput(d: Date | string) {
   return new Date(dt.getTime() - tz * 60000).toISOString().slice(0, 16);
 }
 
-export function SessionForm({ initial }: { initial?: Omit<S, "startsAt" | "endsAt"> & { startsAt: Date | string; endsAt: Date | string } }) {
+export function SessionForm({
+  initial,
+  speakers,
+}: {
+  initial?: Omit<S, "startsAt" | "endsAt"> & { startsAt: Date | string; endsAt: Date | string };
+  speakers: SpeakerOption[];
+}) {
   const router = useRouter();
   const [form, setForm] = useState<S>(
     initial
       ? { ...initial, startsAt: toLocalInput(initial.startsAt), endsAt: toLocalInput(initial.endsAt) }
-      : { title: "", description: "", speaker: "", location: "", track: "", startsAt: "", endsAt: "" }
+      : { title: "", description: "", speaker: "", speakerId: "", location: "", track: "", startsAt: "", endsAt: "", event: "LABFEST", isFeatured: false }
   );
   const [err, setErr] = useState("");
   const [saving, setSaving] = useState(false);
 
-  function up<K extends keyof S>(k: K, v: string) { setForm((f) => ({ ...f, [k]: v })); }
+  function up<K extends keyof S>(k: K, v: S[K]) { setForm((f) => ({ ...f, [k]: v })); }
+
+  function pickSpeaker(id: string) {
+    if (!id) {
+      setForm((f) => ({ ...f, speakerId: "", speaker: f.speaker }));
+      return;
+    }
+    const sp = speakers.find((s) => s.id === id);
+    setForm((f) => ({ ...f, speakerId: id, speaker: sp?.name ?? f.speaker }));
+  }
 
   async function save() {
     setSaving(true); setErr("");
@@ -56,12 +76,53 @@ export function SessionForm({ initial }: { initial?: Omit<S, "startsAt" | "endsA
   return (
     <div className="space-y-3">
       <div><label className="label">Title *</label><input className="input" value={form.title} onChange={(e) => up("title", e.target.value)} /></div>
-      <div><label className="label">Speaker</label><input className="input" value={form.speaker ?? ""} onChange={(e) => up("speaker", e.target.value)} /></div>
+      <div>
+        <label className="label">Speaker</label>
+        <select
+          className="input"
+          value={form.speakerId ?? ""}
+          onChange={(e) => pickSpeaker(e.target.value)}
+        >
+          <option value="">— No speaker —</option>
+          {speakers.map((s) => (
+            <option key={s.id} value={s.id}>{s.name}</option>
+          ))}
+        </select>
+        <p className="mt-1 text-xs text-slate-500">
+          Add a new speaker in the <a href="/admin/speakers" className="underline">Speakers</a> admin.
+        </p>
+      </div>
       <div><label className="label">Location</label><input className="input" value={form.location ?? ""} onChange={(e) => up("location", e.target.value)} /></div>
+      <div>
+        <label className="flex items-start gap-2 text-sm cursor-pointer rounded-lg border border-slate-300 bg-white p-3">
+          <input
+            type="checkbox"
+            className="h-4 w-4 mt-0.5"
+            checked={form.isFeatured}
+            onChange={(e) => up("isFeatured", e.target.checked)}
+          />
+          <span>
+            <strong>Mark as exclusive / masterclass.</strong>{" "}
+            <span className="text-xs text-slate-500">
+              Gets the black &amp; gold treatment on the schedule, appears in its own "Exclusive" section at the top.
+            </span>
+          </span>
+        </label>
+      </div>
       <div><label className="label">Track</label>
         <select className="input" value={form.track ?? ""} onChange={(e) => up("track", e.target.value)}>
           <option value="">—</option>
-          <option>Clinical</option><option>Business</option><option>Technology</option><option>Social</option>
+          <option>Keynote</option>
+          <option>Motivational</option>
+          <option>Leadership</option>
+          <option>Wellness</option>
+          <option>Workshop</option>
+          <option>Panel</option>
+          <option>Clinical</option>
+          <option>Business</option>
+          <option>Technology</option>
+          <option>Social</option>
+          <option>After Hours</option>
         </select>
       </div>
       <div className="grid grid-cols-2 gap-2">

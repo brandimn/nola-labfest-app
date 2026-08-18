@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
@@ -16,16 +17,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Email already registered" }, { status: 400 });
   }
   const hash = await bcrypt.hash(body.password, 10);
-  await prisma.user.create({
-    data: {
-      email,
-      password: hash,
-      name: String(body.name).trim(),
-      company: body.company || null,
-      title: body.title || null,
-      phone: body.phone || null,
-      role: "ATTENDEE",
-    },
-  });
+  try {
+    await prisma.user.create({
+      data: {
+        email,
+        password: hash,
+        name: String(body.name).trim(),
+        company: body.company || null,
+        title: body.title || null,
+        phone: body.phone || null,
+        role: "ATTENDEE",
+      },
+    });
+  } catch (e) {
+    if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === "P2002") {
+      return NextResponse.json({ error: "Email already registered" }, { status: 400 });
+    }
+    throw e;
+  }
   return NextResponse.json({ ok: true });
 }

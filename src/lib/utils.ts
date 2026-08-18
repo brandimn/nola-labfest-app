@@ -10,7 +10,7 @@ export function formatTime(date: Date | string) {
   return d.toLocaleTimeString("en-US", {
     hour: "numeric",
     minute: "2-digit",
-    timeZone: "America/New_York",
+    timeZone: "America/Chicago",
   });
 }
 
@@ -20,6 +20,6 @@ export function formatDay(date: Date | string) {
     weekday: "long",
     month: "long",
     day: "numeric",
-    timeZone: "America/New_York",
+    timeZone: "America/Chicago",
   });
 }
