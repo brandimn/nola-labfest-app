@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LogoUpload } from "@/components/logo-upload";
+import { CategoryPicker } from "@/components/category-picker";
 
 type Vendor = {
   id?: string;
@@ -21,7 +22,13 @@ type Vendor = {
   sponsorships: string[];
 };
 
-export function VendorForm({ initial }: { initial?: Vendor }) {
+export function VendorForm({
+  initial,
+  allCategories = [],
+}: {
+  initial?: Vendor;
+  allCategories?: string[];
+}) {
   const router = useRouter();
   const [form, setForm] = useState<Vendor>(
     initial ?? {
@@ -130,18 +137,11 @@ export function VendorForm({ initial }: { initial?: Vendor }) {
       </div>
       <div>
         <label className="label">Categories</label>
-        <input
-          className="input"
-          value={form.categories.join(", ")}
-          onChange={(e) =>
-            update(
-              "categories",
-              e.target.value.split(",").map((c) => c.trim()).filter(Boolean)
-            )
-          }
-          placeholder="e.g. 3D Printing, Lab Materials"
+        <CategoryPicker
+          value={form.categories}
+          onChange={(next) => update("categories", next)}
+          options={allCategories}
         />
-        <p className="mt-1 text-xs text-slate-500">Comma-separated. A vendor can be in several categories.</p>
       </div>
       <LogoUpload
         value={form.logoUrl}

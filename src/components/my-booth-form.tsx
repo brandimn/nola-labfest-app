@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { LogoUpload } from "@/components/logo-upload";
+import { CategoryPicker } from "@/components/category-picker";
 
 type Booth = {
   name: string;
@@ -62,51 +63,10 @@ export function MyBoothForm({
       <LogoUpload value={form.logoUrl} onChange={(v) => update("logoUrl", v || null)} label="Your logo" />
       <div>
         <label className="label">Categories</label>
-        <p className="mb-2 text-xs text-slate-500">
-          Tap the ones that fit your booth. This is how attendees filter the vendor list.
-        </p>
-        <div className="flex flex-wrap gap-2">
-          {allCategories.map((c) => {
-            const on = form.categories.includes(c);
-            return (
-              <button
-                key={c}
-                type="button"
-                onClick={() =>
-                  update(
-                    "categories",
-                    on ? form.categories.filter((x) => x !== c) : [...form.categories, c]
-                  )
-                }
-                className={
-                  on
-                    ? "rounded-full bg-[#7C3AED] px-3 py-1.5 text-sm font-semibold text-white"
-                    : "rounded-full border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700"
-                }
-              >
-                {on ? "✓ " : ""}{c}
-              </button>
-            );
-          })}
-        </div>
-
-        {form.categories.filter((c) => !allCategories.includes(c)).length > 0 && (
-          <p className="mt-2 text-xs text-slate-500">
-            Yours: {form.categories.filter((c) => !allCategories.includes(c)).join(", ")}
-          </p>
-        )}
-
-        <label className="label mt-3">Something not listed?</label>
-        <input
-          className="input"
-          placeholder="Type a category and press Enter"
-          onKeyDown={(e) => {
-            if (e.key !== "Enter") return;
-            e.preventDefault();
-            const v = (e.target as HTMLInputElement).value.trim();
-            if (v && !form.categories.includes(v)) update("categories", [...form.categories, v]);
-            (e.target as HTMLInputElement).value = "";
-          }}
+        <CategoryPicker
+          value={form.categories}
+          onChange={(next) => update("categories", next)}
+          options={allCategories}
         />
       </div>
       <div><label className="label">Website</label><input className="input" value={form.website ?? ""} onChange={(e) => update("website", e.target.value)} /></div>

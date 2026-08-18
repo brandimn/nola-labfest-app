@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getMyBooth } from "@/lib/booth";
-import { prisma } from "@/lib/prisma";
+import { getAllCategories } from "@/lib/categories";
 import { requireUser } from "@/lib/session";
 import { MyBoothForm } from "@/components/my-booth-form";
 
@@ -10,12 +10,7 @@ export default async function MyBoothPage() {
   const booth = await getMyBooth(user.id);
   if (!booth) redirect("/me");
 
-  // Offer the categories already in use so vendors pick from the same list
-  // instead of inventing near-duplicates that split the category filter.
-  const rows = await prisma.vendor.findMany({ select: { categories: true, category: true } });
-  const allCategories = Array.from(
-    new Set(rows.flatMap((r) => [...(r.categories ?? []), r.category]).filter(Boolean) as string[])
-  ).sort();
+  const allCategories = await getAllCategories();
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-6">
