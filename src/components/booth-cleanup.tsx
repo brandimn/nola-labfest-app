@@ -40,9 +40,18 @@ export function BoothCleanup() {
   const [note, setNote] = useState("");
 
   const load = useCallback(async () => {
-    const r = await fetch("/api/admin/booth-cleanup", { cache: "no-store" });
-    const d = await r.json();
-    if (d.error) setError(d.error); else setData(d);
+    try {
+      const r = await fetch("/api/admin/booth-cleanup", { cache: "no-store" });
+      const text = await r.text();
+      let d: any = null;
+      try { d = JSON.parse(text); } catch {
+        setError(`The server replied with HTTP ${r.status} instead of data:\n\n${text.slice(0, 500)}`);
+        return;
+      }
+      if (d.error) setError(d.error); else setData(d);
+    } catch (e) {
+      setError(e instanceof Error ? `${e.name}: ${e.message}` : "The request never completed");
+    }
   }, []);
   useEffect(() => { load(); }, [load]);
 

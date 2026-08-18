@@ -135,7 +135,7 @@ async function mergeOne(keepId: string, removeId: string) {
 
 export async function GET() {
   if (!(await requireAdmin())) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-
+  try {
   const onList = new Set(roster.companies);
   const booths = await prisma.vendor.findMany({
     orderBy: { name: "asc" },
@@ -176,16 +176,25 @@ export async function GET() {
 
   return NextResponse.json({
     totalBooths: booths.length,
-    duplicates: pairs.map((p) => ({
-      keep: shape(byId.get(p.keep.id)!),
-      remove: shape(byId.get(p.remove.id)!),
-    })),
+    duplicates: pairs
+      .filter((p) => byId.has(p.keep.id) && byId.has(p.remove.id))
+      .map((p) => ({
+        keep: shape(byId.get(p.keep.id)!),
+        remove: shape(byId.get(p.remove.id)!),
+      })),
     notOnRoster: booths
       .filter((b) => !onList.has(b.name) && !removedIds.has(b.id))
       .map(shape),
     gaps,
     autoFillable: gaps.filter((g) => g.canAutoFill).length,
   });
+  } catch (e) {
+    // Without this the page just white-screens into the app's generic error box
+    // and nothing reaches the logs.
+    const message = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
+    console.error("booth-cleanup GET failed:", message);
+    return NextResponse.json({ error: `Could not read the booths — ${message}` }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
