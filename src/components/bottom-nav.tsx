@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { Home, Users, Calendar, QrCode, User, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type Role = "ATTENDEE" | "VENDOR" | "ADMIN";
+type Role = "ATTENDEE" | "VENDOR" | "SPEAKER" | "ADMIN";
 
 export function BottomNav({ role }: { role: Role }) {
   const pathname = usePathname();

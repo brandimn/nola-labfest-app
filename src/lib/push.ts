@@ -1,7 +1,7 @@
 import webpush from "web-push";
 import { prisma } from "@/lib/prisma";
 
-type Role = "ATTENDEE" | "VENDOR" | "ADMIN";
+type Role = "ATTENDEE" | "VENDOR" | "SPEAKER" | "ADMIN";
 
 let configured = false;
 function configure() {

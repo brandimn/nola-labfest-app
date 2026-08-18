@@ -94,12 +94,12 @@ async function mergeOne(keepId: string, removeId: string) {
     prisma.user.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } }),
 
     prisma.boothScan.deleteMany({
-      where: { vendorId: removeId, attendeeId: { in: [...scanAttendees] } },
+      where: { vendorId: removeId, attendeeId: { in: Array.from(scanAttendees) } },
     }),
     prisma.boothScan.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } }),
 
     prisma.lead.deleteMany({
-      where: { vendorId: removeId, attendeeId: { in: [...leadAttendees] } },
+      where: { vendorId: removeId, attendeeId: { in: Array.from(leadAttendees) } },
     }),
     prisma.lead.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } }),
 
