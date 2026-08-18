@@ -134,6 +134,31 @@ async function teamEmails() {
   await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
 }
 
+// Titles were only ever typed into the admin screen, never committed, so they
+// died with the table. Brandi is re-supplying them.
+async function teamTitles() {
+  const KEY = "team-titles-v1";
+  if (await prisma.setting.findUnique({ where: { key: KEY } })) {
+    console.log("[restore] team titles: already done, skipped");
+    return;
+  }
+  const TITLES = {
+    "Shawn Nowak":  "CEO",
+    "Brandi Nowak": "COO",
+  };
+  const out = [];
+  for (const [name, title] of Object.entries(TITLES)) {
+    const r = await prisma.teamMember.updateMany({ where: { name }, data: { title } });
+    out.push(r.count ? `${name} = ${title}` : `${name} NOT FOUND`);
+  }
+  const missing = await prisma.teamMember.findMany({
+    where: { title: null }, select: { name: true }, orderBy: { sortOrder: "asc" },
+  });
+  console.log(`[restore] team titles set: ${out.join(" | ")}`);
+  console.log(`[restore] still with no title: ${missing.map((m) => m.name).join(", ") || "none"}`);
+  await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
+}
+
 // Everyone imported from the roster postdates the workbook's Namebadges tab, so
 // there is no row to match. Their badge type follows from what they are.
 async function badgeTypeFromRole() {
@@ -174,5 +199,6 @@ main()
   .then(addRemainingTeam)
   .then(reorderTeam)
   .then(teamEmails)
+  .then(teamTitles)
   .catch((e) => console.error("[restore] skipped:", e?.message ?? e))
   .finally(() => prisma.$disconnect());
