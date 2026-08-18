@@ -21,6 +21,7 @@ model User {
   state        String?
   badgeType    String?  // LAB | VENDOR | SPEAKER | NOWAK | STUDENT — drives badge label/color
   badgeToken   String   @unique @default(cuid())
+  mustChangePassword Boolean @default(false)
   invitedAt        DateTime?
   openedInviteAt   DateTime?
   installedAt      DateTime?
@@ -28,6 +29,8 @@ model User {
   updatedAt    DateTime @updatedAt
 
   ownedVendor       Vendor?           @relation("VendorOwner")
+  vendorId          String?
+  boothStaffOf      Vendor?           @relation("VendorStaff", fields: [vendorId], references: [id], onDelete: SetNull)
   ownedSpeaker      Speaker?          @relation("SpeakerOwner")
   favorites         Favorite[]
   boothScans        BoothScan[]
@@ -62,6 +65,7 @@ model Vendor {
   boothScans BoothScan[]
   leads      Lead[]
   boothVotes BoothVote[]
+  staff      User[]      @relation("VendorStaff")
 
   @@index([category])
 }

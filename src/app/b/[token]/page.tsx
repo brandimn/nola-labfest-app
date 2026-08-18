@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { getMyBooth } from "@/lib/booth";
 import { getUser } from "@/lib/session";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +19,7 @@ export default async function BadgeRedirect({ params }: { params: { token: strin
   // If a signed-in vendor lands here (e.g. scanned with the phone camera), capture the lead.
   let captured = false;
   if (viewer?.role === "VENDOR") {
-    const vendor = await prisma.vendor.findUnique({ where: { userId: viewer.id } });
+    const vendor = await getMyBooth(viewer.id);
     if (vendor) {
       try {
         await prisma.lead.upsert({

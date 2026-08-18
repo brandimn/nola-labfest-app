@@ -70,12 +70,16 @@ export async function POST(req: NextRequest) {
           company: v.company || null,
           role: "VENDOR",
           password: hash,
+          mustChangePassword: true,
         },
       });
       const vendorId = vendorByCompany.get(v.company);
       if (vendorId) {
+        // Everyone from the company is booth staff: they all scan badges, share
+        // one lead list, and can edit the listing.
+        await prisma.user.update({ where: { id: user.id }, data: { vendorId } });
+        // The first one listed is also the primary contact on the booth record.
         const booth = await prisma.vendor.findUnique({ where: { id: vendorId } });
-        // First person listed for a company owns the booth; the rest still see it via company.
         if (booth && !booth.userId) {
           await prisma.vendor.update({ where: { id: vendorId }, data: { userId: user.id } });
         }
@@ -104,6 +108,7 @@ export async function POST(req: NextRequest) {
           company: s.company || null,
           role: "SPEAKER",
           password: hash,
+          mustChangePassword: true,
         },
       });
       const already = await prisma.speaker.findFirst({

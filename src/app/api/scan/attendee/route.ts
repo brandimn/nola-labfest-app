@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getMyBooth } from "@/lib/booth";
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -16,7 +17,7 @@ export async function POST(req: NextRequest) {
   const attendee = await prisma.user.findUnique({ where: { badgeToken: token } });
   if (!attendee) return NextResponse.json({ error: "Invalid badge" }, { status: 404 });
 
-  const vendor = await prisma.vendor.findUnique({ where: { userId: session.user.id } });
+  const vendor = await getMyBooth(session.user.id);
   if (!vendor) {
     return NextResponse.json({ error: "No vendor profile found for your account" }, { status: 400 });
   }

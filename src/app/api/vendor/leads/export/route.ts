@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getMyBooth } from "@/lib/booth";
 
 function csvEscape(v: string | null | undefined) {
   if (v == null) return "";
@@ -15,7 +16,7 @@ function csvEscape(v: string | null | undefined) {
 export async function GET() {
   const session = await getServerSession(authOptions);
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const vendor = await prisma.vendor.findUnique({ where: { userId: session.user.id } });
+  const vendor = await getMyBooth(session.user.id);
   if (!vendor) return NextResponse.json({ error: "No vendor profile" }, { status: 400 });
 
   const leads = await prisma.lead.findMany({

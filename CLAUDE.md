@@ -54,6 +54,18 @@ never signed up, so use it only to look up a name for an email already on the ap
 Everyone starts with the shared password Labfest26 and is asked to pick their own on first login.
 The import never sends email. Re-running it is safe.
 
+## Booths with several staff
+A company can send more than one person. `User.vendorId` puts them all on the same booth: they
+share one lead list, all scan badges, and all can edit the listing. `Vendor.userId` still marks
+the primary contact. Always look a booth up with `getMyBooth()` from `src/lib/booth.ts`, never
+`vendor.findUnique({ where: { userId } })`, or staff who are not the primary contact silently
+lose lead capture.
+
+## First login
+Roster-imported accounts get `mustChangePassword: true`. `requireUser()` in `src/lib/session.ts`
+redirects them to `/change-password` until they pick their own. The check reads the database,
+not the login token, so it clears immediately.
+
 ## Deploys
 `npm run build` runs `prisma db push`, so deploying applies schema changes to the live database.
 Prisma refuses destructive changes without a flag, so additive changes are safe, but be careful

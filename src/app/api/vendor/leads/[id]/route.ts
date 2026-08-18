@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { getMyBooth } from "@/lib/booth";
 
 // Vendors (and admins) can write a note on a lead they own.
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
@@ -11,7 +12,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     return NextResponse.json({ error: "Not allowed" }, { status: 403 });
   }
 
-  const vendor = await prisma.vendor.findUnique({ where: { userId: session.user.id } });
+  const vendor = await getMyBooth(session.user.id);
   if (!vendor) return NextResponse.json({ error: "No vendor profile found for your account" }, { status: 400 });
 
   const lead = await prisma.lead.findUnique({ where: { id: params.id } });
