@@ -47,13 +47,16 @@ export default function ResetPasswordPage() {
       className="min-h-screen flex items-center justify-center px-4 py-10 bg-cover bg-center"
       style={{
         backgroundImage:
-          "linear-gradient(135deg, rgba(61,30,80,0.85), rgba(177,62,125,0.75) 50%, rgba(245,165,71,0.75)), url('/nola-hero.png')",
+          "linear-gradient(160deg, rgba(15,23,42,0.72), rgba(124,58,237,0.72) 40%, rgba(177,62,125,0.7) 70%, rgba(245,165,71,0.7)), url('/nola-hero-2.jpg')",
       }}
     >
       <div className="w-full max-w-sm card p-6">
         <div className="mb-6 text-center">
-          <img src="/nola-lockup.png" alt="NOLA LabFest" className="mx-auto mb-3 h-20 w-auto" />
-          <p className="text-xs italic text-slate-600">with a New Orleans twist</p>
+          <img
+            src="/nola-lockup.png"
+            alt="NOLA LabFest"
+            className="mx-auto mb-3 h-20 w-auto brightness-0 invert drop-shadow-lg"
+          />
           <p className="mt-3 text-sm text-slate-600">Pick a new password</p>
         </div>
 

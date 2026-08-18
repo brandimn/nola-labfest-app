@@ -132,7 +132,7 @@ export default async function Home() {
               target="_blank"
               rel="noreferrer"
               className="relative mb-4 block overflow-hidden rounded-xl p-4 text-white shadow-md"
-              style={{ background: "linear-gradient(135deg, #0057A3 0%, #7C3AED 100%)" }}
+              style={{ background: "linear-gradient(135deg, #3D1E50 0%, #7C3AED 100%)" }}
             >
               <div className="flex items-center justify-between gap-3">
                 <div>
@@ -152,7 +152,7 @@ export default async function Home() {
           ) : (
             <div
               className="relative mb-4 block overflow-hidden rounded-xl p-4 text-white shadow-md"
-              style={{ background: "linear-gradient(135deg, #0057A3 0%, #7C3AED 100%)" }}
+              style={{ background: "linear-gradient(135deg, #3D1E50 0%, #7C3AED 100%)" }}
             >
               <p className="text-[10px] font-semibold uppercase tracking-widest opacity-85">
                 Got questions?
