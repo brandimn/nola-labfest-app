@@ -73,6 +73,29 @@ async function main() {
     console.log(`[booth-backfill] NOT removed, had people or data attached: ${keptBack.join(" | ")}`);
   }
 
+  // Amann was held back by the safety check because a test scan was attached.
+  // Brandi confirmed it goes. The scan cascades with the booth.
+  const AMANN_KEY = "booth-dropped-amann";
+  const amannDone = await prisma.setting.findUnique({ where: { key: AMANN_KEY } });
+  if (!amannDone) {
+    const booth = await prisma.vendor.findFirst({
+      where: { name: { startsWith: "Amann", mode: "insensitive" } },
+      include: { _count: { select: { staff: true, leads: true, boothScans: true } } },
+    });
+    if (booth) {
+      const c = booth._count;
+      await prisma.vendor.delete({ where: { id: booth.id } });
+      console.log(
+        `[booth-backfill] removed ${booth.name} on request (${c.staff} staff, ${c.leads} leads, ${c.boothScans} scans went with it)`
+      );
+    } else {
+      console.log("[booth-backfill] Amann: already gone");
+    }
+    await prisma.setting.create({ data: { key: AMANN_KEY, value: new Date().toISOString() } });
+  } else {
+    console.log("[booth-backfill] Amann removal: already done, skipped");
+  }
+
   const renamed = [];
   for (const [from, to] of Object.entries(RENAMES)) {
     const old = booths.find((b) => b.name === from);
