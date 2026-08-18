@@ -72,9 +72,9 @@ async function addRemainingTeam() {
     return;
   }
   const MORE = [
-    { name: "Kimmie Nowak", sortOrder: 5 },
-    { name: "Jeff Dalton",  sortOrder: 6 },
-    { name: "Haijin Yang",  sortOrder: 7 },
+    { name: "Haijin Yang",  sortOrder: 5 },
+    { name: "Kimmie Nowak", sortOrder: 6 },
+    { name: "Jeff Dalton",  sortOrder: 7 },
   ];
   const added = [];
   for (const m of MORE) {
@@ -86,6 +86,25 @@ async function addRemainingTeam() {
   console.log(`[restore] team members added (${added.length}): ${added.join(", ") || "none, already there"}`);
   const total = await prisma.teamMember.count();
   console.log(`[restore] Nowak team is now ${total} people`);
+  await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
+}
+
+// Haijin goes above Kimmie and Jeff. Separate key so it applies to rows the
+// step above already created.
+async function reorderTeam() {
+  const KEY = "team-order-haijin-above-v1";
+  if (await prisma.setting.findUnique({ where: { key: KEY } })) {
+    console.log("[restore] team order: already done, skipped");
+    return;
+  }
+  const ORDER = { "Haijin Yang": 5, "Kimmie Nowak": 6, "Jeff Dalton": 7 };
+  for (const [name, sortOrder] of Object.entries(ORDER)) {
+    await prisma.teamMember.updateMany({ where: { name }, data: { sortOrder } });
+  }
+  const team = await prisma.teamMember.findMany({
+    orderBy: { sortOrder: "asc" }, select: { name: true },
+  });
+  console.log(`[restore] team order: ${team.map((t) => t.name).join(" > ")}`);
   await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
 }
 
@@ -127,5 +146,6 @@ async function badgeTypeFromRole() {
 main()
   .then(badgeTypeFromRole)
   .then(addRemainingTeam)
+  .then(reorderTeam)
   .catch((e) => console.error("[restore] skipped:", e?.message ?? e))
   .finally(() => prisma.$disconnect());

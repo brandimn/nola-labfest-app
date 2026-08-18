@@ -16,7 +16,13 @@ type Booth = {
   sponsorTier: string | null;
 };
 
-export function MyBoothForm({ initial }: { initial: Booth }) {
+export function MyBoothForm({
+  initial,
+  allCategories = [],
+}: {
+  initial: Booth;
+  allCategories?: string[];
+}) {
   const router = useRouter();
   const [form, setForm] = useState(initial);
   const [saving, setSaving] = useState(false);
@@ -56,13 +62,52 @@ export function MyBoothForm({ initial }: { initial: Booth }) {
       <LogoUpload value={form.logoUrl} onChange={(v) => update("logoUrl", v || null)} label="Your logo" />
       <div>
         <label className="label">Categories</label>
+        <p className="mb-2 text-xs text-slate-500">
+          Tap the ones that fit your booth. This is how attendees filter the vendor list.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {allCategories.map((c) => {
+            const on = form.categories.includes(c);
+            return (
+              <button
+                key={c}
+                type="button"
+                onClick={() =>
+                  update(
+                    "categories",
+                    on ? form.categories.filter((x) => x !== c) : [...form.categories, c]
+                  )
+                }
+                className={
+                  on
+                    ? "rounded-full bg-[#7C3AED] px-3 py-1.5 text-sm font-semibold text-white"
+                    : "rounded-full border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700"
+                }
+              >
+                {on ? "✓ " : ""}{c}
+              </button>
+            );
+          })}
+        </div>
+
+        {form.categories.filter((c) => !allCategories.includes(c)).length > 0 && (
+          <p className="mt-2 text-xs text-slate-500">
+            Yours: {form.categories.filter((c) => !allCategories.includes(c)).join(", ")}
+          </p>
+        )}
+
+        <label className="label mt-3">Something not listed?</label>
         <input
           className="input"
-          value={form.categories.join(", ")}
-          onChange={(e) => update("categories", e.target.value.split(",").map((c) => c.trim()).filter(Boolean))}
-          placeholder="e.g. 3D Printing, Lab Materials"
+          placeholder="Type a category and press Enter"
+          onKeyDown={(e) => {
+            if (e.key !== "Enter") return;
+            e.preventDefault();
+            const v = (e.target as HTMLInputElement).value.trim();
+            if (v && !form.categories.includes(v)) update("categories", [...form.categories, v]);
+            (e.target as HTMLInputElement).value = "";
+          }}
         />
-        <p className="mt-1 text-xs text-slate-500">Separate with commas. Helps attendees find you.</p>
       </div>
       <div><label className="label">Website</label><input className="input" value={form.website ?? ""} onChange={(e) => update("website", e.target.value)} /></div>
       <div><label className="label">Contact email</label><input className="input" type="email" value={form.contactEmail ?? ""} onChange={(e) => update("contactEmail", e.target.value)} /></div>
