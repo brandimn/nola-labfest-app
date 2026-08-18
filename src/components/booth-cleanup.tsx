@@ -67,12 +67,18 @@ export function BoothCleanup() {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action: "MERGE_ALL" }),
     });
-    const d = await r.json();
+    const d = await r.json().catch(() => ({ error: "The server did not send back a readable answer" }));
     setBusy("");
     if (!r.ok) { setError(d.error || "Merge failed"); return; }
+    const lines = d.merged.map((m: any) =>
+      `${m.kept}${m.gained.length ? ` — got back ${m.gained.join(", ")}` : " — nothing to recover"}`
+    );
     setNote(
-      `Merged ${d.count} ${d.count === 1 ? "pair" : "pairs"}. ` +
-      d.merged.map((m: any) => `${m.kept}${m.gained.length ? ` (got back ${m.gained.join(", ")})` : ""}`).join("; ")
+      `Merged ${d.count} ${d.count === 1 ? "pair" : "pairs"}.\n` + lines.join("\n") +
+      (d.failed?.length
+        ? `\n\nCould not merge ${d.failed.length}:\n` +
+          d.failed.map((f: any) => `${f.pair} — ${f.reason}`).join("\n")
+        : "")
     );
     load();
   }
@@ -90,12 +96,17 @@ export function BoothCleanup() {
     load();
   }
 
-  if (error) return <p className="text-red-600 text-sm">{error}</p>;
+  if (error) return (
+    <div className="space-y-3">
+      <pre className="card whitespace-pre-wrap p-3 text-sm text-red-700">{error}</pre>
+      <button onClick={() => { setError(""); load(); }} className="btn-secondary text-sm">Try again</button>
+    </div>
+  );
   if (!data) return <p className="text-sm text-slate-500">Loading…</p>;
 
   return (
     <div className="space-y-6">
-      {note && <p className="text-green-700 text-sm">{note}</p>}
+      {note && <pre className="card whitespace-pre-wrap p-3 text-sm text-green-800">{note}</pre>}
       <p className="text-sm text-slate-600">{data.totalBooths} booths in the app.</p>
 
       <section>

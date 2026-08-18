@@ -27,7 +27,15 @@ function looksLikeSame(a: string, b: string) {
   return short.length >= 4 && long.startsWith(short);
 }
 
-function richness(v: { logoUrl: string | null; description: string | null; website: string | null; categories: string[]; sponsorTier: string | null; isLunchSponsor: boolean; atLOTM: boolean }) {
+type BoothRow = {
+  id: string; name: string; boothNumber: string;
+  logoUrl: string | null; description: string | null; website: string | null;
+  categories: string[]; category: string | null; sponsorTier: string | null;
+  isLunchSponsor: boolean; atLOTM: boolean; userId: string | null;
+  contactEmail: string | null; contactPhone: string | null;
+};
+
+function richness(v: BoothRow) {
   return [
     v.logoUrl, v.description, v.website, v.sponsorTier,
     v.categories?.length ? "cats" : null,
@@ -37,17 +45,16 @@ function richness(v: { logoUrl: string | null; description: string | null; websi
 }
 
 async function findPairs() {
-  const booths = await prisma.vendor.findMany({ orderBy: { name: "asc" } });
-  const pairs: { keepId: string; removeId: string; keepName: string; removeName: string }[] = [];
+  const booths = (await prisma.vendor.findMany({ orderBy: { name: "asc" } })) as BoothRow[];
+  const pairs: { keep: BoothRow; remove: BoothRow }[] = [];
   const used = new Set<string>();
   for (const a of booths) {
     for (const b of booths) {
-      if (a.id === b.id) continue;
+      if (a.id === b.id || a.name === b.name) continue;
       if (used.has(a.id) || used.has(b.id)) continue;
-      if (a.name === b.name) continue;
       if (!looksLikeSame(a.name, b.name)) continue;
       const [keep, remove] = richness(a) >= richness(b) ? [a, b] : [b, a];
-      pairs.push({ keepId: keep.id, removeId: remove.id, keepName: keep.name, removeName: remove.name });
+      pairs.push({ keep, remove });
       used.add(a.id); used.add(b.id);
     }
   }
@@ -55,14 +62,9 @@ async function findPairs() {
 }
 
 async function mergeOne(keepId: string, removeId: string) {
-  const keep = await prisma.vendor.findUnique({ where: { id: keepId } });
-  const remove = await prisma.vendor.findUnique({ where: { id: removeId } });
+  const keep = (await prisma.vendor.findUnique({ where: { id: keepId } })) as BoothRow | null;
+  const remove = (await prisma.vendor.findUnique({ where: { id: removeId } })) as BoothRow | null;
   if (!keep || !remove) return null;
-
-  await prisma.user.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } });
-  await prisma.lead.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } });
-  await prisma.boothScan.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } });
-  await prisma.boothVote.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } });
 
   const gained: string[] = [];
   if (!keep.logoUrl && remove.logoUrl) gained.push("logo");
@@ -73,25 +75,58 @@ async function mergeOne(keepId: string, removeId: string) {
   if (!keep.isLunchSponsor && remove.isLunchSponsor) gained.push("lunch sponsor");
   if (!keep.atLOTM && remove.atLOTM) gained.push("LOTM");
 
-  await prisma.vendor.update({
-    where: { id: keepId },
-    data: {
-      logoUrl: keep.logoUrl ?? remove.logoUrl,
-      website: keep.website ?? remove.website,
-      description: keep.description ?? remove.description,
-      contactEmail: keep.contactEmail ?? remove.contactEmail,
-      contactPhone: keep.contactPhone ?? remove.contactPhone,
-      sponsorTier: keep.sponsorTier ?? remove.sponsorTier,
-      categories: keep.categories?.length ? keep.categories : remove.categories,
-      category: keep.category ?? remove.category,
-      boothNumber: keep.boothNumber === "TBD" && remove.boothNumber !== "TBD" ? remove.boothNumber : keep.boothNumber,
-      isLunchSponsor: keep.isLunchSponsor || remove.isLunchSponsor,
-      atLOTM: keep.atLOTM || remove.atLOTM,
-      userId: keep.userId ?? remove.userId,
-    },
-  });
-  await prisma.vendor.update({ where: { id: removeId }, data: { userId: null } });
-  await prisma.vendor.delete({ where: { id: removeId } });
+  // Scans and leads are unique per attendee+booth. If the same attendee is on
+  // both booths, moving the row would collide, so drop the duplicate instead.
+  const [keepScans, keepLeads] = await Promise.all([
+    prisma.boothScan.findMany({ where: { vendorId: keepId }, select: { attendeeId: true } }),
+    prisma.lead.findMany({ where: { vendorId: keepId }, select: { attendeeId: true } }),
+  ]);
+  const scanAttendees = new Set(keepScans.map((s) => s.attendeeId));
+  const leadAttendees = new Set(keepLeads.map((l) => l.attendeeId));
+
+  await prisma.$transaction([
+    // Release the unique userId from the duplicate BEFORE the keeper claims it.
+    prisma.vendor.update({ where: { id: removeId }, data: { userId: null } }),
+
+    prisma.user.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } }),
+
+    prisma.boothScan.deleteMany({
+      where: { vendorId: removeId, attendeeId: { in: [...scanAttendees] } },
+    }),
+    prisma.boothScan.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } }),
+
+    prisma.lead.deleteMany({
+      where: { vendorId: removeId, attendeeId: { in: [...leadAttendees] } },
+    }),
+    prisma.lead.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } }),
+
+    // One vote per attendee overall, so these can never collide on the keeper.
+    prisma.boothVote.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } }),
+
+    prisma.vendor.update({
+      where: { id: keepId },
+      data: {
+        logoUrl: keep.logoUrl ?? remove.logoUrl,
+        website: keep.website ?? remove.website,
+        description: keep.description ?? remove.description,
+        contactEmail: keep.contactEmail ?? remove.contactEmail,
+        contactPhone: keep.contactPhone ?? remove.contactPhone,
+        sponsorTier: keep.sponsorTier ?? remove.sponsorTier,
+        categories: keep.categories?.length ? keep.categories : remove.categories,
+        category: keep.category ?? remove.category,
+        boothNumber:
+          keep.boothNumber === "TBD" && remove.boothNumber !== "TBD"
+            ? remove.boothNumber
+            : keep.boothNumber,
+        isLunchSponsor: keep.isLunchSponsor || remove.isLunchSponsor,
+        atLOTM: keep.atLOTM || remove.atLOTM,
+        userId: keep.userId ?? remove.userId,
+      },
+    }),
+
+    prisma.vendor.delete({ where: { id: removeId } }),
+  ]);
+
   return { kept: keep.name, removed: remove.name, gained };
 }
 
@@ -105,47 +140,25 @@ export async function GET() {
   });
 
   const shape = (b: (typeof booths)[number]) => ({
-    id: b.id,
-    name: b.name,
-    boothNumber: b.boothNumber,
+    id: b.id, name: b.name, boothNumber: b.boothNumber,
     onRoster: onList.has(b.name),
-    staff: b._count.staff,
-    leads: b._count.leads,
-    scans: b._count.boothScans,
-    detail: richness(b),
+    staff: b._count.staff, leads: b._count.leads, scans: b._count.boothScans,
+    detail: richness(b as unknown as BoothRow),
     has: {
-      logo: !!b.logoUrl,
-      website: !!b.website,
-      categories: b.categories?.length ?? 0,
-      description: !!b.description,
-      sponsorTier: b.sponsorTier,
-      lunchSponsor: b.isLunchSponsor,
-      lotm: b.atLOTM,
+      logo: !!b.logoUrl, website: !!b.website,
+      categories: b.categories?.length ?? 0, description: !!b.description,
+      sponsorTier: b.sponsorTier, lunchSponsor: b.isLunchSponsor, lotm: b.atLOTM,
     },
   });
 
-  // Pair a roster booth with an older booth that is plainly the same company.
-  const pairs: { keep: ReturnType<typeof shape>; remove: ReturnType<typeof shape> }[] = [];
-  const used = new Set<string>();
-  for (const a of booths) {
-    for (const b of booths) {
-      if (a.id === b.id) continue;
-      if (used.has(a.id) || used.has(b.id)) continue;
-      if (a.name === b.name) continue;
-      if (!looksLikeSame(a.name, b.name)) continue;
-      // Keep whichever record carries more real content.
-      const [keep, remove] = richness(a) >= richness(b) ? [a, b] : [b, a];
-      pairs.push({ keep: shape(keep), remove: shape(remove) });
-      used.add(a.id); used.add(b.id);
-    }
-  }
+  const pairs = await findPairs();
+  const removedIds = new Set(pairs.map((p) => p.remove.id));
+  const byId = new Map(booths.map((b) => [b.id, b]));
 
   const gaps = booths
-    .filter((b) => !pairs.some((p) => p.remove.id === b.id))
+    .filter((b) => !removedIds.has(b.id))
     .map((b) => ({
-      id: b.id,
-      name: b.name,
-      onRoster: onList.has(b.name),
+      id: b.id, name: b.name, onRoster: onList.has(b.name),
       missing: [
         !b.logoUrl && "logo",
         !b.website && "website",
@@ -160,8 +173,13 @@ export async function GET() {
 
   return NextResponse.json({
     totalBooths: booths.length,
-    duplicates: pairs,
-    notOnRoster: booths.filter((b) => !onList.has(b.name) && !pairs.some((p) => p.remove.id === b.id)).map(shape),
+    duplicates: pairs.map((p) => ({
+      keep: shape(byId.get(p.keep.id)!),
+      remove: shape(byId.get(p.remove.id)!),
+    })),
+    notOnRoster: booths
+      .filter((b) => !onList.has(b.name) && !removedIds.has(b.id))
+      .map(shape),
     gaps,
     autoFillable: gaps.filter((g) => g.canAutoFill).length,
   });
@@ -171,45 +189,56 @@ export async function POST(req: NextRequest) {
   if (!(await requireAdmin())) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const body = await req.json().catch(() => ({}));
 
-  // Merge a duplicate into the booth we are keeping. Everything attached to the
-  // duplicate moves across first, so no staff, lead or scan is lost.
-  if (body?.action === "MERGE") {
-    const { keepId, removeId } = body;
-    if (!keepId || !removeId || keepId === removeId) {
-      return NextResponse.json({ error: "Need two different booths" }, { status: 400 });
+  try {
+    if (body?.action === "MERGE") {
+      const { keepId, removeId } = body;
+      if (!keepId || !removeId || keepId === removeId) {
+        return NextResponse.json({ error: "Need two different booths" }, { status: 400 });
+      }
+      const merged = await mergeOne(keepId, removeId);
+      if (!merged) return NextResponse.json({ error: "Booth not found" }, { status: 404 });
+      return NextResponse.json({ ok: true, merged });
     }
-    const merged = await mergeOne(keepId, removeId);
-    if (!merged) return NextResponse.json({ error: "Booth not found" }, { status: 404 });
-    return NextResponse.json({ ok: true, merged });
-  }
 
-  // Merge every pair we detected, in one go.
-  if (body?.action === "MERGE_ALL") {
-    const pairs = await findPairs();
-    const merged = [];
-    for (const p of pairs) {
-      const r = await mergeOne(p.keepId, p.removeId);
-      if (r) merged.push(r);
+    if (body?.action === "MERGE_ALL") {
+      const pairs = await findPairs();
+      const merged = [];
+      const failed: { pair: string; reason: string }[] = [];
+      for (const p of pairs) {
+        try {
+          const r = await mergeOne(p.keep.id, p.remove.id);
+          if (r) merged.push(r);
+        } catch (e) {
+          failed.push({
+            pair: `${p.keep.name} + ${p.remove.name}`,
+            reason: e instanceof Error ? e.message : "unknown",
+          });
+        }
+      }
+      return NextResponse.json({ ok: true, count: merged.length, merged, failed });
     }
-    return NextResponse.json({ ok: true, count: merged.length, merged });
-  }
 
-  // Fill only the logo and website we can source. Never overwrites, never
-  // invents a description or a category.
-  if (body?.action === "FILL") {
-    const filled: { name: string; set: string[] }[] = [];
-    for (const [name, known] of Object.entries(KNOWN)) {
-      const booth = await prisma.vendor.findFirst({ where: { name } });
-      if (!booth) continue;
-      const data: { logoUrl?: string; website?: string } = {};
-      if (!booth.logoUrl && known.logoUrl) data.logoUrl = known.logoUrl;
-      if (!booth.website && known.website) data.website = known.website;
-      if (Object.keys(data).length === 0) continue;
-      await prisma.vendor.update({ where: { id: booth.id }, data });
-      filled.push({ name, set: Object.keys(data) });
+    if (body?.action === "FILL") {
+      const filled: { name: string; set: string[] }[] = [];
+      for (const [name, known] of Object.entries(KNOWN)) {
+        const booth = await prisma.vendor.findFirst({ where: { name } });
+        if (!booth) continue;
+        const data: { logoUrl?: string; website?: string } = {};
+        if (!booth.logoUrl && known.logoUrl) data.logoUrl = known.logoUrl;
+        if (!booth.website && known.website) data.website = known.website;
+        if (Object.keys(data).length === 0) continue;
+        await prisma.vendor.update({ where: { id: booth.id }, data });
+        filled.push({ name, set: Object.keys(data) });
+      }
+      return NextResponse.json({ ok: true, filled });
     }
-    return NextResponse.json({ ok: true, filled });
-  }
 
-  return NextResponse.json({ error: "Unknown action" }, { status: 400 });
+    return NextResponse.json({ error: "Unknown action" }, { status: 400 });
+  } catch (e) {
+    // Surface the real reason instead of letting the page show a generic hiccup.
+    return NextResponse.json(
+      { error: e instanceof Error ? e.message : "Something went wrong" },
+      { status: 500 }
+    );
+  }
 }
