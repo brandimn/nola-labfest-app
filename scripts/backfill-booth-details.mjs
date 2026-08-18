@@ -183,6 +183,20 @@ async function main() {
   console.log(`[booth-backfill] total booths now: ${after.length}`);
   console.log(`[booth-backfill] possible duplicates remaining (${dupes.length}): ${dupes.join(" | ") || "none"}`);
 
+  // Full inventory: a booth record is a company, not a person. Several of these
+  // are not a physical table, so list people per booth and let the workbook
+  // notes decide what actually needs floor space.
+  const withStaff = await prisma.vendor.findMany({
+    select: { name: true, boothNumber: true, _count: { select: { staff: true } } },
+    orderBy: { name: "asc" },
+  });
+  console.log(`[booth-inventory] ${withStaff.length} booth records:`);
+  for (const v of withStaff) {
+    console.log(`[booth-inventory]   ${v.name} — ${v._count.staff} people — booth ${v.boothNumber}`);
+  }
+  const totalPeople = withStaff.reduce((n, v) => n + v._count.staff, 0);
+  console.log(`[booth-inventory] people attached to booths: ${totalPeople}`);
+
   console.log(`[booth-backfill] still incomplete (${stillMissing.length}):`);
   for (const line of stillMissing) console.log(`[booth-backfill]   ${line}`);
 }
