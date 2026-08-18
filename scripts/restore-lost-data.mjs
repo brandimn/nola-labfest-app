@@ -62,6 +62,42 @@ async function main() {
   await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
 }
 
+// Everyone imported from the roster postdates the workbook's Namebadges tab, so
+// there is no row to match. Their badge type follows from what they are.
+async function badgeTypeFromRole() {
+  const KEY = "badge-type-from-role-v1";
+  if (await prisma.setting.findUnique({ where: { key: KEY } })) {
+    console.log("[restore] badge type from role: already done, skipped");
+    return;
+  }
+  const byRole = { VENDOR: "VENDOR", SPEAKER: "SPEAKER", ADMIN: "NOWAK" };
+  let n = 0;
+  for (const [role, badgeType] of Object.entries(byRole)) {
+    const r = await prisma.user.updateMany({
+      where: { role, badgeType: null },
+      data: { badgeType },
+    });
+    n += r.count;
+    console.log(`[restore] ${role} -> badge ${badgeType}: ${r.count}`);
+  }
+  // Anyone with a speaker profile is a speaker on their badge, whatever their role.
+  const speakers = await prisma.speaker.findMany({
+    where: { userId: { not: null } },
+    select: { userId: true },
+  });
+  const ids = speakers.map((s) => s.userId).filter(Boolean);
+  if (ids.length) {
+    const r = await prisma.user.updateMany({
+      where: { id: { in: ids }, badgeType: null },
+      data: { badgeType: "SPEAKER" },
+    });
+    n += r.count;
+  }
+  console.log(`[restore] badge type set from role on ${n} people`);
+  await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
+}
+
 main()
+  .then(badgeTypeFromRole)
   .catch((e) => console.error("[restore] skipped:", e?.message ?? e))
   .finally(() => prisma.$disconnect());
