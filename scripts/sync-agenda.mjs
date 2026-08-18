@@ -84,6 +84,25 @@ async function main() {
   }
   console.log(`[agenda] lunch sponsors: ${marked.join(" | ")}`);
 
+  // Sponsorship tags taken from the agenda page. Applied once so that editing
+  // or clearing them in the admin screen afterwards is not undone by a deploy.
+  const TAGS = { "Scheftner": ["Distillery Sponsor"] };
+  const TAGS_KEY = "vendor-sponsorship-tags-v1";
+  const tagsDone = await prisma.setting.findUnique({ where: { key: TAGS_KEY } });
+  if (!tagsDone) {
+    const out = [];
+    for (const [name, labels] of Object.entries(TAGS)) {
+      const v = await prisma.vendor.findFirst({ where: { name: { equals: name, mode: "insensitive" } } });
+      if (!v) { out.push(`${name}: no booth`); continue; }
+      await prisma.vendor.update({ where: { id: v.id }, data: { sponsorships: labels } });
+      out.push(`${v.name}: ${labels.join(", ")}`);
+    }
+    await prisma.setting.create({ data: { key: TAGS_KEY, value: new Date().toISOString() } });
+    console.log(`[agenda] sponsorship tags: ${out.join(" | ")}`);
+  } else {
+    console.log("[agenda] sponsorship tags: already done, skipped");
+  }
+
   const total = await prisma.session.count();
   console.log(`[agenda] sessions in the app now: ${total}`);
 }

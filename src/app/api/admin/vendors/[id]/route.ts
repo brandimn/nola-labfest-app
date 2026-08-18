@@ -31,6 +31,11 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   for (const f of ["logoUrl", "website", "contactEmail", "contactPhone", "description", "sponsorTier"] as const) {
     if (f in body) data[f] = body[f] || null;
   }
+  if ("sponsorships" in body) {
+    data.sponsorships = Array.isArray(body.sponsorships)
+      ? body.sponsorships.map((x: unknown) => String(x).trim()).filter(Boolean)
+      : [];
+  }
   if ("atLabFest" in body) data.atLabFest = body.atLabFest !== false;
   if ("isLunchSponsor" in body) data.isLunchSponsor = body.isLunchSponsor === true;
   if ("atLOTM" in body) data.atLOTM = body.atLOTM === true;

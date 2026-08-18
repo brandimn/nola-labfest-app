@@ -1,6 +1,8 @@
 type Vendor = {
   atLabFest?: boolean | null;
   isLunchSponsor?: boolean | null;
+  /** Free text sponsorships, e.g. "Distillery Sponsor". Set by the organisers. */
+  sponsorships?: string[] | null;
 };
 
 /** Small tags that appear next to a vendor name indicating sponsorships/events.
@@ -29,6 +31,14 @@ export function VendorPills({
           LabFest
         </span>
       )}
+      {(vendor.sponsorships ?? []).map((label) => (
+        <span
+          key={label}
+          className={`rounded-full bg-[#7C3AED] text-white ${cls} font-bold uppercase tracking-wider`}
+        >
+          {label}
+        </span>
+      ))}
       {vendor.isLunchSponsor && !hidden.has("lunch") && (
         <span
           className={`rounded-full bg-[#F5A547] text-slate-900 ${cls} font-bold uppercase tracking-wider`}

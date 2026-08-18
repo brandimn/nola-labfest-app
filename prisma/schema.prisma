@@ -58,6 +58,7 @@ model Vendor {
   atLabFest       Boolean  @default(true)
   atLOTM          Boolean  @default(false)
   isLunchSponsor  Boolean  @default(false)
+  sponsorships    String[] @default([])   // free text tags e.g. "Distillery Sponsor"
   boothToken   String   @unique @default(cuid())
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

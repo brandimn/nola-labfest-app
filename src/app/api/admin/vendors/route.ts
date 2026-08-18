@@ -41,6 +41,9 @@ export async function POST(req: NextRequest) {
       atLabFest: body.atLabFest !== false,
       atLOTM: body.atLOTM === true,
       isLunchSponsor: body.isLunchSponsor === true,
+      sponsorships: Array.isArray(body.sponsorships)
+        ? body.sponsorships.map((x: unknown) => String(x).trim()).filter(Boolean)
+        : [],
     },
   });
   return NextResponse.json(v);

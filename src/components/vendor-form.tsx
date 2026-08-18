@@ -18,6 +18,7 @@ type Vendor = {
   sponsorTier: string | null;
   atLabFest: boolean;
   isLunchSponsor: boolean;
+  sponsorships: string[];
 };
 
 export function VendorForm({ initial }: { initial?: Vendor }) {
@@ -36,6 +37,7 @@ export function VendorForm({ initial }: { initial?: Vendor }) {
       sponsorTier: "",
       atLabFest: true,
       isLunchSponsor: false,
+      sponsorships: [],
     }
   );
   const [error, setError] = useState("");
@@ -108,6 +110,23 @@ export function VendorForm({ initial }: { initial?: Vendor }) {
           <option value="SILVER">Silver</option>
           <option value="BRONZE">Bronze</option>
         </select>
+      </div>
+      <div>
+        <label className="label">Sponsorships</label>
+        <input
+          className="input"
+          value={(form.sponsorships ?? []).join(", ")}
+          onChange={(e) =>
+            update(
+              "sponsorships",
+              e.target.value.split(",").map((c) => c.trim()).filter(Boolean)
+            )
+          }
+          placeholder="e.g. Distillery Sponsor, Workshop Sponsor"
+        />
+        <p className="mt-1 text-xs text-slate-500">
+          Comma separated. Each one shows as a purple tag next to the vendor name.
+        </p>
       </div>
       <div>
         <label className="label">Categories</label>
