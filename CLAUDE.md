@@ -66,10 +66,23 @@ Roster-imported accounts get `mustChangePassword: true`. `requireUser()` in `src
 redirects them to `/change-password` until they pick their own. The check reads the database,
 not the login token, so it clears immediately.
 
+## There are TWO Vercel projects, only one is real
+`nola-labfest-app` is the live site and holds the environment variables.
+`nola-labfest-app-ka2f` is a duplicate with no DATABASE_URL. Both were connected to the same
+GitHub repo, so every push built both and the duplicate failed instantly, sending Brandi a
+"failed production deployment" email every time. Its GitHub connection was disconnected on
+2026-08-18. Do not reconnect it, and check `npx vercel project ls` before trusting any claim
+about which project is failing.
+
 ## Deploys
 `npm run build` runs `prisma db push`, so deploying applies schema changes to the live database.
-Prisma refuses destructive changes without a flag, so additive changes are safe, but be careful
-with renames and column removals.
+Prisma refuses destructive changes without a flag, so additive changes are safe.
+
+NEVER pass `--accept-data-loss`. On 2026-08-18 it was used to get one harmless unique constraint
+applied, from a checkout that was 30 commits behind. It dropped TeamMember (5 rows),
+GalleryPhoto (1 row), User.state (67 values), User.badgeType (69) and the Vendor and Session
+columns added in those commits. Read every line of the warning list, not the first one. If a
+constraint genuinely needs forcing, fetch and merge first so the schema being pushed is current.
 
 ## Working style notes
 - Brandi gets one prompt at a time, test between each change
