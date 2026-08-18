@@ -60,6 +60,23 @@ export function BoothCleanup() {
     load();
   }
 
+  async function mergeAll() {
+    if (!confirm(`Merge all ${data?.duplicates.length} pairs?\n\nEach one keeps the fuller booth and folds the empty copy into it. Staff, leads and scans move across first.`)) return;
+    setBusy("mergeAll"); setError(""); setNote("");
+    const r = await fetch("/api/admin/booth-cleanup", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "MERGE_ALL" }),
+    });
+    const d = await r.json();
+    setBusy("");
+    if (!r.ok) { setError(d.error || "Merge failed"); return; }
+    setNote(
+      `Merged ${d.count} ${d.count === 1 ? "pair" : "pairs"}. ` +
+      d.merged.map((m: any) => `${m.kept}${m.gained.length ? ` (got back ${m.gained.join(", ")})` : ""}`).join("; ")
+    );
+    load();
+  }
+
   async function fill() {
     setBusy("fill"); setError(""); setNote("");
     const r = await fetch("/api/admin/booth-cleanup", {
@@ -88,6 +105,17 @@ export function BoothCleanup() {
         {data.duplicates.length === 0 ? (
           <p className="text-sm text-slate-500">None. Nothing is doubled up.</p>
         ) : (
+          <>
+          <div className="card mb-3 p-4">
+            <p className="mb-2 text-sm">
+              Merge all {data.duplicates.length} at once. Each keeps the fuller booth and folds
+              the empty copy into it, so your photos, descriptions, categories and sponsor flags
+              come back onto one listing.
+            </p>
+            <button onClick={mergeAll} disabled={busy === "mergeAll"} className="btn-primary text-sm">
+              {busy === "mergeAll" ? "Merging…" : `Merge all ${data.duplicates.length}`}
+            </button>
+          </div>
           <ul className="space-y-3">
             {data.duplicates.map((p) => (
               <li key={p.remove.id} className="card p-4">
@@ -111,6 +139,7 @@ export function BoothCleanup() {
               </li>
             ))}
           </ul>
+          </>
         )}
       </section>
 

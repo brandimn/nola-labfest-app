@@ -36,6 +36,65 @@ function richness(v: { logoUrl: string | null; description: string | null; websi
   ].filter(Boolean).length;
 }
 
+async function findPairs() {
+  const booths = await prisma.vendor.findMany({ orderBy: { name: "asc" } });
+  const pairs: { keepId: string; removeId: string; keepName: string; removeName: string }[] = [];
+  const used = new Set<string>();
+  for (const a of booths) {
+    for (const b of booths) {
+      if (a.id === b.id) continue;
+      if (used.has(a.id) || used.has(b.id)) continue;
+      if (a.name === b.name) continue;
+      if (!looksLikeSame(a.name, b.name)) continue;
+      const [keep, remove] = richness(a) >= richness(b) ? [a, b] : [b, a];
+      pairs.push({ keepId: keep.id, removeId: remove.id, keepName: keep.name, removeName: remove.name });
+      used.add(a.id); used.add(b.id);
+    }
+  }
+  return pairs;
+}
+
+async function mergeOne(keepId: string, removeId: string) {
+  const keep = await prisma.vendor.findUnique({ where: { id: keepId } });
+  const remove = await prisma.vendor.findUnique({ where: { id: removeId } });
+  if (!keep || !remove) return null;
+
+  await prisma.user.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } });
+  await prisma.lead.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } });
+  await prisma.boothScan.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } });
+  await prisma.boothVote.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } });
+
+  const gained: string[] = [];
+  if (!keep.logoUrl && remove.logoUrl) gained.push("logo");
+  if (!keep.description && remove.description) gained.push("description");
+  if (!keep.website && remove.website) gained.push("website");
+  if (!keep.categories?.length && remove.categories?.length) gained.push("categories");
+  if (!keep.sponsorTier && remove.sponsorTier) gained.push("sponsor tier");
+  if (!keep.isLunchSponsor && remove.isLunchSponsor) gained.push("lunch sponsor");
+  if (!keep.atLOTM && remove.atLOTM) gained.push("LOTM");
+
+  await prisma.vendor.update({
+    where: { id: keepId },
+    data: {
+      logoUrl: keep.logoUrl ?? remove.logoUrl,
+      website: keep.website ?? remove.website,
+      description: keep.description ?? remove.description,
+      contactEmail: keep.contactEmail ?? remove.contactEmail,
+      contactPhone: keep.contactPhone ?? remove.contactPhone,
+      sponsorTier: keep.sponsorTier ?? remove.sponsorTier,
+      categories: keep.categories?.length ? keep.categories : remove.categories,
+      category: keep.category ?? remove.category,
+      boothNumber: keep.boothNumber === "TBD" && remove.boothNumber !== "TBD" ? remove.boothNumber : keep.boothNumber,
+      isLunchSponsor: keep.isLunchSponsor || remove.isLunchSponsor,
+      atLOTM: keep.atLOTM || remove.atLOTM,
+      userId: keep.userId ?? remove.userId,
+    },
+  });
+  await prisma.vendor.update({ where: { id: removeId }, data: { userId: null } });
+  await prisma.vendor.delete({ where: { id: removeId } });
+  return { kept: keep.name, removed: remove.name, gained };
+}
+
 export async function GET() {
   if (!(await requireAdmin())) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
@@ -119,37 +178,20 @@ export async function POST(req: NextRequest) {
     if (!keepId || !removeId || keepId === removeId) {
       return NextResponse.json({ error: "Need two different booths" }, { status: 400 });
     }
-    const keep = await prisma.vendor.findUnique({ where: { id: keepId } });
-    const remove = await prisma.vendor.findUnique({ where: { id: removeId } });
-    if (!keep || !remove) return NextResponse.json({ error: "Booth not found" }, { status: 404 });
+    const merged = await mergeOne(keepId, removeId);
+    if (!merged) return NextResponse.json({ error: "Booth not found" }, { status: 404 });
+    return NextResponse.json({ ok: true, merged });
+  }
 
-    await prisma.user.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } });
-    await prisma.lead.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } });
-    await prisma.boothScan.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } });
-    await prisma.boothVote.updateMany({ where: { vendorId: removeId }, data: { vendorId: keepId } });
-
-    // Carry over anything the kept record is missing, then hand over the
-    // primary contact if the kept booth has none.
-    await prisma.vendor.update({
-      where: { id: keepId },
-      data: {
-        logoUrl: keep.logoUrl ?? remove.logoUrl,
-        website: keep.website ?? remove.website,
-        description: keep.description ?? remove.description,
-        contactEmail: keep.contactEmail ?? remove.contactEmail,
-        contactPhone: keep.contactPhone ?? remove.contactPhone,
-        sponsorTier: keep.sponsorTier ?? remove.sponsorTier,
-        categories: keep.categories?.length ? keep.categories : remove.categories,
-        category: keep.category ?? remove.category,
-        boothNumber: keep.boothNumber === "TBD" && remove.boothNumber !== "TBD" ? remove.boothNumber : keep.boothNumber,
-        isLunchSponsor: keep.isLunchSponsor || remove.isLunchSponsor,
-        atLOTM: keep.atLOTM || remove.atLOTM,
-        userId: keep.userId ?? remove.userId,
-      },
-    });
-    await prisma.vendor.update({ where: { id: removeId }, data: { userId: null } });
-    await prisma.vendor.delete({ where: { id: removeId } });
-    return NextResponse.json({ ok: true, merged: { kept: keep.name, removed: remove.name } });
+  // Merge every pair we detected, in one go.
+  if (body?.action === "MERGE_ALL") {
+    const pairs = await findPairs();
+    const merged = [];
+    for (const p of pairs) {
+      const r = await mergeOne(p.keepId, p.removeId);
+      if (r) merged.push(r);
+    }
+    return NextResponse.json({ ok: true, count: merged.length, merged });
   }
 
   // Fill only the logo and website we can source. Never overwrites, never
