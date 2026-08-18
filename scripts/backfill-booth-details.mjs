@@ -19,6 +19,25 @@ async function main() {
     },
   });
 
+  // One time only, tracked in Setting so it can never fire again. Once real
+  // booth numbers are assigned, a later deploy must not wipe them.
+  const RESET_KEY = "booth-numbers-reset-to-tbd";
+  const alreadyReset = await prisma.setting.findUnique({ where: { key: RESET_KEY } });
+  let resetCount = 0;
+  if (!alreadyReset) {
+    const r = await prisma.vendor.updateMany({
+      where: { NOT: { boothNumber: "TBD" } },
+      data: { boothNumber: "TBD" },
+    });
+    resetCount = r.count;
+    await prisma.setting.create({
+      data: { key: RESET_KEY, value: new Date().toISOString() },
+    });
+  }
+  console.log(
+    `[booth-backfill] booth numbers reset to TBD: ${alreadyReset ? "already done, skipped" : resetCount}`
+  );
+
   const renamed = [];
   for (const [from, to] of Object.entries(RENAMES)) {
     const old = booths.find((b) => b.name === from);
