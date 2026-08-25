@@ -7,7 +7,8 @@ A Progressive Web App (PWA) for the annual NOLA LabFest dental industry event ho
 Brandi Nowak Dalton, co-owner of Nowak Dental Supplies (GitHub: brandimn)
 
 ## Live URLs
-- Production: https://nola-labfest-app.vercel.app
+- Production: https://app.nolalabfest.com (custom domain, added 2026-08-25)
+- Also still works: https://nola-labfest-app.vercel.app
 - GitHub repo: https://github.com/brandimn/nola-labfest-app.git
 
 ## Tech stack
@@ -73,6 +74,15 @@ GitHub repo, so every push built both and the duplicate failed instantly, sendin
 "failed production deployment" email every time. Its GitHub connection was disconnected on
 2026-08-18. Do not reconnect it, and check `npx vercel project ls` before trusting any claim
 about which project is failing.
+
+## The app address lives in NEXTAUTH_URL
+It is not just the sign in redirect. Booth QR codes, attendee badge QR codes, password reset
+links and invite emails all build their URLs from it. If the domain ever changes, update
+NEXTAUTH_URL in the Vercel dashboard and redeploy, or printed QR codes will carry the old
+address forever. It is set to https://app.nolalabfest.com.
+
+DNS for nolalabfest.com is managed by Marybeth in Squarespace. `app` is an A record to
+76.76.21.21. The marketing site nolalabfest.com is a separate Squarespace site, not ours.
 
 ## Deploys
 `npm run build` runs `prisma db push`, so deploying applies schema changes to the live database.
