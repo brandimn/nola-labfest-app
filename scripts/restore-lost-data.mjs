@@ -192,14 +192,14 @@ async function teamTitlesRest() {
 // Point the packet buttons at the login protected route. The packets contain
 // the shared password in plain text, so they must not sit on a public URL.
 async function packetLinks() {
-  const KEY = "packet-links-v1";
+  const KEY = "packet-links-v2";
   if (await prisma.setting.findUnique({ where: { key: KEY } })) {
     console.log("[restore] packet links: already done, skipped");
     return;
   }
   const LINKS = {
-    vendorPacketUrl: "/api/packet/vendor",
-    speakerPacketUrl: "/api/packet/speaker",
+    vendorPacketUrl: "/packet/vendor",
+    speakerPacketUrl: "/packet/speaker",
   };
   for (const [key, value] of Object.entries(LINKS)) {
     await prisma.setting.upsert({ where: { key }, create: { key, value }, update: { value } });

@@ -129,8 +129,7 @@ export default async function Home() {
           (vendorPacketUrl ? (
             <a
               href={vendorPacketUrl}
-              target="_blank"
-              rel="noreferrer"
+              {...(vendorPacketUrl.startsWith("/") ? {} : { target: "_blank", rel: "noreferrer" })}
               className="relative mb-4 block overflow-hidden rounded-xl p-4 text-white shadow-md"
               style={{ background: "linear-gradient(135deg, #3D1E50 0%, #7C3AED 100%)" }}
             >
@@ -166,8 +165,7 @@ export default async function Home() {
           (speakerPacketUrl ? (
             <a
               href={speakerPacketUrl}
-              target="_blank"
-              rel="noreferrer"
+              {...(speakerPacketUrl.startsWith("/") ? {} : { target: "_blank", rel: "noreferrer" })}
               className="relative mb-4 block overflow-hidden rounded-xl p-4 text-white shadow-md"
               style={{ background: "linear-gradient(135deg, #3D1E50 0%, #B13E7D 100%)" }}
             >

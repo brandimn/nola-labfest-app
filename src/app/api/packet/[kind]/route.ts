@@ -49,6 +49,9 @@ export async function GET(req: NextRequest, { params }: { params: { kind: string
     return NextResponse.json({ error: "That packet is not for your account" }, { status: 403 });
   }
 
+  // "Save a copy" forces a download even for a PDF, which otherwise displays.
+  const forceDownload = req.nextUrl.searchParams.get("download") === "1";
+
   for (const fmt of FORMATS) {
     try {
       const buf = await readFile(
@@ -58,7 +61,7 @@ export async function GET(req: NextRequest, { params }: { params: { kind: string
         headers: {
           "Content-Type": fmt.type,
           "Content-Length": String(buf.length),
-          "Content-Disposition": `${fmt.disposition}; filename="${KINDS[kind].name}.${fmt.ext}"`,
+          "Content-Disposition": `${forceDownload ? "attachment" : fmt.disposition}; filename="${KINDS[kind].name}.${fmt.ext}"`,
           "Cache-Control": "private, max-age=300",
         },
       });
