@@ -8,19 +8,28 @@ import { prisma } from "@/lib/prisma";
 // The packets contain the shared LabFest password in plain text, so they must
 // never sit on a public URL. They live outside /public and are only handed over
 // to someone already signed in who is actually a vendor or a speaker.
-const FILES = {
-  vendor: { file: "vendor-packet.docx", name: "NOLA LabFest 2026 Vendor Packet.docx" },
-  speaker: { file: "speaker-packet.docx", name: "NOLA LabFest 2026 Speaker Packet.docx" },
+const KINDS = {
+  vendor: { base: "vendor-packet", name: "NOLA LabFest 2026 Vendor Packet" },
+  speaker: { base: "speaker-packet", name: "NOLA LabFest 2026 Speaker Packet" },
 } as const;
 
-const DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+// PDF first: iOS Safari renders a PDF inline but shows a blank page for a Word
+// file, so a Word file has to be sent as a download instead of displayed.
+const FORMATS = [
+  { ext: "pdf", type: "application/pdf", disposition: "inline" },
+  {
+    ext: "docx",
+    type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    disposition: "attachment",
+  },
+] as const;
 
-export async function GET(_req: NextRequest, { params }: { params: { kind: string } }) {
-  const kind = params.kind as keyof typeof FILES;
-  if (!FILES[kind]) return NextResponse.json({ error: "Not found" }, { status: 404 });
+export async function GET(req: NextRequest, { params }: { params: { kind: string } }) {
+  const kind = params.kind as keyof typeof KINDS;
+  if (!KINDS[kind]) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
   const session = await getServerSession(authOptions);
-  if (!session?.user) return NextResponse.redirect(new URL("/login", _req.url));
+  if (!session?.user) return NextResponse.redirect(new URL("/login", req.url));
 
   const me = await prisma.user.findUnique({
     where: { id: session.user.id },
@@ -31,9 +40,8 @@ export async function GET(_req: NextRequest, { params }: { params: { kind: strin
       ownedSpeaker: { select: { id: true } },
     },
   });
-  const isAdmin = me?.role === "ADMIN";
   const allowed =
-    isAdmin ||
+    me?.role === "ADMIN" ||
     (kind === "vendor" && !!(me?.vendorId || me?.ownedVendor)) ||
     (kind === "speaker" && !!me?.ownedSpeaker);
 
@@ -41,17 +49,26 @@ export async function GET(_req: NextRequest, { params }: { params: { kind: strin
     return NextResponse.json({ error: "That packet is not for your account" }, { status: 403 });
   }
 
-  try {
-    const buf = await readFile(path.join(process.cwd(), "packets", FILES[kind].file));
-    return new NextResponse(new Uint8Array(buf), {
-      headers: {
-        "Content-Type": DOCX,
-        // inline so phones preview it rather than dumping it straight to Files
-        "Content-Disposition": `inline; filename="${FILES[kind].name}"`,
-        "Cache-Control": "private, max-age=300",
-      },
-    });
-  } catch {
-    return NextResponse.json({ error: "Packet is not uploaded yet" }, { status: 404 });
+  for (const fmt of FORMATS) {
+    try {
+      const buf = await readFile(
+        path.join(process.cwd(), "packets", `${KINDS[kind].base}.${fmt.ext}`)
+      );
+      return new NextResponse(new Uint8Array(buf), {
+        headers: {
+          "Content-Type": fmt.type,
+          "Content-Length": String(buf.length),
+          "Content-Disposition": `${fmt.disposition}; filename="${KINDS[kind].name}.${fmt.ext}"`,
+          "Cache-Control": "private, max-age=300",
+        },
+      });
+    } catch {
+      // try the next format
+    }
   }
+
+  return NextResponse.json(
+    { error: "That packet has not been uploaded yet. Tell Brandi." },
+    { status: 404 }
+  );
 }
