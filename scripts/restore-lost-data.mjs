@@ -189,6 +189,25 @@ async function teamTitlesRest() {
   await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
 }
 
+// Point the packet buttons at the login protected route. The packets contain
+// the shared password in plain text, so they must not sit on a public URL.
+async function packetLinks() {
+  const KEY = "packet-links-v1";
+  if (await prisma.setting.findUnique({ where: { key: KEY } })) {
+    console.log("[restore] packet links: already done, skipped");
+    return;
+  }
+  const LINKS = {
+    vendorPacketUrl: "/api/packet/vendor",
+    speakerPacketUrl: "/api/packet/speaker",
+  };
+  for (const [key, value] of Object.entries(LINKS)) {
+    await prisma.setting.upsert({ where: { key }, create: { key, value }, update: { value } });
+  }
+  console.log(`[restore] packet links set: ${Object.values(LINKS).join(" | ")}`);
+  await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
+}
+
 // Everyone imported from the roster postdates the workbook's Namebadges tab, so
 // there is no row to match. Their badge type follows from what they are.
 async function badgeTypeFromRole() {
@@ -231,5 +250,6 @@ main()
   .then(teamEmails)
   .then(teamTitles)
   .then(teamTitlesRest)
+  .then(packetLinks)
   .catch((e) => console.error("[restore] skipped:", e?.message ?? e))
   .finally(() => prisma.$disconnect());

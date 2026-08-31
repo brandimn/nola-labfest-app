@@ -6,6 +6,13 @@ const nextConfig = {
     remotePatterns: [],
   },
   eslint: { ignoreDuringBuilds: true },
+  // The packet files live outside /public on purpose, so tell Vercel to ship
+  // them with the function that serves them.
+  experimental: {
+    outputFileTracingIncludes: {
+      "/api/packet/[kind]": ["./packets/**"],
+    },
+  },
   typescript: { ignoreBuildErrors: true },
   async headers() {
     return [

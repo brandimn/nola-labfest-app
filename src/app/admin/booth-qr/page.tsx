@@ -55,10 +55,15 @@ export default async function AdminBoothQrPage() {
               {b.logoUrl ? (
                 <img src={b.logoUrl} alt={b.name} className="mb-2 h-12 w-auto object-contain" />
               ) : null}
-              <p className="font-display text-xl font-bold leading-tight">{b.name}</p>
-              <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-[#7C3AED]">
-                Booth {b.boothNumber}
-              </p>
+              <p className="mb-3 font-display text-xl font-bold leading-tight">{b.name}</p>
+              {/* Printed and framed before the floor plan is settled, so a
+                  placeholder booth number is worse than none. Shows again on its
+                  own once real numbers are assigned. */}
+              {b.boothNumber && b.boothNumber.toUpperCase() !== "TBD" && (
+                <p className="mb-3 -mt-2 text-xs font-semibold uppercase tracking-wider text-[#7C3AED]">
+                  Booth {b.boothNumber}
+                </p>
+              )}
               <img src={b.qr} alt={`${b.name} booth QR`} className="h-44 w-44" />
               <p className="mt-3 text-xs text-slate-500">Scan to earn your stamp 🤓</p>
             </div>
