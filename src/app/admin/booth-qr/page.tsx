@@ -2,7 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
 import QRCode from "qrcode";
 import Link from "next/link";
-import { Printer, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { PrintButton } from "@/components/print-button";
 
 export const dynamic = "force-dynamic";
 
@@ -38,9 +39,7 @@ export default async function AdminBoothQrPage() {
             {booths.length} booth signs · print and place one at each booth. Attendees scan these to earn passport stamps.
           </p>
         </div>
-        <button onClick={undefined as any} className="btn-primary inline-flex items-center gap-2 print-btn">
-          <Printer className="h-4 w-4" /> Print booth signs
-        </button>
+        <PrintButton label="Print booth signs" />
       </div>
 
       {booths.length === 0 ? (
@@ -82,11 +81,6 @@ export default async function AdminBoothQrPage() {
           nav, .print\\:hidden { display: none !important; }
         }
       `}</style>
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `document.querySelectorAll('.print-btn').forEach(b=>b.addEventListener('click',()=>window.print()));`,
-        }}
-      />
     </main>
   );
 }

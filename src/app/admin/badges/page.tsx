@@ -2,7 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
 import QRCode from "qrcode";
 import Link from "next/link";
-import { Printer, ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { PrintButton } from "@/components/print-button";
 
 export const dynamic = "force-dynamic";
 
@@ -80,12 +81,7 @@ export default async function AdminBadgesPage({
             {badges.length} {badges.length === 1 ? "badge" : "badges"} ready to print · 4 per letter-size page
           </p>
         </div>
-        <button
-          onClick={undefined as any}
-          className="btn-primary inline-flex items-center gap-2 print-btn"
-        >
-          <Printer className="h-4 w-4" /> Print badges
-        </button>
+        <PrintButton label="Print badges" />
       </div>
 
       <form className="mb-4 print:hidden" action="">
@@ -128,7 +124,6 @@ export default async function AdminBadgesPage({
           .badge-card { box-shadow: none !important; }
         }
       `}</style>
-      <PrintButtonScript />
     </main>
   );
 }
@@ -222,12 +217,3 @@ function BadgeCard({
   );
 }
 
-function PrintButtonScript() {
-  return (
-    <script
-      dangerouslySetInnerHTML={{
-        __html: `document.querySelectorAll('.print-btn').forEach(b => b.addEventListener('click', () => window.print()));`,
-      }}
-    />
-  );
-}
