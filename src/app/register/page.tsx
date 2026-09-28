@@ -68,6 +68,9 @@ export default function RegisterPage() {
           <div>
             <label className="label">Name</label>
             <input className="input" value={form.name} onChange={(e) => update("name", e.target.value)} required />
+            <p className="mt-1 text-xs text-slate-500">
+              Enter your name the way it&rsquo;s on your invite so we can match your registration.
+            </p>
           </div>
           <div>
             <label className="label">Email</label>
