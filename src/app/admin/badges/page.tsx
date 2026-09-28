@@ -30,10 +30,13 @@ async function qrFor(token: string) {
 export default async function AdminBadgesPage({
   searchParams,
 }: {
-  searchParams: { q?: string };
+  searchParams: { q?: string; since?: string };
 }) {
   await requireRole("ADMIN");
   const q = searchParams.q?.trim();
+  const since = searchParams.since?.trim();
+  const sinceDate = since && !isNaN(Date.parse(since)) ? new Date(since) : null;
+  const todayStr = new Date().toLocaleDateString("en-CA", { timeZone: "America/Chicago" });
 
   const bgSetting = await prisma.setting.findUnique({
     where: { key: "badgeBackgroundUrl" },
@@ -43,6 +46,7 @@ export default async function AdminBadgesPage({
   const attendees = await prisma.user.findMany({
     where: {
       badgeType: { not: null },
+      ...(sinceDate ? { createdAt: { gte: sinceDate } } : {}),
       ...(q
         ? {
             OR: [
@@ -84,15 +88,42 @@ export default async function AdminBadgesPage({
         <PrintButton label="Print badges" />
       </div>
 
-      <form className="mb-4 print:hidden" action="">
-        <input
-          name="q"
-          type="search"
-          defaultValue={q ?? ""}
-          placeholder="Filter by name, email, or company…"
-          className="input"
-        />
+      <form className="mb-2 flex flex-wrap items-end gap-2 print:hidden" action="">
+        <div className="min-w-[180px] flex-1">
+          <label className="mb-1 block text-xs font-semibold text-slate-500">Search</label>
+          <input
+            name="q"
+            type="search"
+            defaultValue={q ?? ""}
+            placeholder="name, email, or company…"
+            className="input"
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-semibold text-slate-500">Added on/after</label>
+          <input name="since" type="date" defaultValue={since ?? ""} className="input" />
+        </div>
+        <button type="submit" className="btn-secondary">Filter</button>
       </form>
+      <div className="mb-4 flex flex-wrap gap-2 text-xs print:hidden">
+        <a
+          href={`?since=${todayStr}`}
+          className="rounded-full bg-[#7C3AED]/10 px-3 py-1 font-semibold text-[#7C3AED] hover:bg-[#7C3AED]/20"
+        >
+          Just today&rsquo;s additions
+        </a>
+        <a
+          href="?"
+          className="rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-600 hover:bg-slate-200"
+        >
+          Show all
+        </a>
+        {sinceDate && (
+          <span className="rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-700">
+            Showing badges added on/after {since}
+          </span>
+        )}
+      </div>
 
       {badges.length === 0 ? (
         <div className="card p-8 text-center text-slate-500 print:hidden">
