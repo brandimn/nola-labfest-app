@@ -141,18 +141,25 @@ export default async function AdminBadgesPage({
         .badge-grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
-          gap: 0.35in;
+          gap: 0.45in;
         }
+        .badge-slot { position: relative; }
+        .cropmark { position: absolute; width: 0.14in; height: 0.14in; pointer-events: none; }
+        .cm-tl { top: -0.12in; left: -0.12in; border-top: 0.6pt solid #94a3b8; border-left: 0.6pt solid #94a3b8; }
+        .cm-tr { top: -0.12in; right: -0.12in; border-top: 0.6pt solid #94a3b8; border-right: 0.6pt solid #94a3b8; }
+        .cm-bl { bottom: -0.12in; left: -0.12in; border-bottom: 0.6pt solid #94a3b8; border-left: 0.6pt solid #94a3b8; }
+        .cm-br { bottom: -0.12in; right: -0.12in; border-bottom: 0.6pt solid #94a3b8; border-right: 0.6pt solid #94a3b8; }
         @media screen and (max-width: 640px) {
           .badge-grid { grid-template-columns: 1fr; }
         }
         @media print {
-          @page { size: letter; margin: 0.3in; }
+          @page { size: letter; margin: 0.35in; }
           body { background: white !important; }
-          .badge-grid { gap: 0.25in; }
-          .badge-card { break-inside: avoid; page-break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+          .badge-grid { gap: 0.45in; }
+          .badge-slot { break-inside: avoid; page-break-inside: avoid; }
+          .badge-card { -webkit-print-color-adjust: exact; print-color-adjust: exact; box-shadow: none !important; }
+          .cropmark { border-color: #475569 !important; }
           nav, .print\\:hidden { display: none !important; }
-          .badge-card { box-shadow: none !important; }
         }
       `}</style>
     </main>
@@ -176,6 +183,7 @@ function BadgeCard({
   const type = attendee.badgeType ? TYPE_STYLE[attendee.badgeType] : null;
 
   return (
+    <div className="badge-slot relative">
     <div
       className="badge-card relative overflow-hidden rounded-2xl border border-slate-200 shadow-sm"
       style={{
@@ -244,6 +252,12 @@ function BadgeCard({
         alt={`${attendee.name} QR badge`}
         className="absolute bottom-[0.16in] right-[0.2in] h-[1in] w-[1in] rounded-md border border-white bg-white p-1 shadow-md"
       />
+      </div>
+      {/* Corner crop marks — line up a cutter/scissors on these */}
+      <span className="cropmark cm-tl" />
+      <span className="cropmark cm-tr" />
+      <span className="cropmark cm-bl" />
+      <span className="cropmark cm-br" />
     </div>
   );
 }
