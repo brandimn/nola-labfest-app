@@ -67,8 +67,28 @@ model Vendor {
   leads      Lead[]
   boothVotes BoothVote[]
   staff      User[]      @relation("VendorStaff")
+  promos     Promo[]
 
   @@index([category])
+}
+
+// A show special / promotion an attendee can see on the home screen. A vendor
+// adds their own, or an admin adds one on a vendor's behalf. Always tied to a
+// Vendor so attendees know who is offering it.
+model Promo {
+  id          String   @id @default(cuid())
+  vendorId    String
+  vendor      Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  title       String
+  details     String?  @db.Text
+  imageUrl    String?  @db.Text   // optional flyer/photo as a data URL
+  window      String?              // free text "when", e.g. "Oct 1-31"
+  active      Boolean  @default(true)
+  createdById String?              // who entered it (vendor or admin user id)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([vendorId])
 }
 
 model BoothVote {

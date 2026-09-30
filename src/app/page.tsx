@@ -14,6 +14,7 @@ import {
   MapPin,
   UsersRound,
   Images,
+  Tag,
 } from "lucide-react";
 import { PushPrompt } from "@/components/push-prompt";
 import { Countdown } from "@/components/countdown";
@@ -284,6 +285,7 @@ export default async function Home() {
           <Tile href="/speakers" icon={Mic} label="Speakers" color="#B13E7D" image={tileImg.speakers} />
           <Tile href="/team" icon={UsersRound} label="Nowak Team" color="#0057A3" image={tileImg.team} />
           <Tile href="/gallery" icon={Images} label="Photo Gallery" color="#DB2777" image={tileImg.gallery} />
+          <Tile href="/promos" icon={Tag} label="Promos & Deals" color="#B45309" image={tileImg.promos} />
           {user.role === "ATTENDEE" && (
             <>
               <Tile href="/scan" icon={QrCode} label="Scan Booth" color="#0E8C4B" image={tileImg.scan} />
@@ -295,6 +297,7 @@ export default async function Home() {
             <>
               <Tile href="/vendor/scan" icon={QrCode} label="Scan Lead" color="#0E8C4B" />
               <Tile href="/vendor/leads" icon={Trophy} label="My Leads" color="#F59E0B" />
+              <Tile href="/vendor/promos" icon={Tag} label="My Promos" color="#B13E7D" />
             </>
           )}
           {user.role === "ADMIN" && (

@@ -4,7 +4,7 @@ import { SignOutButton } from "@/components/sign-out-button";
 import { MyProfileForm } from "@/components/my-profile-form";
 import { ChangePasswordForm } from "@/components/change-password-form";
 import Link from "next/link";
-import { IdCard, Calendar, QrCode, Store, Mic } from "lucide-react";
+import { IdCard, Calendar, QrCode, Store, Mic, Tag } from "lucide-react";
 
 export default async function MePage() {
   const user = await requireUser();
@@ -28,7 +28,10 @@ export default async function MePage() {
         <Link href="/badge" className="btn-secondary justify-start"><IdCard className="h-4 w-4 mr-2" /> My Badge</Link>
         <Link href="/agenda" className="btn-secondary justify-start"><Calendar className="h-4 w-4 mr-2" /> My Agenda</Link>
         {(me.ownedVendor || me.boothStaffOf) && (
-          <Link href="/vendor/profile" className="btn-secondary justify-start"><Store className="h-4 w-4 mr-2" /> My Booth</Link>
+          <>
+            <Link href="/vendor/profile" className="btn-secondary justify-start"><Store className="h-4 w-4 mr-2" /> My Booth</Link>
+            <Link href="/vendor/promos" className="btn-secondary justify-start"><Tag className="h-4 w-4 mr-2" /> My Promos</Link>
+          </>
         )}
         {me.ownedSpeaker && (
           <Link href="/speaker/profile" className="btn-secondary justify-start"><Mic className="h-4 w-4 mr-2" /> My Speaker Profile</Link>

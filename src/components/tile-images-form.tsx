@@ -9,6 +9,7 @@ const TILES: { key: string; label: string }[] = [
   { key: "speakers", label: "Speakers" },
   { key: "team", label: "Nowak Team" },
   { key: "gallery", label: "Photo Gallery" },
+  { key: "promos", label: "Promos & Deals" },
   { key: "scan", label: "Scan Booth" },
   { key: "badge", label: "My Badge" },
   { key: "vote", label: "Vote" },

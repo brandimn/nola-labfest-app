@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
-import { Users, Store, Calendar, Bell, Trophy, Scan, Sparkles, Printer, Settings, Mail, Mic, QrCode, Contact, LayoutGrid, Upload, Wrench } from "lucide-react";
+import { Users, Store, Calendar, Bell, Trophy, Scan, Sparkles, Printer, Settings, Mail, Mic, QrCode, Contact, LayoutGrid, Upload, Wrench, Tag } from "lucide-react";
 import { SignOutButton } from "@/components/sign-out-button";
 
 export default async function AdminHome() {
@@ -48,6 +48,7 @@ export default async function AdminHome() {
 
       <div className="grid grid-cols-2 gap-3 mb-6">
         <AdminTile href="/admin/vendors" icon={Store} label="Vendors" />
+        <AdminTile href="/admin/promos" icon={Tag} label="Promos & Deals" />
         <AdminTile href="/admin/schedule" icon={Calendar} label="Schedule" />
         <AdminTile href="/admin/speakers" icon={Mic} label="Speakers" />
         <AdminTile href="/admin/team" icon={Contact} label="Nowak Team" />
