@@ -135,25 +135,16 @@ export function EditUserForm({ user, vendors = [] }: { user: User; vendors?: Ven
               onChange={(e) => update("vendorId", e.target.value || null)}
             >
               <option value="">— None (they won't be able to scan badges) —</option>
-              {vendors.map((v) => {
-                const takenByOther =
-                  v.userId && v.userId !== user.id;
-                return (
-                  <option
-                    key={v.id}
-                    value={v.id}
-                    disabled={!!takenByOther}
-                  >
-                    {v.name} — Booth {v.boothNumber}
-                    {takenByOther ? " (already assigned)" : ""}
-                  </option>
-                );
-              })}
+              {vendors.map((v) => (
+                <option key={v.id} value={v.id}>
+                  {v.name} — Booth {v.boothNumber}
+                </option>
+              ))}
             </select>
             <p className="mt-1 text-xs text-slate-500">
-              Pick the booth this vendor represents. They'll be able to scan
-              attendee badges as this vendor, and leads will be captured to this
-              booth.
+              Pick the booth this person works. More than one person can be on the
+              same booth, and they'll all scan badges into that booth's shared lead
+              list.
             </p>
           </div>
         )}

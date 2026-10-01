@@ -61,30 +61,18 @@ export async function PATCH(
   if (typeof body.title === "string") data.title = body.title.trim() || null;
   if (typeof body.phone === "string") data.phone = body.phone.trim() || null;
 
+  // Booth assignment uses the staff link (User.vendorId) so a booth can have
+  // several people on it, all sharing one lead list. The old "main contact"
+  // link (Vendor.userId) is left as-is.
+  if (body.vendorId !== undefined) {
+    data.vendorId = body.vendorId || null;
+  }
+
   const updated = await prisma.user.update({
     where: { id: params.id },
     data,
     select: { id: true, email: true, name: true, role: true },
   });
-
-  // Handle vendor assignment — only meaningful when role is VENDOR
-  if (body.vendorId !== undefined) {
-    const newVendorId: string | null = body.vendorId || null;
-
-    // Clear any vendor row currently pointing at this user.
-    await prisma.vendor.updateMany({
-      where: { userId: params.id },
-      data: { userId: null },
-    });
-
-    if (newVendorId) {
-      // Clear any other user that was linked to this vendor (one-to-one).
-      await prisma.vendor.update({
-        where: { id: newVendorId },
-        data: { userId: params.id },
-      });
-    }
-  }
 
   return NextResponse.json({ ok: true, user: updated });
 }

@@ -21,6 +21,10 @@ export default async function EditUserPage({ params }: { params: { id: string } 
   ]);
   if (!user) notFound();
 
+  // Which booth does this person work? The staff link (User.vendorId) comes
+  // first, then the "main contact" ownership link. Either one lets them scan.
+  const boothId = user.vendorId ?? currentVendor?.id ?? null;
+
   return (
     <main className="mx-auto max-w-xl px-4 py-6">
       <Link href="/admin/users" className="text-sm text-slate-500">← Users</Link>
@@ -40,7 +44,7 @@ export default async function EditUserPage({ params }: { params: { id: string } 
           company: user.company ?? "",
           title: user.title ?? "",
           phone: user.phone ?? "",
-          vendorId: currentVendor?.id ?? null,
+          vendorId: boothId,
         }}
         vendors={vendors}
       />
