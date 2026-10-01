@@ -24,6 +24,7 @@ async function main() {
       description: s.description ?? null,
       speaker: s.speaker ?? null,
       speakerId: s.speaker ? speakerId(s.speaker) : null,
+      location: s.location ?? null,
       track: s.track ?? null,
       isFeatured: !!s.isFeatured,
       startsAt,

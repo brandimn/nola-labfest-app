@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/session";
 import { formatDay, formatTime } from "@/lib/utils";
 import { FeaturedSessionCard } from "@/components/featured-session-card";
-import { Sparkles } from "lucide-react";
+import { Sparkles, Download } from "lucide-react";
 
 const TRACK_COLORS: Record<string, string> = {
   Clinical: "bg-emerald-100 text-emerald-800",
@@ -42,6 +42,15 @@ export default async function SchedulePage() {
         <h1 className="font-display text-4xl font-extrabold gradient-text">Schedule</h1>
         <Link href="/agenda" className="text-sm font-bold text-[#7C3AED]">My Agenda →</Link>
       </div>
+
+      <a
+        href="/labfest-agenda-2026.pdf"
+        target="_blank"
+        rel="noreferrer"
+        className="mb-4 inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200"
+      >
+        <Download className="h-4 w-4" /> Download the printable agenda (PDF)
+      </a>
 
       {featured.length > 0 && (
         <section className="mb-6">
