@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
 import QRCode from "qrcode";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Download } from "lucide-react";
 import { PrintButton } from "@/components/print-button";
 
 export const dynamic = "force-dynamic";
@@ -73,6 +73,11 @@ export default async function AdminBadgesPage({
     attendees.map(async (a) => ({ ...a, qr: await qrFor(a.badgeToken) }))
   );
 
+  const pdfParams = new URLSearchParams();
+  if (q) pdfParams.set("q", q);
+  if (since) pdfParams.set("since", since);
+  const pdfHref = `/api/admin/badges/pdf${pdfParams.toString() ? `?${pdfParams}` : ""}`;
+
   return (
     <main className="mx-auto max-w-5xl px-4 py-6 print:px-0 print:py-0 print:max-w-none">
       <div className="mb-4 flex items-center justify-between print:hidden">
@@ -82,11 +87,20 @@ export default async function AdminBadgesPage({
           </Link>
           <h1 className="mt-1 text-2xl font-bold font-display">Attendee Badges</h1>
           <p className="text-sm text-slate-600">
-            {badges.length} {badges.length === 1 ? "badge" : "badges"} ready to print · 4 per letter-size page
+            {badges.length} {badges.length === 1 ? "badge" : "badges"} · 6 per letter-size page
           </p>
         </div>
-        <PrintButton label="Print badges" />
+        <div className="flex items-center gap-2">
+          <a href={pdfHref} className="btn-primary inline-flex items-center gap-1 whitespace-nowrap">
+            <Download className="h-4 w-4" /> Download PDF
+          </a>
+          <PrintButton label="Print" />
+        </div>
       </div>
+      <p className="mb-3 text-xs text-slate-500 print:hidden">
+        Download the PDF to print at home or take to a print shop. Badges are 6 per
+        letter page with square corners and a thin cut line, ready to trim.
+      </p>
 
       <form className="mb-2 flex flex-wrap items-end gap-2 print:hidden" action="">
         <div className="min-w-[180px] flex-1">
@@ -144,21 +158,15 @@ export default async function AdminBadgesPage({
           gap: 0.45in;
         }
         .badge-slot { position: relative; }
-        .cropmark { position: absolute; width: 0.14in; height: 0.14in; pointer-events: none; }
-        .cm-tl { top: -0.12in; left: -0.12in; border-top: 0.6pt solid #94a3b8; border-left: 0.6pt solid #94a3b8; }
-        .cm-tr { top: -0.12in; right: -0.12in; border-top: 0.6pt solid #94a3b8; border-right: 0.6pt solid #94a3b8; }
-        .cm-bl { bottom: -0.12in; left: -0.12in; border-bottom: 0.6pt solid #94a3b8; border-left: 0.6pt solid #94a3b8; }
-        .cm-br { bottom: -0.12in; right: -0.12in; border-bottom: 0.6pt solid #94a3b8; border-right: 0.6pt solid #94a3b8; }
         @media screen and (max-width: 640px) {
           .badge-grid { grid-template-columns: 1fr; }
         }
         @media print {
           @page { size: letter; margin: 0.35in; }
           body { background: white !important; }
-          .badge-grid { gap: 0.45in; }
+          .badge-grid { gap: 0.3in; }
           .badge-slot { break-inside: avoid; page-break-inside: avoid; }
           .badge-card { -webkit-print-color-adjust: exact; print-color-adjust: exact; box-shadow: none !important; }
-          .cropmark { border-color: #475569 !important; }
           nav, .print\\:hidden { display: none !important; }
         }
       `}</style>
@@ -185,10 +193,9 @@ function BadgeCard({
   return (
     <div className="badge-slot relative">
     <div
-      className="badge-card relative overflow-hidden rounded-2xl border border-slate-200 shadow-sm"
+      className="badge-card relative overflow-hidden rounded-none border border-slate-300 shadow-sm"
       style={{
         aspectRatio: "4 / 3",
-        minHeight: "3in",
         backgroundImage: `url('${background}')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
@@ -253,11 +260,6 @@ function BadgeCard({
         className="absolute bottom-[0.16in] right-[0.2in] h-[1in] w-[1in] rounded-md border border-white bg-white p-1 shadow-md"
       />
       </div>
-      {/* Corner crop marks — line up a cutter/scissors on these */}
-      <span className="cropmark cm-tl" />
-      <span className="cropmark cm-tr" />
-      <span className="cropmark cm-bl" />
-      <span className="cropmark cm-br" />
     </div>
   );
 }
