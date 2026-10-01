@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/session";
 import { formatDay, formatTime } from "@/lib/utils";
 import { FeaturedSessionCard } from "@/components/featured-session-card";
+import { sessionVisibilityWhere } from "@/lib/session-visibility";
 import { Sparkles, Download } from "lucide-react";
 
 const TRACK_COLORS: Record<string, string> = {
@@ -18,7 +19,7 @@ export default async function SchedulePage() {
   const user = await requireUser();
 
   const sessions = await prisma.session.findMany({
-    where: { event: "LABFEST" },
+    where: { event: "LABFEST", ...sessionVisibilityWhere(user) },
     orderBy: { startsAt: "asc" },
     include: { speakerRef: true },
   });

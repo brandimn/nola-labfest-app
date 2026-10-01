@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/session";
 import { formatDay, formatTime } from "@/lib/utils";
 import { FavoriteButton } from "@/components/favorite-button";
+import { canSeeSession } from "@/lib/session-visibility";
 import { Sparkles } from "lucide-react";
 
 export default async function SessionDetailPage({ params }: { params: { id: string } }) {
@@ -13,6 +14,8 @@ export default async function SessionDetailPage({ params }: { params: { id: stri
     include: { speakerRef: true },
   });
   if (!session) notFound();
+  // Invitation-only sessions are hidden from anyone not on the allow list.
+  if (!canSeeSession(user, session)) notFound();
   const fav = await prisma.favorite.findUnique({
     where: { userId_sessionId: { userId: user.id, sessionId: session.id } },
   });

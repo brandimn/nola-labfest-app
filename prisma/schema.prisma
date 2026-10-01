@@ -116,6 +116,8 @@ model Session {
   track       String?
   event       String   @default("LABFEST") // LABFEST | LOTM
   isFeatured  Boolean  @default(false)     // "exclusive masterclass" treatment
+  restricted     Boolean  @default(false)  // invitation only: hidden unless on the allow list
+  allowedUserIds String[] @default([])     // user ids that may see a restricted session
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 

@@ -2,14 +2,16 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/session";
 import { formatDay, formatTime } from "@/lib/utils";
+import { canSeeSession } from "@/lib/session-visibility";
 
 export default async function AgendaPage() {
   const user = await requireUser();
-  const favorites = await prisma.favorite.findMany({
+  const favoritesRaw = await prisma.favorite.findMany({
     where: { userId: user.id },
     include: { session: true },
     orderBy: { session: { startsAt: "asc" } },
   });
+  const favorites = favoritesRaw.filter((f) => canSeeSession(user, f.session));
 
   const byDay: Record<string, typeof favorites> = {};
   for (const f of favorites) {

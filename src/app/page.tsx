@@ -19,6 +19,7 @@ import {
 import { PushPrompt } from "@/components/push-prompt";
 import { Countdown } from "@/components/countdown";
 import { SponsorTier } from "@/components/sponsor-tier";
+import { sessionVisibilityWhere } from "@/lib/session-visibility";
 
 const EVENT_START_ISO = "2026-10-15T08:00:00-05:00";
 const EVENT_LABEL = "October 15–17, 2026 · New Orleans";
@@ -39,7 +40,7 @@ export default async function Home() {
   ] = await Promise.all([
     prisma.vendor.count(),
     prisma.session.findFirst({
-      where: { startsAt: { gte: new Date() }, event: "LABFEST" },
+      where: { startsAt: { gte: new Date() }, event: "LABFEST", ...sessionVisibilityWhere(user) },
       orderBy: { startsAt: "asc" },
     }),
     user.role === "ATTENDEE"
