@@ -55,11 +55,14 @@ export async function buildBadgesPdf({ badges, bgBytes }: { badges: BadgeInput[]
   const qrImages = await Promise.all(badges.map((b) => (b.qrPng ? pdf.embedPng(b.qrPng) : null)));
 
   const PAGE_W = 612, PAGE_H = 792;           // US Letter, points
-  const margin = 25.2;                        // 0.35in
-  const colGap = 14.4, rowGap = 14.4;         // 0.2in
-  const cols = 2, rows = 3, perPage = cols * rows;
-  const bw = (PAGE_W - 2 * margin - colGap * (cols - 1)) / cols; // ~273.6 (3.8in)
-  const bh = (bw * 3) / 4;                                        // ~205.2 (2.85in)
+  const cols = 2, rows = 2, perPage = cols * rows; // 4 larger badges per page
+  const colGap = 0, rowGap = 0;               // badges butt together, cut on the shared line
+  const bw = 288;                             // 4in
+  const bh = (bw * 3) / 4;                     // 216 = 3in
+  const gridW = cols * bw + (cols - 1) * colGap;
+  const gridH = rows * bh + (rows - 1) * rowGap;
+  const startX = (PAGE_W - gridW) / 2;        // centered horizontally
+  const startTop = (PAGE_H - gridH) / 2;      // centered vertically (from top)
 
   let page = pdf.addPage([PAGE_W, PAGE_H]);
   badges.forEach((b, i) => {
@@ -67,8 +70,8 @@ export async function buildBadgesPdf({ badges, bgBytes }: { badges: BadgeInput[]
     if (slot === 0 && i > 0) page = pdf.addPage([PAGE_W, PAGE_H]);
     const col = slot % cols;
     const row = Math.floor(slot / cols);
-    const bx = margin + col * (bw + colGap);
-    const by = PAGE_H - margin - row * (bh + rowGap) - bh;
+    const bx = startX + col * (bw + colGap);
+    const by = PAGE_H - startTop - row * (bh + rowGap) - bh;
 
     page.drawImage(bg, { x: bx, y: by, width: bw, height: bh });
 
