@@ -40,7 +40,13 @@ export default async function PromosPage() {
           {promos.map((p) => (
             <div key={p.id} className="card overflow-hidden">
               {p.imageUrl && (
-                <img src={p.imageUrl} alt="" className="max-h-56 w-full object-cover" />
+                <a href={p.imageUrl} target="_blank" rel="noreferrer" className="block bg-slate-50">
+                  <img
+                    src={p.imageUrl}
+                    alt=""
+                    className="mx-auto max-h-[30rem] w-full object-contain"
+                  />
+                </a>
               )}
               <div className="p-4">
                 <Link
