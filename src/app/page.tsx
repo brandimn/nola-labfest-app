@@ -15,6 +15,7 @@ import {
   UsersRound,
   Images,
   Tag,
+  Map,
 } from "lucide-react";
 import { PushPrompt } from "@/components/push-prompt";
 import { Countdown } from "@/components/countdown";
@@ -282,7 +283,8 @@ export default async function Home() {
 
         <div className="grid grid-cols-3 gap-2 mb-6">
           <Tile href="/vendors" icon={Users} label="Vendors" color="#7C3AED" image={tileImg.vendors} />
-          <Tile href="/schedule" icon={Calendar} label="Schedule" color="#0EA5E9" image={tileImg.schedule} />
+          <Tile href="/map" icon={Map} label="Floor Map" color="#0EA5E9" image={tileImg.map} />
+          <Tile href="/schedule" icon={Calendar} label="Schedule" color="#0284C7" image={tileImg.schedule} />
           <Tile href="/speakers" icon={Mic} label="Speakers" color="#B13E7D" image={tileImg.speakers} />
           <Tile href="/team" icon={UsersRound} label="Nowak Team" color="#0057A3" image={tileImg.team} />
           <Tile href="/gallery" icon={Images} label="Photo Gallery" color="#DB2777" image={tileImg.gallery} />

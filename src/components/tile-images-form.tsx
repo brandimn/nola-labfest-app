@@ -5,6 +5,7 @@ import { LogoUpload } from "@/components/logo-upload";
 
 const TILES: { key: string; label: string }[] = [
   { key: "vendors", label: "Vendors" },
+  { key: "map", label: "Floor Map" },
   { key: "schedule", label: "Schedule" },
   { key: "speakers", label: "Speakers" },
   { key: "team", label: "Nowak Team" },
