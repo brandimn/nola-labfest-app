@@ -87,7 +87,7 @@ export default async function AdminBadgesPage({
           </Link>
           <h1 className="mt-1 text-2xl font-bold font-display">Attendee Badges</h1>
           <p className="text-sm text-slate-600">
-            {badges.length} {badges.length === 1 ? "badge" : "badges"} · 4 per letter-size page
+            {badges.length} {badges.length === 1 ? "badge" : "badges"} · 6 per letter-size page
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -98,7 +98,7 @@ export default async function AdminBadgesPage({
         </div>
       </div>
       <p className="mb-3 text-xs text-slate-500 print:hidden">
-        Download the PDF to print at home or take to a print shop. Badges are 4 per
+        Download the PDF to print at home or take to a print shop. Badges are 6 per
         letter page (4 by 3 inches) with square corners and a thin cut line, ready to trim.
       </p>
 

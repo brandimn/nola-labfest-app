@@ -55,7 +55,7 @@ export async function buildBadgesPdf({ badges, bgBytes }: { badges: BadgeInput[]
   const qrImages = await Promise.all(badges.map((b) => (b.qrPng ? pdf.embedPng(b.qrPng) : null)));
 
   const PAGE_W = 612, PAGE_H = 792;           // US Letter, points
-  const cols = 2, rows = 2, perPage = cols * rows; // 4 larger badges per page
+  const cols = 2, rows = 3, perPage = cols * rows; // 6 full-size (4x3in) badges per page
   const colGap = 0, rowGap = 0;               // badges butt together, cut on the shared line
   const bw = 288;                             // 4in
   const bh = (bw * 3) / 4;                     // 216 = 3in
