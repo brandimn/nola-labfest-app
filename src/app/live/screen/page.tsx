@@ -46,7 +46,9 @@ export default function ScreenPage() {
 
   const name = state?.game.name ?? "LabFest";
   const phase = state?.phase ?? "LOBBY";
-  const champion = state?.scoreboard?.find((p) => p.id === state?.championId);
+  const champion =
+    state?.belt?.rows.find((p) => p.id === state?.championId) ??
+    state?.scoreboard?.find((p) => p.id === state?.championId);
 
   return (
     <main className="relative flex min-h-screen flex-col px-10 py-8">
@@ -116,6 +118,16 @@ export default function ScreenPage() {
 
         {["REVEAL", "VOTING", "RESULTS", "UNMASKED"].includes(phase) && (
           <>
+            {state?.prompt?.round === "BELT" && state?.belt && (
+              <div className="mb-6 flex items-center justify-center gap-10">
+                {state.belt.rows.map((r) => (
+                  <div key={r.id} className="text-center">
+                    <p className="text-3xl font-semibold text-white/70">{r.name}</p>
+                    <p className="font-display text-6xl font-bold" style={{ color: GOLD }}>{r.wins}</p>
+                  </div>
+                ))}
+              </div>
+            )}
             <p className="mb-6 max-w-5xl text-4xl text-white/70">{state?.prompt?.text}</p>
             {phase === "VOTING" && (
               <p className="mb-6 font-display text-6xl font-bold" style={{ color: GOLD }}>
@@ -168,11 +180,9 @@ export default function ScreenPage() {
           <>
             <p className="text-4xl uppercase tracking-[0.3em] text-white/60">Belt Match</p>
             <div className="mt-10 flex flex-wrap items-center justify-center gap-10">
-              {state?.scoreboard
-                ?.filter((p) => state.beltFinalists.includes(p.id))
-                .map((p) => (
-                  <span key={p.id} className="font-display text-7xl font-bold">{p.name}</span>
-                ))}
+              {state?.belt?.rows.map((p) => (
+                <span key={p.id} className="font-display text-7xl font-bold">{p.name}</span>
+              ))}
             </div>
           </>
         )}

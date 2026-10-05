@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { ATTRIBUTED_PHASES, getActiveGame, getState, scoreboardFor, Phase } from "@/lib/live-game";
+import { ATTRIBUTED_PHASES, beltStanding, getActiveGame, getState, scoreboardFor, Phase } from "@/lib/live-game";
 
 // Every screen polls this. Hundreds of phones at once, so it stays small and is
 // cached for a second at the edge. The host passes ?fresh=1 to skip the cache so
@@ -94,6 +94,14 @@ export async function GET(req: NextRequest) {
       : [],
     answerCount: answers.filter((a) => a.text.trim()).length,
     beltFinalists: state.beltFinalists,
+    belt: state.beltFinalists.length
+      ? beltStanding(
+          players
+            .filter((p) => state.beltFinalists.includes(p.id))
+            .map((p) => ({ id: p.id, name: p.name })),
+          state.beltWinners
+        )
+      : null,
     championId: state.championId,
     scoreboard: ["SCOREBOARD", "BELT_INTRO", "CHAMPION"].includes(phase)
       ? await scoreboardFor(game.id)

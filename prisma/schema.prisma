@@ -352,6 +352,9 @@ model GameState {
   unmasked        Boolean   @default(false)
   // Two normally, three when the second place is tied.
   beltFinalists   String[]  @default([])
+  // One entry per belt round, in order, holding the winning player id.
+  // Counting them gives the best of three score.
+  beltWinners     String[]  @default([])
   championId      String?
   updatedAt       DateTime  @updatedAt
 }

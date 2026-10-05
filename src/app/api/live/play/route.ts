@@ -48,6 +48,15 @@ export async function POST(req: NextRequest) {
     const player = await prisma.gamePlayer.findFirst({ where: { gameId: game.id, deviceId } });
     if (!player) return NextResponse.json({ error: "Pick your name first" }, { status: 403 });
 
+    // In the Belt Match only the finalists are still writing.
+    const prompt = await prisma.gamePrompt.findUnique({
+      where: { id: state.currentPromptId },
+      select: { round: true },
+    });
+    if (prompt?.round === "BELT" && !state.beltFinalists.includes(player.id)) {
+      return NextResponse.json({ error: "This one is for the finalists" }, { status: 403 });
+    }
+
     const text = String(body.text ?? "").trim().slice(0, game.answerMaxLength);
     await prisma.gameAnswer.upsert({
       where: { promptId_playerId: { promptId: state.currentPromptId, playerId: player.id } },

@@ -177,12 +177,45 @@ export default function HostPage() {
         </section>
       )}
 
+      {/* Belt Match */}
+      {(state?.belt?.rows.length ?? 0) > 0 && (
+        <section className="mt-4 rounded-2xl bg-white/5 p-4">
+          <p className="mb-2 text-xs uppercase tracking-wider text-white/50">
+            Belt Match, best of 3 (round {(state?.belt?.roundsPlayed ?? 0) + 1})
+          </p>
+          <div className="flex items-center justify-center gap-6">
+            {state?.belt?.rows.map((r) => (
+              <div key={r.id} className="text-center">
+                <p className="font-display text-xl font-bold">{r.name}</p>
+                <p className="font-display text-4xl font-bold text-[#F5A547]">{r.wins}</p>
+              </div>
+            ))}
+          </div>
+          {state?.prompt?.round === "BELT" && ["RESULTS", "UNMASKED"].includes(phase) && (
+            <Btn on={() => act("AWARD_BELT_ROUND")} kind="go">Award this round</Btn>
+          )}
+          {(state?.belt?.roundsPlayed ?? 0) > 0 && (
+            <button onClick={() => act("UNDO_BELT_ROUND")} className="mt-2 w-full rounded-lg bg-white/10 p-2 text-xs">
+              Undo last round
+            </button>
+          )}
+          {state?.belt?.clinched && (
+            <p className="mt-3 rounded-lg bg-[#F5A547] p-3 text-center text-sm font-bold text-slate-900">
+              {state.belt.clinched.name} has it. Crown them below, or play the third for fun.
+            </p>
+          )}
+        </section>
+      )}
+
       {/* Crown */}
-      {["BELT_INTRO", "SCOREBOARD"].includes(phase) && (
+      {(["BELT_INTRO", "SCOREBOARD"].includes(phase) || (state?.belt?.rows.length ?? 0) > 0) && (
         <section className="mt-4 rounded-2xl bg-white/5 p-3">
           <p className="mb-2 text-xs uppercase tracking-wider text-white/50">Crown the champion</p>
           <div className="grid grid-cols-2 gap-2">
-            {state?.scoreboard?.map((p) => (
+            {(state?.belt?.rows.length
+              ? state.belt.rows.map((r) => ({ id: r.id, name: r.name }))
+              : state?.scoreboard ?? []
+            ).map((p) => (
               <Btn key={p.id} on={() => act("CROWN", { playerId: p.id })}>{p.name}</Btn>
             ))}
           </div>

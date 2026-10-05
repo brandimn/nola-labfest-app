@@ -35,6 +35,11 @@ export type LiveState = {
   answers: { id: string; text: string; votes: number | null; percent: number | null; player: string | null }[];
   answerCount: number;
   beltFinalists: string[];
+  belt: {
+    rows: { id: string; name: string; wins: number }[];
+    clinched: { id: string; name: string; wins: number } | null;
+    roundsPlayed: number;
+  } | null;
   championId: string | null;
   scoreboard: { id: string; name: string; photoUrl: string | null; points: number }[] | null;
 };

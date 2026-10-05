@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { HOST_COOKIE, hostPin, isHost } from "@/lib/live-host";
-import { beltFinalistsFrom, getActiveGame, getOrCreateGame, getState, scoreboardFor, shuffled } from "@/lib/live-game";
+import { beltFinalistsFrom, beltStanding, getActiveGame, getOrCreateGame, getState, scoreboardFor, shuffled } from "@/lib/live-game";
 
 export const dynamic = "force-dynamic";
 
@@ -150,8 +150,47 @@ export async function POST(req: NextRequest) {
     case "START_BELT": {
       const board = await scoreboardFor(game.id);
       const finalists = beltFinalistsFrom(board);
-      await set({ phase: "BELT_INTRO", beltFinalists: finalists });
+      // Starting the Belt Match clears any previous rounds.
+      await set({ phase: "BELT_INTRO", beltFinalists: finalists, beltWinners: [] });
       return NextResponse.json({ ok: true, finalists });
+    }
+
+    case "AWARD_BELT_ROUND": {
+      // Whoever took the most votes on the current belt prompt wins the round.
+      // An exact tie is settled with Pick Winner first, which collapses the
+      // votes onto one answer, so there is nothing separate to resolve here.
+      if (!state.currentPromptId) {
+        return NextResponse.json({ error: "No prompt is up" }, { status: 400 });
+      }
+      const answers = await prisma.gameAnswer.findMany({
+        where: { promptId: state.currentPromptId },
+        select: { id: true, playerId: true, _count: { select: { votes: true } } },
+      });
+      const contenders = answers.filter((a) => state.beltFinalists.includes(a.playerId));
+      if (!contenders.length) {
+        return NextResponse.json({ error: "Neither finalist answered this one" }, { status: 400 });
+      }
+      const best = [...contenders].sort((a, b) => b._count.votes - a._count.votes);
+      if (best.length > 1 && best[0]._count.votes === best[1]._count.votes) {
+        return NextResponse.json(
+          { error: "That round is tied. Use Pick the winner by applause, then award it." },
+          { status: 400 }
+        );
+      }
+      const winners = [...state.beltWinners, best[0].playerId];
+      await set({ beltWinners: winners });
+      await prisma.gamePrompt.update({
+        where: { id: state.currentPromptId }, data: { used: true },
+      });
+      const players = await prisma.gamePlayer.findMany({
+        where: { id: { in: state.beltFinalists } }, select: { id: true, name: true },
+      });
+      return NextResponse.json({ ok: true, standing: beltStanding(players, winners) });
+    }
+
+    case "UNDO_BELT_ROUND": {
+      await set({ beltWinners: state.beltWinners.slice(0, -1) });
+      return NextResponse.json({ ok: true });
     }
 
     case "CROWN": {

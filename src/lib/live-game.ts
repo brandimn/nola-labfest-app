@@ -82,6 +82,24 @@ export function beltFinalistsFrom(board: { id: string; points: number }[]) {
   return through.map((p) => p.id);
 }
 
+/** Best of three. Wins are counted from the ordered list of round winners, so
+ *  the host can award a round and the score is derived rather than tracked in
+ *  two places. */
+export function beltStanding(
+  finalists: { id: string; name: string }[],
+  winners: string[]
+) {
+  const rows = finalists.map((f) => ({
+    ...f,
+    wins: winners.filter((w) => w === f.id).length,
+  }));
+  const top = rows.reduce((best, r) => (r.wins > best ? r.wins : best), 0);
+  // Two wins takes it in a head to head. With three finalists a clear lead
+  // after three rounds is enough, which is why the host still confirms.
+  const clinched = top >= 2 ? rows.find((r) => r.wins === top) ?? null : null;
+  return { rows: rows.sort((a, b) => b.wins - a.wins), clinched, roundsPlayed: winners.length };
+}
+
 export function shuffled<T>(items: T[]) {
   const out = [...items];
   for (let i = out.length - 1; i > 0; i--) {

@@ -49,7 +49,9 @@ export default function PlayPage() {
     }
   }
 
-  const writing = state?.phase === "WRITING" && (seconds ?? 0) > 0;
+  const inBeltMatch = state?.prompt?.round === "BELT";
+  const benched = inBeltMatch && !!me && !state?.beltFinalists.includes(me.id);
+  const writing = state?.phase === "WRITING" && (seconds ?? 0) > 0 && !benched;
 
   if (!me) {
     return (
@@ -95,10 +97,14 @@ export default function PlayPage() {
       {!writing ? (
         <div className="flex flex-1 flex-col items-center justify-center text-center">
           <p className="font-display text-3xl font-bold">
-            {saved ? "Locked in" : "Get ready"}
+            {benched ? "Belt Match" : saved ? "Locked in" : "Get ready"}
           </p>
           <p className="mt-2 text-sm text-white/70">
-            {saved ? "Look at the big screen." : "Your prompt is coming up."}
+            {benched
+              ? "This round is between the finalists. Sit back and heckle."
+              : saved
+                ? "Look at the big screen."
+                : "Your prompt is coming up."}
           </p>
         </div>
       ) : (
