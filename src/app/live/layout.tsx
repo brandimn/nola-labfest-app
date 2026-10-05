@@ -3,5 +3,5 @@
 export const metadata = { title: "LabFest Live" };
 
 export default function LiveLayout({ children }: { children: React.ReactNode }) {
-  return <div className="min-h-screen bg-[#0F172A] text-white">{children}</div>;
+  return <div className="-mb-20 min-h-screen bg-[#0F172A] pb-0 text-white">{children}</div>;
 }

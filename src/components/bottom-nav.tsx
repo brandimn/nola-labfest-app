@@ -9,7 +9,11 @@ type Role = "ATTENDEE" | "VENDOR" | "SPEAKER" | "ADMIN";
 
 export function BottomNav({ role }: { role: Role }) {
   const pathname = usePathname();
-  if (pathname === "/login" || pathname === "/register") return null;
+  // The game runs for a whole ballroom, most of whom are not signed in and have
+  // no business in the admin area. It gets the screen to itself.
+  if (pathname === "/login" || pathname === "/register" || pathname.startsWith("/live")) {
+    return null;
+  }
 
   const items = [
     { href: "/", label: "Home", icon: Home, color: "#B13E7D" },
