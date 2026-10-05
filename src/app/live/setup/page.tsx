@@ -1,0 +1,243 @@
+"use client";
+
+import { useCallback, useEffect, useState } from "react";
+import { shrinkImage, readFileAsDataUrl } from "@/lib/shrink-image";
+import { usePost } from "@/lib/live-client";
+
+type Player = { id: string; name: string; seatOrder: number; deviceId: string | null };
+type Prompt = { id: string; round: string; text: string; sortOrder: number; isFinale: boolean; hasPhoto: boolean };
+type Data = {
+  game: { id: string; mode: string; name: string; beltText: string; timerSeconds: number; answerMaxLength: number };
+  players: Player[];
+  prompts: Prompt[];
+};
+
+const ROUNDS: [string, string][] = [
+  ["R1", "Round 1"], ["R2", "Round 2 caption"], ["BELT", "Belt Match"], ["BONUS", "Bonus"],
+];
+
+export default function SetupPage() {
+  const post = usePost();
+  const [data, setData] = useState<Data | null>(null);
+  const [error, setError] = useState("");
+  const [note, setNote] = useState("");
+  const [newPrompt, setNewPrompt] = useState({ round: "R1", text: "" });
+
+  const load = useCallback(async () => {
+    const r = await fetch("/api/live/setup", { cache: "no-store" });
+    if (r.status === 401) { setError("Sign in on the host page first, then come back."); return; }
+    if (r.ok) { setData(await r.json()); setError(""); }
+  }, []);
+  useEffect(() => { load(); }, [load]);
+
+  async function act(action: string, extra: Record<string, unknown> = {}) {
+    setError(""); setNote("");
+    try { await post("/api/live/setup", { action, ...extra }); await load(); }
+    catch (e) { setError(e instanceof Error ? e.message : "That did not work"); }
+  }
+  async function host(action: string, extra: Record<string, unknown> = {}) {
+    setError(""); setNote("");
+    try { await post("/api/live/host", { action, ...extra }); await load(); setNote("Done."); }
+    catch (e) { setError(e instanceof Error ? e.message : "That did not work"); }
+  }
+
+  async function uploadPhoto(promptId: string, file: File) {
+    const raw = await readFileAsDataUrl(file);
+    const small = await shrinkImage(raw, 1200);
+    await act("SAVE_PROMPT", { id: promptId, text: data?.prompts.find((p) => p.id === promptId)?.text ?? "", imageUrl: small });
+  }
+
+  if (error && !data) {
+    return (
+      <main className="mx-auto max-w-md px-4 py-16 text-center">
+        <p className="text-sm text-red-300">{error}</p>
+        <a href="/live/host" className="mt-4 inline-block rounded-xl bg-[#F5A547] px-6 py-3 font-bold text-slate-900">
+          Go to the host page
+        </a>
+      </main>
+    );
+  }
+  if (!data) return <main className="px-4 py-16 text-center text-white/60">Loading…</main>;
+
+  return (
+    <main className="mx-auto max-w-2xl px-4 py-6 pb-24">
+      <h1 className="font-display text-2xl font-bold">Game setup</h1>
+      <p className="mt-1 text-sm text-white/60">
+        Currently editing the <strong>{data.game.mode === "LIVE" ? "live" : "practice"}</strong> game.
+      </p>
+      {error && <p className="mt-3 rounded bg-red-500/20 p-2 text-sm text-red-200">{error}</p>}
+      {note && <p className="mt-3 rounded bg-green-500/20 p-2 text-sm text-green-200">{note}</p>}
+
+      <section className="mt-5 rounded-2xl bg-white/5 p-4">
+        <p className="mb-3 text-xs uppercase tracking-wider text-white/50">Names and timing</p>
+        <label className="block text-sm">Game name</label>
+        <input
+          defaultValue={data.game.name}
+          onBlur={(e) => act("SAVE_GAME", { name: e.target.value, beltText: data.game.beltText, timerSeconds: data.game.timerSeconds })}
+          className="mt-1 w-full rounded-lg bg-white p-2 text-slate-900"
+        />
+        <p className="mt-1 text-xs text-white/50">Shows on every screen. Change it any time, even mid show.</p>
+
+        <label className="mt-4 block text-sm">Belt text</label>
+        <input
+          defaultValue={data.game.beltText}
+          onBlur={(e) => act("SAVE_GAME", { name: data.game.name, beltText: e.target.value, timerSeconds: data.game.timerSeconds })}
+          className="mt-1 w-full rounded-lg bg-white p-2 text-slate-900"
+        />
+
+        <label className="mt-4 block text-sm">Writing timer (seconds)</label>
+        <input
+          type="number" defaultValue={data.game.timerSeconds}
+          onBlur={(e) => act("SAVE_GAME", { name: data.game.name, beltText: data.game.beltText, timerSeconds: e.target.value })}
+          className="mt-1 w-32 rounded-lg bg-white p-2 text-slate-900"
+        />
+      </section>
+
+      <section className="mt-5 rounded-2xl bg-white/5 p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <p className="text-xs uppercase tracking-wider text-white/50">Players ({data.players.length})</p>
+          <button onClick={() => act("ADD_PLAYER", { name: "New player" })} className="rounded bg-white/15 px-3 py-1 text-sm">
+            + Add
+          </button>
+        </div>
+        <div className="space-y-2">
+          {data.players.map((p) => (
+            <div key={p.id} className="flex items-center gap-2">
+              <input
+                defaultValue={p.name}
+                onBlur={(e) => act("SAVE_PLAYER", { id: p.id, name: e.target.value })}
+                className="flex-1 rounded-lg bg-white p-2 text-slate-900"
+              />
+              {p.deviceId && (
+                <button onClick={() => host("UNLOCK_PLAYER", { playerId: p.id })} className="rounded bg-amber-500/80 px-2 py-2 text-xs font-bold text-slate-900">
+                  Unlock phone
+                </button>
+              )}
+              <button onClick={() => act("DELETE_PLAYER", { id: p.id })} className="rounded bg-red-500/70 px-3 py-2 text-xs font-bold">
+                Remove
+              </button>
+            </div>
+          ))}
+          {!data.players.length && <p className="text-sm text-white/50">Add the six finalists here.</p>}
+        </div>
+      </section>
+
+      <section className="mt-5 rounded-2xl bg-white/5 p-4">
+        <p className="mb-3 text-xs uppercase tracking-wider text-white/50">Prompts</p>
+        <div className="flex gap-2">
+          <select
+            value={newPrompt.round}
+            onChange={(e) => setNewPrompt((s) => ({ ...s, round: e.target.value }))}
+            className="rounded-lg bg-white p-2 text-slate-900"
+          >
+            {ROUNDS.map(([v, label]) => <option key={v} value={v}>{label}</option>)}
+          </select>
+          <input
+            value={newPrompt.text}
+            onChange={(e) => setNewPrompt((s) => ({ ...s, text: e.target.value }))}
+            placeholder="New prompt"
+            className="flex-1 rounded-lg bg-white p-2 text-slate-900"
+          />
+          <button
+            onClick={() => { if (newPrompt.text.trim()) { act("ADD_PROMPT", newPrompt); setNewPrompt({ round: newPrompt.round, text: "" }); } }}
+            className="rounded bg-[#F5A547] px-4 py-2 font-bold text-slate-900"
+          >
+            Add
+          </button>
+        </div>
+
+        {ROUNDS.map(([round, label]) => {
+          const list = data.prompts.filter((p) => p.round === round);
+          if (!list.length) return null;
+          return (
+            <div key={round} className="mt-4">
+              <p className="mb-2 text-sm font-semibold text-white/70">{label}</p>
+              <div className="space-y-2">
+                {list.map((p) => (
+                  <div key={p.id} className="rounded-xl bg-white/10 p-3">
+                    <textarea
+                      defaultValue={p.text}
+                      onBlur={(e) => act("SAVE_PROMPT", { id: p.id, text: e.target.value, isFinale: p.isFinale })}
+                      rows={2}
+                      className="w-full rounded-lg bg-white p-2 text-slate-900"
+                    />
+                    <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+                      <button onClick={() => act("MOVE_PROMPT", { id: p.id, direction: -1 })} className="rounded bg-white/15 px-2 py-1">↑</button>
+                      <button onClick={() => act("MOVE_PROMPT", { id: p.id, direction: 1 })} className="rounded bg-white/15 px-2 py-1">↓</button>
+                      <label className="flex items-center gap-1">
+                        <input
+                          type="checkbox" defaultChecked={p.isFinale}
+                          onChange={(e) => act("SAVE_PROMPT", { id: p.id, text: p.text, isFinale: e.target.checked })}
+                        />
+                        Finale
+                      </label>
+                      {round === "R2" && (
+                        <label className="cursor-pointer rounded bg-white/15 px-2 py-1">
+                          {p.hasPhoto ? "Replace photo" : "Add photo"}
+                          <input
+                            type="file" accept="image/*" className="hidden"
+                            onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadPhoto(p.id, f); }}
+                          />
+                        </label>
+                      )}
+                      {p.hasPhoto && <span className="text-[#7ddc9f]">photo ✓</span>}
+                      <button onClick={() => act("DELETE_PROMPT", { id: p.id })} className="ml-auto rounded bg-red-500/70 px-2 py-1 font-bold">
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </section>
+
+      <section className="mt-5 rounded-2xl bg-white/5 p-4">
+        <p className="mb-3 text-xs uppercase tracking-wider text-white/50">Practice and reset</p>
+        <div className="grid grid-cols-2 gap-2">
+          <button onClick={() => host("SET_MODE", { mode: "PRACTICE" })} className="rounded-xl bg-white/15 p-3 text-sm font-bold">
+            Use practice game
+          </button>
+          <button onClick={() => host("SET_MODE", { mode: "LIVE" })} className="rounded-xl bg-white/15 p-3 text-sm font-bold">
+            Use live game
+          </button>
+        </div>
+        <ResetButton onConfirm={() => host("RESET_GAME")} />
+      </section>
+
+      <section className="mt-5 rounded-2xl bg-white/5 p-4 text-sm">
+        <p className="mb-2 text-xs uppercase tracking-wider text-white/50">Links to put on QR codes</p>
+        <p className="font-mono text-xs">Audience: /live/vote</p>
+        <p className="font-mono text-xs">Finalists: /live/play</p>
+        <p className="font-mono text-xs">Big screen: /live/screen</p>
+      </section>
+    </main>
+  );
+}
+
+/** In page confirm rather than a browser dialog, which is easy to dismiss by
+ *  accident on a phone. */
+function ResetButton({ onConfirm }: { onConfirm: () => void }) {
+  const [arm, setArm] = useState(false);
+  if (!arm) {
+    return (
+      <button onClick={() => setArm(true)} className="mt-2 w-full rounded-xl bg-red-500/70 p-3 text-sm font-bold">
+        Reset game (keeps players and prompts)
+      </button>
+    );
+  }
+  return (
+    <div className="mt-2 rounded-xl bg-red-500/20 p-3">
+      <p className="text-sm">This wipes every answer, vote and score. Players and prompts stay.</p>
+      <div className="mt-2 grid grid-cols-2 gap-2">
+        <button onClick={() => { onConfirm(); setArm(false); }} className="rounded-lg bg-red-600 p-2 text-sm font-bold">
+          Yes, reset
+        </button>
+        <button onClick={() => setArm(false)} className="rounded-lg bg-white/15 p-2 text-sm font-bold">
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
