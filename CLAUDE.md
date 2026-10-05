@@ -84,6 +84,21 @@ address forever. It is set to https://app.nolalabfest.com.
 DNS for nolalabfest.com is managed by Marybeth in Squarespace. `app` is an A record to
 76.76.21.21. The marketing site nolalabfest.com is a separate Squarespace site, not ours.
 
+## GitHub auth uses a deploy key, not a password
+GitHub stopped accepting passwords for git, and the saved keychain credential went stale on
+2026-10-05. Rather than a personal access token, this repo uses an SSH **deploy key**, which is
+scoped to this one repository and does not expire:
+
+- private half: `~/.ssh/labfest_deploy` on Brandi's Mac, never leaves it
+- public half: added under the repo's Settings, Security, Deploy keys, with write access ticked
+- `~/.ssh/config` points github.com at that key, and the remote is the SSH form
+  `git@github.com:brandimn/nola-labfest-app.git`
+
+Verify with `ssh -T git@github.com`; it answers "Hi brandimn/nola-labfest-app" rather than naming
+the account, which is the scoping working. If a push ever fails again, check that first before
+touching tokens. Do not ask Brandi for a token; she cannot paste into a Terminal password prompt
+easily and a classic token would cover every repository she owns.
+
 ## Deploys
 `npm run build` runs `prisma db push`, so deploying applies schema changes to the live database.
 Prisma refuses destructive changes without a flag, so additive changes are safe.
