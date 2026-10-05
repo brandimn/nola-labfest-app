@@ -10,31 +10,31 @@ datasource db {
 // Role stored as string for sqlite compatibility (enum values: ATTENDEE | VENDOR | ADMIN)
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
-  password     String
-  name         String
-  role         String   @default("ATTENDEE")
-  phone        String?
-  company      String?
-  title        String?
-  state        String?
-  badgeType    String?  // LAB | VENDOR | SPEAKER | NOWAK | STUDENT — drives badge label/color
-  badgeToken   String   @unique @default(cuid())
-  mustChangePassword Boolean @default(false)
-  invitedAt        DateTime?
-  openedInviteAt   DateTime?
-  installedAt      DateTime?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id                 String    @id @default(cuid())
+  email              String    @unique
+  password           String
+  name               String
+  role               String    @default("ATTENDEE")
+  phone              String?
+  company            String?
+  title              String?
+  state              String?
+  badgeType          String? // LAB | VENDOR | SPEAKER | NOWAK | STUDENT — drives badge label/color
+  badgeToken         String    @unique @default(cuid())
+  mustChangePassword Boolean   @default(false)
+  invitedAt          DateTime?
+  openedInviteAt     DateTime?
+  installedAt        DateTime?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
-  ownedVendor       Vendor?           @relation("VendorOwner")
+  ownedVendor       Vendor?            @relation("VendorOwner")
   vendorId          String?
-  boothStaffOf      Vendor?           @relation("VendorStaff", fields: [vendorId], references: [id], onDelete: SetNull)
-  ownedSpeaker      Speaker?          @relation("SpeakerOwner")
+  boothStaffOf      Vendor?            @relation("VendorStaff", fields: [vendorId], references: [id], onDelete: SetNull)
+  ownedSpeaker      Speaker?           @relation("SpeakerOwner")
   favorites         Favorite[]
   boothScans        BoothScan[]
-  leadsAsAttendee   Lead[]            @relation("LeadAttendee")
+  leadsAsAttendee   Lead[]             @relation("LeadAttendee")
   pushSubscriptions PushSubscription[]
   announcements     Announcement[]
   boothVote         BoothVote?
@@ -42,26 +42,26 @@ model User {
 }
 
 model Vendor {
-  id           String   @id @default(cuid())
-  userId       String?  @unique
-  user         User?    @relation("VendorOwner", fields: [userId], references: [id], onDelete: SetNull)
-  name         String
-  boothNumber  String
-  logoUrl      String?
-  description  String?
-  website      String?
-  contactEmail String?
-  contactPhone String?
-  category     String?      // primary category (kept for existing displays)
-  categories   String[]     @default([])  // full set of categories a vendor fits
-  sponsorTier  String?  // PLATINUM | GOLD | SILVER | BRONZE | null
-  atLabFest       Boolean  @default(true)
-  atLOTM          Boolean  @default(false)
-  isLunchSponsor  Boolean  @default(false)
-  sponsorships    String[] @default([])   // free text tags e.g. "Distillery Sponsor"
-  boothToken   String   @unique @default(cuid())
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id             String   @id @default(cuid())
+  userId         String?  @unique
+  user           User?    @relation("VendorOwner", fields: [userId], references: [id], onDelete: SetNull)
+  name           String
+  boothNumber    String
+  logoUrl        String?
+  description    String?
+  website        String?
+  contactEmail   String?
+  contactPhone   String?
+  category       String? // primary category (kept for existing displays)
+  categories     String[] @default([]) // full set of categories a vendor fits
+  sponsorTier    String? // PLATINUM | GOLD | SILVER | BRONZE | null
+  atLabFest      Boolean  @default(true)
+  atLOTM         Boolean  @default(false)
+  isLunchSponsor Boolean  @default(false)
+  sponsorships   String[] @default([]) // free text tags e.g. "Distillery Sponsor"
+  boothToken     String   @unique @default(cuid())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   boothScans BoothScan[]
   leads      Lead[]
@@ -81,10 +81,10 @@ model Promo {
   vendor      Vendor   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
   title       String
   details     String?  @db.Text
-  imageUrl    String?  @db.Text   // optional flyer/photo as a data URL
-  window      String?              // free text "when", e.g. "Oct 1-31"
+  imageUrl    String?  @db.Text // optional flyer/photo as a data URL
+  window      String? // free text "when", e.g. "Oct 1-31"
   active      Boolean  @default(true)
-  createdById String?              // who entered it (vendor or admin user id)
+  createdById String? // who entered it (vendor or admin user id)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -104,22 +104,22 @@ model BoothVote {
 }
 
 model Session {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  speaker     String?
-  speakerId   String?
-  speakerRef  Speaker? @relation(fields: [speakerId], references: [id], onDelete: SetNull)
-  location    String?
-  startsAt    DateTime
-  endsAt      DateTime
-  track       String?
-  event       String   @default("LABFEST") // LABFEST | LOTM
-  isFeatured  Boolean  @default(false)     // "exclusive masterclass" treatment
-  restricted     Boolean  @default(false)  // invitation only: hidden unless on the allow list
-  allowedUserIds String[] @default([])     // user ids that may see a restricted session
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id             String   @id @default(cuid())
+  title          String
+  description    String?
+  speaker        String?
+  speakerId      String?
+  speakerRef     Speaker? @relation(fields: [speakerId], references: [id], onDelete: SetNull)
+  location       String?
+  startsAt       DateTime
+  endsAt         DateTime
+  track          String?
+  event          String   @default("LABFEST") // LABFEST | LOTM
+  isFeatured     Boolean  @default(false) // "exclusive masterclass" treatment
+  restricted     Boolean  @default(false) // invitation only: hidden unless on the allow list
+  allowedUserIds String[] @default([]) // user ids that may see a restricted session
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   favorites Favorite[]
 
@@ -203,7 +203,7 @@ model Setting {
 
 model GalleryPhoto {
   id           String   @id @default(cuid())
-  url          String   @db.Text        // resized JPEG data URL
+  url          String   @db.Text // resized JPEG data URL
   caption      String?
   uploaderId   String?
   uploaderName String
@@ -248,4 +248,110 @@ model PasswordReset {
   createdAt DateTime  @default(now())
 
   @@index([userId])
+}
+
+// ---------------------------------------------------------------------------
+// LabFest Bench Talk: the live comedy game.
+// Prefixed "Game" because Session already means an agenda session.
+// Everything about a running game lives here, so any screen can be refreshed
+// or reopened mid show and land exactly where it should.
+// ---------------------------------------------------------------------------
+
+model Game {
+  id              String   @id @default(cuid())
+  mode            String   @default("PRACTICE") // PRACTICE | LIVE
+  name            String   @default("LabFest Bench Talk")
+  beltText        String   @default("Lab Nerds Unite")
+  timerSeconds    Int      @default(60)
+  answerMaxLength Int      @default(80)
+  hostMuted       Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  players GamePlayer[]
+  prompts GamePrompt[]
+  state   GameState?
+
+  @@index([mode])
+}
+
+model GamePlayer {
+  id        String  @id @default(cuid())
+  gameId    String
+  game      Game    @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  name      String
+  photoUrl  String? @db.Text
+  seatOrder Int     @default(0)
+  // Set when a finalist claims this slot on their phone. Host can clear it.
+  deviceId  String?
+
+  answers GameAnswer[]
+
+  @@index([gameId, seatOrder])
+}
+
+model GamePrompt {
+  id        String  @id @default(cuid())
+  gameId    String
+  game      Game    @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  round     String // R1 | R2 | BELT | BONUS
+  text      String  @db.Text
+  // Caption photos are data URLs. Never sent in the polled state payload:
+  // screens load them once from /api/live/photo/<id> instead.
+  imageUrl  String? @db.Text
+  sortOrder Int     @default(0)
+  isFinale  Boolean @default(false)
+  used      Boolean @default(false)
+
+  answers GameAnswer[]
+  votes   GameVote[]
+
+  @@index([gameId, round, sortOrder])
+}
+
+model GameAnswer {
+  id           String     @id @default(cuid())
+  promptId     String
+  prompt       GamePrompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  playerId     String
+  player       GamePlayer @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  text         String     @db.Text
+  displayOrder Int        @default(0) // shuffled once at reveal time
+  typedByHost  Boolean    @default(false)
+
+  votes GameVote[]
+
+  @@unique([promptId, playerId])
+  @@index([promptId, displayOrder])
+}
+
+model GameVote {
+  id       String     @id @default(cuid())
+  promptId String
+  prompt   GamePrompt @relation(fields: [promptId], references: [id], onDelete: Cascade)
+  answerId String
+  answer   GameAnswer @relation(fields: [answerId], references: [id], onDelete: Cascade)
+  deviceId String
+  votedAt  DateTime   @default(now())
+
+  // One vote per phone per prompt.
+  @@unique([promptId, deviceId])
+  @@index([answerId])
+}
+
+model GameState {
+  gameId          String    @id
+  game            Game      @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  // LOBBY PROMPT WRITING REVEAL VOTING RESULTS UNMASKED SCOREBOARD BELT_INTRO CHAMPION
+  phase           String    @default("LOBBY")
+  currentPromptId String?
+  timerEndsAt     DateTime?
+  // Set while paused, cleared on resume.
+  timerRemaining  Int?
+  revealedCount   Int       @default(0)
+  unmasked        Boolean   @default(false)
+  // Two normally, three when the second place is tied.
+  beltFinalists   String[]  @default([])
+  championId      String?
+  updatedAt       DateTime  @updatedAt
 }
