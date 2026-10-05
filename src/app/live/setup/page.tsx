@@ -211,6 +211,9 @@ export default function SetupPage() {
         <p className="font-mono text-xs">Audience: /live/vote</p>
         <p className="font-mono text-xs">Finalists: /live/play</p>
         <p className="font-mono text-xs">Big screen: /live/screen</p>
+        <a href="/live/codes" className="mt-3 inline-block rounded-xl bg-[#F5A547] px-4 py-3 font-bold text-slate-900">
+          Open printable QR codes
+        </a>
       </section>
     </main>
   );
