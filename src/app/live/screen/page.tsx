@@ -92,16 +92,19 @@ export default function ScreenPage() {
 
   if (!started) {
     return (
-      <main className="stage flex min-h-screen flex-col items-center justify-center gap-8">
-        <img src="/live/title.webp" alt="" className="max-h-[50vh] w-auto max-w-[80vw] drop-shadow-2xl" />
-        <p className="text-2xl font-semibold text-white/70">Tap once to let the music play</p>
-        <button
-          onClick={() => setStarted(true)}
-          className="rounded-full px-20 py-8 font-display text-5xl font-bold text-slate-900 shadow-2xl"
-          style={{ background: GOLD }}
-        >
-          Tap to Start
-        </button>
+      /* Reads as a title card if the room happens to see it: the whole screen is
+         the button and the instruction is small enough to vanish from the back
+         of a ballroom. */
+      <main
+        onClick={() => setStarted(true)}
+        className="stage flex min-h-screen cursor-pointer flex-col items-center justify-center gap-6"
+      >
+        <div className="beads" />
+        <img src="/live/title.webp" alt="" className="max-h-[55vh] w-auto max-w-[80vw] drop-shadow-2xl" />
+        <p className="font-display text-4xl font-black" style={{ color: GOLD }}>
+          Coming up next
+        </p>
+        <p className="absolute bottom-6 text-sm text-white/35">Tap anywhere to begin</p>
       </main>
     );
   }
