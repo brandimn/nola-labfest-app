@@ -76,9 +76,14 @@ export async function GET(req: NextRequest) {
           id: prompt.id,
           round: prompt.round,
           text: prompt.text,
-          // A data URL here would be re-sent to every phone on every poll, so
-          // only a pointer travels and the picture is fetched once.
-          photo: prompt.imageUrl ? `/api/live/photo/${prompt.id}` : null,
+          // A data URL would be re-sent to every phone on every poll, so only a
+          // pointer travels and the picture is fetched once. A file path is
+          // already a pointer, so it goes straight through.
+          photo: prompt.imageUrl
+            ? prompt.imageUrl.startsWith("data:")
+              ? `/api/live/photo/${prompt.id}`
+              : prompt.imageUrl
+            : null,
           isFinale: prompt.isFinale,
         }
       : null,

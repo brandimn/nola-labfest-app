@@ -247,7 +247,14 @@ export default function ScreenPage() {
               </div>
             )}
 
-            <p className="mb-8 max-w-5xl text-4xl font-semibold text-white/75">{state?.prompt?.text}</p>
+            {state?.prompt?.photo && (
+              <img
+                src={state.prompt.photo}
+                alt=""
+                className="mb-5 max-h-[26vh] w-auto rounded-2xl shadow-2xl"
+              />
+            )}
+            <p className="mb-6 max-w-5xl text-4xl font-semibold text-white/75">{state?.prompt?.text}</p>
 
             {phase === "VOTING" && (
               <p className="blink mb-8 font-display text-7xl font-black" style={{ color: GOLD }}>
@@ -284,7 +291,13 @@ export default function ScreenPage() {
                     />
                   )}
                   <div className="relative flex items-center justify-between gap-8">
-                    <span className="font-display text-5xl font-black leading-tight">{a.text}</span>
+                    <span
+                    className={`font-display font-black leading-tight ${
+                      state?.prompt?.photo ? "text-4xl" : "text-5xl"
+                    }`}
+                  >
+                    {a.text}
+                  </span>
                     {a.percent != null && (
                       <span className="shrink-0 font-display text-6xl font-black" style={{ color: GOLD }}>
                         {a.percent}%

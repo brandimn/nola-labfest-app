@@ -10,6 +10,38 @@ const PROMPTS = [
   { round: "R1", text: "The one thing you should NOT yell at a dental convention" },
 ];
 
+async function captionPrompts() {
+  const KEY = "bench-talk-captions-v1";
+  if (await prisma.setting.findUnique({ where: { key: KEY } })) {
+    console.log("[bench-talk] caption prompts: already done, skipped");
+    return;
+  }
+  const game =
+    (await prisma.game.findFirst({ where: { mode: "LIVE" } })) ??
+    (await prisma.game.findFirst({ where: { mode: "PRACTICE" } }));
+  if (!game) return;
+
+  const CAPTIONS = [
+    { text: "Caption this", imageUrl: "/live/captions/elf-gypsum.webp" },
+    { text: "Caption this", imageUrl: "/live/captions/crying-dentures.webp" },
+    { text: "Caption this", imageUrl: "/live/captions/badge-bourbon.webp" },
+  ];
+  const added = [];
+  for (const c of CAPTIONS) {
+    const exists = await prisma.gamePrompt.findFirst({
+      where: { gameId: game.id, imageUrl: c.imageUrl },
+    });
+    if (exists) continue;
+    const count = await prisma.gamePrompt.count({ where: { gameId: game.id, round: "R2" } });
+    await prisma.gamePrompt.create({
+      data: { gameId: game.id, round: "R2", text: c.text, imageUrl: c.imageUrl, sortOrder: count },
+    });
+    added.push(c.imageUrl.split("/").pop());
+  }
+  console.log(`[bench-talk] caption prompts added (${added.length}): ${added.join(", ") || "none"}`);
+  await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
+}
+
 async function renameGame() {
   // The title art Brandi made names the game, so the setting follows it. Still
   // editable in Setup right up to showtime.
@@ -52,5 +84,6 @@ async function main() {
 
 main()
   .then(renameGame)
+  .then(captionPrompts)
   .catch((e) => console.error("[bench-talk] skipped:", e?.message ?? e))
   .finally(() => prisma.$disconnect());

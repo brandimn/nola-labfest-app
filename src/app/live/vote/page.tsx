@@ -66,7 +66,14 @@ export default function VotePage() {
 
       {voting && (
         <>
-          <p className="mt-4 text-center font-display text-xl font-bold leading-snug">
+          {state?.prompt?.photo && (
+            <img
+              src={state.prompt.photo}
+              alt=""
+              className="mt-4 w-full rounded-xl shadow-lg"
+            />
+          )}
+          <p className="mt-3 text-center font-display text-xl font-bold leading-snug">
             {state?.prompt?.text}
           </p>
           {votedFor ? (
