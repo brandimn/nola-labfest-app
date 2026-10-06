@@ -106,7 +106,7 @@ export default function PlayPage() {
           <img
             src={
               benched ? "/live/tooth/shades.png"
-                : saved ? "/live/tooth/thumbs.png"
+                : saved ? "/live/tooth/wink.png"
                 : "/live/tooth/question.png"
             }
             alt=""

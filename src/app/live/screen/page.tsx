@@ -11,10 +11,10 @@ const TOOTH: Record<string, string> = {
   WRITING: "question",
   REVEAL: "peek",
   VOTING: "megaphone",
-  RESULTS: "excited",
-  UNMASKED: "point",
+  RESULTS: "wow",
+  UNMASKED: "present",
   SCOREBOARD: "thumbs",
-  BELT_INTRO: "scepter",
+  BELT_INTRO: "sceptre",
   CHAMPION: "crown",
 };
 
