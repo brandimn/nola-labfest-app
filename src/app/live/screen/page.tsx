@@ -58,11 +58,24 @@ export default function ScreenPage() {
     }
   }, [state?.phase, state?.game.muted, started]);
 
+  // Asking a clip to play while it is still playing does nothing, and the bell
+  // rings longer than the gap between answers, so every other ding was being
+  // dropped. Rewinding first restarts it every time.
+  const strike = (el: HTMLAudioElement | null) => {
+    if (!el) return;
+    try {
+      el.currentTime = 0;
+    } catch {
+      /* not ready yet; play anyway */
+    }
+    el.play().catch(() => {});
+  };
+
   // A ding on each answer as it lands.
   useEffect(() => {
     if (!started || !state) return;
     if (state.revealedCount > lastRevealed.current && !state.game.muted) {
-      ding.current?.play().catch(() => {});
+      strike(ding.current);
     }
     lastRevealed.current = state.revealedCount;
   }, [state?.revealedCount, state?.game.muted, started, state]);
@@ -72,7 +85,7 @@ export default function ScreenPage() {
     if (!started || !state) return;
     const became = state.phase !== lastPhase.current;
     if (became && state.phase === "RESULTS" && !state.game.muted) {
-      drumroll.current?.play().catch(() => {});
+      strike(drumroll.current);
     }
     lastPhase.current = state.phase;
   }, [state?.phase, state?.game.muted, started, state]);
