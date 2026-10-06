@@ -14,14 +14,17 @@
 // Anyone with genuinely no email keeps their @labfest.badge account so they
 // still get a badge. Guarded so it only ever runs once.
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcryptjs";
 import fs from "node:fs";
 import path from "node:path";
 
 const prisma = new PrismaClient();
+// Same shared password the roster import uses.
+const SHARED_PASSWORD = "Labfest26";
 // Bumped to let the run repeat after a late addition to ALIASES. Repeating is
 // safe: the snapshot is never overwritten, the removals find nobody left, and
 // a merge only fires where a duplicate still exists.
-const RUN_KEY = "roster-cleanup-2026-10-06-v2";
+const RUN_KEY = "roster-cleanup-2026-10-06-v3";
 const SNAPSHOT_KEY = "roster-snapshot-2026-10-06";
 
 const norm = (s) => (s ?? "").toLowerCase().replace(/[^a-z]/g, "");
@@ -68,6 +71,23 @@ const ALIASES = [
   // Same mailbox name at shining3d.com and .us, and the master list calls her
   // Grace, so the same-name pass never saw these two as one person.
   { badgeName: "Gratiela Gomez", emails: ["gratiela@shining3d.us"] },
+  // The master list has him as Joshua, the badge row as Josh.
+  { badgeName: "Josh Williams", emails: ["jwilliams@gpsdental.com"] },
+];
+
+// Real addresses Brandi supplied for people who were stuck on a placeholder.
+// They get the shared password and are asked to pick their own, same as
+// everyone else off the roster.
+const CONTACTS = [
+  // Bernard's wife. Takes his company, which the Namebadges tab left blank.
+  {
+    badgeName: "Vinci Ory",
+    email: "vinciory@gmail.com",
+    company: "Your Extensions/Profitable Stylist",
+  },
+  { badgeName: "Shannon Grayson", email: "shannon_morse@ymail.com" },
+  // No address for her, but her badge should not print blank.
+  { badgeName: "Danielle Disston", company: "NADL" },
 ];
 
 // If the script ever matches more than this for removal my name matching is
@@ -285,6 +305,46 @@ async function main() {
     console.log(`[cleanup] MERGED badge record "${from.name}" <${from.email}> into ${to.name} <${to.email}>`);
   }
   console.log(`[cleanup] ${mergedByAlias} differently-spelled duplicates folded in`);
+
+  // 3c. Real addresses and missing companies Brandi supplied.
+  for (const c of CONTACTS) {
+    const u = await prisma.user.findFirst({
+      where: { name: { equals: c.badgeName, mode: "insensitive" } },
+      select: { id: true, name: true, email: true, company: true },
+    });
+    if (!u) {
+      console.log(`[cleanup] contact ${c.badgeName}: no account found, skipped`);
+      continue;
+    }
+    const data = {};
+    if (c.company && c.company !== u.company) data.company = c.company;
+    if (c.email && c.email.toLowerCase() !== u.email.toLowerCase()) {
+      // If the address is already in use this is really a duplicate, and
+      // merging is the right move rather than fighting the unique constraint.
+      const taken = await prisma.user.findUnique({ where: { email: c.email }, select: SELECT });
+      if (taken) {
+        const from = await prisma.user.findUnique({ where: { id: u.id }, select: SELECT });
+        await merge(from, taken);
+        console.log(`[cleanup] contact ${c.badgeName}: ${c.email} already exists, MERGED into it`);
+        continue;
+      }
+      data.email = c.email;
+      // They could never sign in on a placeholder, so give them the shared
+      // password and the same pick-your-own prompt everyone else gets.
+      data.password = await bcrypt.hash(SHARED_PASSWORD, 10);
+      data.mustChangePassword = true;
+    }
+    if (!Object.keys(data).length) {
+      console.log(`[cleanup] contact ${c.badgeName}: already correct`);
+      continue;
+    }
+    await prisma.user.update({ where: { id: u.id }, data });
+    const bits = [
+      data.email ? `email ${u.email} -> ${data.email}` : null,
+      data.company ? `company "${data.company}"` : null,
+    ].filter(Boolean);
+    console.log(`[cleanup] CONTACT ${u.name}: ${bits.join(", ")}`);
+  }
 
   // 4. What is left to deal with by hand.
   const left = await prisma.user.findMany({
