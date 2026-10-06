@@ -61,7 +61,8 @@ export default function SetupPage() {
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-6 pb-24">
-      <h1 className="font-display text-2xl font-bold">Game setup</h1>
+      <a href="/live/host" className="text-sm text-white/60">← Host controls</a>
+      <h1 className="mt-2 font-display text-2xl font-bold">Game setup</h1>
       <p className="mt-1 text-sm text-white/60">
         Currently editing the <strong>{data.game.mode === "LIVE" ? "live" : "practice"}</strong> game.
       </p>
