@@ -31,7 +31,10 @@ export async function POST(req: NextRequest) {
     prisma.gameState.update({
       where: { gameId: game.id },
       // Stamp when the phase changed so the later beats can time themselves.
-      data: "phase" in data ? { ...data, phaseAt: new Date() } : data,
+      data:
+        "phase" in data
+          ? { autoPaused: false, ...data, phaseAt: new Date() }
+          : data,
     });
 
   switch (action) {
@@ -116,6 +119,59 @@ export async function POST(req: NextRequest) {
         { error: "That is every prompt. Crown the champion below." },
         { status: 400 }
       );
+    }
+
+    // Jump straight to a screen to look at it, without playing a game.
+    case "PREVIEW": {
+      const want = String(body.phase ?? "LOBBY");
+      const players = await prisma.gamePlayer.findMany({
+        where: { gameId: game.id }, orderBy: { seatOrder: "asc" },
+      });
+      const prompt =
+        (state.currentPromptId
+          ? await prisma.gamePrompt.findUnique({ where: { id: state.currentPromptId } })
+          : null) ??
+        (await prisma.gamePrompt.findFirst({
+          where: { gameId: game.id },
+          orderBy: [{ round: "asc" }, { sortOrder: "asc" }],
+        }));
+
+      const data: Record<string, unknown> = {
+        phase: want,
+        autoPaused: true,
+        phaseAt: new Date(),
+        currentPromptId: prompt?.id ?? null,
+      };
+
+      // Give each screen enough to look like itself.
+      if (want === "WRITING") {
+        data.timerEndsAt = new Date(Date.now() + 60_000);
+        data.timerRemaining = null;
+      }
+      if (want === "REVEAL") {
+        data.revealStartedAt = new Date(Date.now() - 60_000); // all answers already up
+        data.revealedCount = 99;
+      }
+      if (["UNMASKED", "SCOREBOARD", "CHAMPION"].includes(want)) data.unmasked = true;
+      if (["BELT_INTRO", "CHAMPION"].includes(want)) {
+        data.beltFinalists = players.slice(0, 2).map((p) => p.id);
+      }
+      if (want === "CHAMPION") data.championId = players[0]?.id ?? null;
+      if (want === "LOBBY") {
+        data.currentPromptId = null;
+        data.unmasked = false;
+      }
+
+      await prisma.gameState.update({ where: { gameId: game.id }, data });
+      return NextResponse.json({ ok: true, previewing: want });
+    }
+
+    case "RESUME_GAME": {
+      await prisma.gameState.update({
+        where: { gameId: game.id },
+        data: { autoPaused: false },
+      });
+      return NextResponse.json({ ok: true });
     }
 
     case "SHOW_PROMPT": {

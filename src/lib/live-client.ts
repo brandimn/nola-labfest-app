@@ -34,6 +34,7 @@ export type LiveState = {
   unmasked: boolean;
   answers: { id: string; text: string; votes: number | null; percent: number | null; player: string | null }[];
   answerCount: number;
+  autoPaused: boolean;
   getReadyIn: number | null;
   totalVotes: number | null;
   revealTotal: number;

@@ -92,6 +92,7 @@ export async function GET(req: NextRequest) {
       remaining: state.timerRemaining,
       paused: state.timerRemaining != null,
     },
+    autoPaused: state.autoPaused,
     revealedCount: revealed,
     getReadyIn:
       phase === "PROMPT" && state.promptShownAt

@@ -200,6 +200,43 @@ export default function SetupPage() {
         <ResetButton onConfirm={() => host("RESET_GAME")} />
       </section>
 
+      <section className="mt-5 rounded-2xl bg-white/5 p-4">
+        <h2 className="font-display text-lg font-bold">Have a look at any screen</h2>
+        <p className="mt-1 text-sm text-white/60">
+          Jumps the big screen straight to that moment so you can see how it looks. The game
+          freezes while you do, so nothing moves on by itself. Open the big screen in another tab
+          first.
+        </p>
+        <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {([
+            ["LOBBY", "Lobby"],
+            ["PROMPT", "Prompt up"],
+            ["WRITING", "Writing"],
+            ["REVEAL", "Answers"],
+            ["VOTING", "Voting"],
+            ["RESULTS", "Results"],
+            ["UNMASKED", "Names"],
+            ["SCOREBOARD", "Scoreboard"],
+            ["BELT_INTRO", "Belt Match"],
+            ["CHAMPION", "Champion"],
+          ] as [string, string][]).map(([phase, label]) => (
+            <button
+              key={phase}
+              onClick={() => host("PREVIEW", { phase })}
+              className="rounded-lg bg-white/15 px-3 py-3 text-sm font-semibold"
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <button
+          onClick={() => host("RESUME_GAME")}
+          className="mt-3 w-full rounded-xl bg-[#F5A547] p-3 font-bold text-slate-900"
+        >
+          Done looking, unfreeze the game
+        </button>
+      </section>
+
       <section className="mt-5 rounded-2xl bg-white/5 p-4 text-sm">
         <p className="mb-2 text-xs uppercase tracking-wider text-white/50">Links to put on QR codes</p>
         <p className="font-mono text-xs">Audience: /live/vote</p>

@@ -138,6 +138,17 @@ export default function HostPage() {
         </div>
       </div>
       {offline && <p className="mt-2 rounded bg-amber-500/20 p-2 text-center text-xs text-amber-200">Reconnecting…</p>}
+      {state?.autoPaused && (
+        <div className="mt-2 rounded-xl bg-amber-500/25 p-3 text-center text-sm">
+          <p className="font-bold">Frozen while you look at a screen.</p>
+          <button
+            onClick={() => act("RESUME_GAME")}
+            className="mt-2 rounded-lg bg-[#F5A547] px-4 py-2 font-bold text-slate-900"
+          >
+            Unfreeze
+          </button>
+        </div>
+      )}
       {error && <p className="mt-2 rounded bg-red-500/20 p-2 text-center text-sm text-red-200">{error}</p>}
 
       {/* The one button. Everything below it is an override, not a step. */}

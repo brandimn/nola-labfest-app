@@ -358,6 +358,9 @@ model GameState {
   // When the current phase began. Lets the later beats time themselves without
   // anyone tapping.
   phaseAt         DateTime?
+  // Set while previewing a screen, so the game does not advance out from under
+  // whoever is looking at it. Cleared by any normal control.
+  autoPaused      Boolean   @default(false)
   unmasked        Boolean   @default(false)
   // Two normally, three when the second place is tied.
   beltFinalists   String[]  @default([])

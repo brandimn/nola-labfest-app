@@ -138,6 +138,8 @@ const RESULTS_HOLD_MS = 5000;
 export async function advanceIfDue(gameId: string) {
   const { prisma } = await import("@/lib/prisma");
   const state = await prisma.gameState.findUnique({ where: { gameId } });
+  // Someone is looking at a screen on purpose; leave it alone.
+  if (state?.autoPaused) return;
   if (!state?.currentPromptId) return;
   const now = Date.now();
 
