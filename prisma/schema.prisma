@@ -352,6 +352,9 @@ model GameState {
   // Set when the reveal starts. How many answers are showing is worked out from
   // how long ago that was, so every screen agrees and a refresh lands right.
   revealStartedAt DateTime?
+  // When the prompt went up. Writing opens a few seconds later on its own, so
+  // the host can read it out without anyone tapping anything.
+  promptShownAt   DateTime?
   unmasked        Boolean   @default(false)
   // Two normally, three when the second place is tied.
   beltFinalists   String[]  @default([])

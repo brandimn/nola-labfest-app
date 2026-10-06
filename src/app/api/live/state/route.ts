@@ -88,6 +88,10 @@ export async function GET(req: NextRequest) {
       paused: state.timerRemaining != null,
     },
     revealedCount: revealed,
+    getReadyIn:
+      phase === "PROMPT" && state.promptShownAt
+        ? Math.max(0, Math.ceil((state.promptShownAt.getTime() + 6000 - Date.now()) / 1000))
+        : null,
     unmasked: state.unmasked,
     answers: showAnswers
       ? answers

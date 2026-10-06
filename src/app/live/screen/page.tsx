@@ -178,6 +178,12 @@ export default function ScreenPage() {
               {state?.prompt?.text}
             </h1>
 
+            {phase === "PROMPT" && state?.getReadyIn != null && (
+              <p className="mt-8 font-display text-6xl font-black" style={{ color: GOLD }}>
+                {state.getReadyIn > 0 ? `Get ready… ${state.getReadyIn}` : "Go!"}
+              </p>
+            )}
+
             {phase === "WRITING" && (
               <>
                 <div className="relative mt-10 h-56 w-56">

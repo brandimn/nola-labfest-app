@@ -124,8 +124,10 @@ export default function PlayPage() {
               <p className="mt-3 font-display text-2xl font-bold leading-snug">
                 {state?.prompt?.text}
               </p>
-              <p className="mt-4 text-sm text-white/70">
-                The box opens the second the clock starts.
+              <p className="mt-4 font-display text-4xl font-black text-[#F5A547]">
+                {state?.getReadyIn != null && state.getReadyIn > 0
+                  ? `Writing opens in ${state.getReadyIn}`
+                  : "Go!"}
               </p>
             </>
           ) : (

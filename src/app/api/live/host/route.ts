@@ -45,6 +45,7 @@ export async function POST(req: NextRequest) {
       await set({
         phase: "PROMPT", currentPromptId: prompt.id, revealedCount: 0,
         unmasked: false, timerEndsAt: null, timerRemaining: null,
+        promptShownAt: new Date(), revealStartedAt: null,
       });
       return NextResponse.json({ ok: true });
     }

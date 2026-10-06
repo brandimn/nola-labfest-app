@@ -127,6 +127,7 @@ export function revealedSoFar(startedAt: Date | null, total: number, now = Date.
  *  Driven off the clock on each poll rather than a background job, because
  *  there is no server to run one on. Every write is conditional on the phase it
  *  expects, so several screens polling at once cannot apply it twice. */
+export const GET_READY_MS = 6000;
 const AFTER_WRITING_MS = 3000;
 const AFTER_REVEAL_MS = 2000;
 
@@ -135,6 +136,23 @@ export async function advanceIfDue(gameId: string) {
   const state = await prisma.gameState.findUnique({ where: { gameId } });
   if (!state?.currentPromptId) return;
   const now = Date.now();
+
+  // The prompt has been up long enough for the host to read it: open writing.
+  if (state.phase === "PROMPT" && state.promptShownAt) {
+    if (now - state.promptShownAt.getTime() > GET_READY_MS) {
+      const game = await prisma.game.findUnique({ where: { id: gameId } });
+      await prisma.gameState.updateMany({
+        where: { gameId, phase: "PROMPT" },
+        data: {
+          phase: "WRITING",
+          timerEndsAt: new Date(now + (game?.timerSeconds ?? 60) * 1000),
+          timerRemaining: null,
+        },
+      });
+      return;
+    }
+    return;
+  }
 
   // Writing is over and everyone is locked in: start showing answers.
   if (

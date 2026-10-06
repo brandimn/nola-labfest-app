@@ -144,9 +144,11 @@ export default function HostPage() {
 
       {phase === "PROMPT" && (
         <div className="mt-4 rounded-2xl bg-[#F5A547]/20 p-4 text-center text-sm">
-          <p className="font-bold">The prompt is on the big screen.</p>
+          <p className="font-bold">
+            {state?.getReadyIn ? `Writing opens in ${state.getReadyIn}` : "Writing is opening"}
+          </p>
           <p className="mt-1 text-white/80">
-            Nobody can type until you tap Start timer.
+            Read the prompt out. Nothing to tap.
           </p>
         </div>
       )}
@@ -162,7 +164,9 @@ export default function HostPage() {
 
       {/* Main flow */}
       <section className="mt-4 grid grid-cols-2 gap-2">
-        {phase === "PROMPT" && <Btn on={() => act("START_TIMER")} kind="go">Start timer</Btn>}
+        {phase === "PROMPT" && (
+          <Btn on={() => act("START_TIMER")} kind="quiet">Start writing now</Btn>
+        )}
         {phase === "WRITING" && (
           <Btn on={() => act("START_REVEAL")} kind={everyoneAnswered ? "go" : "quiet"}>
             {everyoneAnswered ? "Reveal now" : "Skip to reveal"}
