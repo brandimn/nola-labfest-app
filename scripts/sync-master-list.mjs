@@ -102,6 +102,21 @@ async function main() {
     updated.push(m.name);
   }
 
+  // The badge PDF prints everyone who has a badge type and silently skips
+  // anyone whose is empty, so that is the one way a person can be missing from
+  // the printout without anybody noticing. Say so out loud, every deploy.
+  const noBadgeType = await prisma.user.findMany({
+    where: { badgeType: null },
+    select: { name: true, email: true, role: true },
+    orderBy: { name: "asc" },
+  });
+  if (noBadgeType.length) {
+    console.log(`[master] WILL NOT PRINT, no badge type (${noBadgeType.length}):`);
+    for (const u of noBadgeType) console.log(`[master]   ${u.name} <${u.email}> ${u.role}`);
+  } else {
+    console.log(`[master] badge check: everyone has a badge type, nobody will be skipped`);
+  }
+
   console.log(`[master] on the list: ${master.length}`);
   console.log(`[master] created (${created.length}): ${created.slice(0, 60).join(" | ")}`);
   console.log(`[master] updated: ${updated.length}`);
