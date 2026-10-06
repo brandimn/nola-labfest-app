@@ -49,6 +49,9 @@ export default function PlayPage() {
     }
   }
 
+  // The prompt is on the big screen before the clock starts. Let them read it
+  // and start thinking rather than staring at "get ready".
+  const promptShowing = state?.phase === "PROMPT";
   const inBeltMatch = state?.prompt?.round === "BELT";
   const benched = inBeltMatch && !!me && !state?.beltFinalists.includes(me.id);
   const writing = state?.phase === "WRITING" && (seconds ?? 0) > 0 && !benched;
@@ -107,18 +110,38 @@ export default function PlayPage() {
                 : "/live/tooth/question.png"
             }
             alt=""
-            className="mb-4 h-40 w-auto drop-shadow-xl"
+            className="mb-4 h-36 w-auto drop-shadow-xl"
           />
-          <p className="font-display text-3xl font-bold">
-            {benched ? "Belt Match" : saved ? "Locked in" : "Get ready"}
-          </p>
-          <p className="mt-2 text-sm text-white/70">
-            {benched
-              ? "This round is between the finalists. Sit back and heckle."
-              : saved
-                ? "Look at the big screen."
-                : "Your prompt is coming up."}
-          </p>
+
+          {promptShowing && !benched ? (
+            <>
+              <p className="text-sm font-bold uppercase tracking-widest text-[#F5A547]">
+                Start thinking
+              </p>
+              {state?.prompt?.photo && (
+                <img src={state.prompt.photo} alt="" className="mt-3 w-full rounded-xl" />
+              )}
+              <p className="mt-3 font-display text-2xl font-bold leading-snug">
+                {state?.prompt?.text}
+              </p>
+              <p className="mt-4 text-sm text-white/70">
+                The box opens the second the clock starts.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="font-display text-3xl font-bold">
+                {benched ? "Belt Match" : saved ? "Locked in" : "Get ready"}
+              </p>
+              <p className="mt-2 text-sm text-white/70">
+                {benched
+                  ? "This round is between the finalists. Sit back and heckle."
+                  : saved
+                    ? "Look at the big screen."
+                    : "Your prompt is coming up."}
+              </p>
+            </>
+          )}
         </div>
       ) : (
         <>

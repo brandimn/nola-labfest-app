@@ -142,6 +142,15 @@ export default function HostPage() {
         </section>
       )}
 
+      {phase === "PROMPT" && (
+        <div className="mt-4 rounded-2xl bg-[#F5A547]/20 p-4 text-center text-sm">
+          <p className="font-bold">The prompt is on the big screen.</p>
+          <p className="mt-1 text-white/80">
+            Nobody can type until you tap Start timer.
+          </p>
+        </div>
+      )}
+
       {!state?.players.length && (
         <div className="mt-4 rounded-2xl bg-amber-500/20 p-4 text-sm">
           <p className="font-bold">No players yet.</p>
