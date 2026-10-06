@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { useCountdown, useLiveState } from "@/lib/live-client";
 
+const PURPLE = "#7C3AED";
+const DEEP = "#3D1E50";
+const GREEN = "#0E8C4B";
 const GOLD = "#F5A547";
 
 export default function ScreenPage() {
@@ -13,8 +16,6 @@ export default function ScreenPage() {
   const ding = useRef<HTMLAudioElement | null>(null);
   const lastRevealed = useRef(0);
 
-  // Thinking music follows the writing phase. Browsers only allow this after a
-  // tap, which is what Tap to Start is for.
   useEffect(() => {
     if (!started || !music.current) return;
     const shouldPlay = state?.phase === "WRITING" && !state.game.muted;
@@ -22,7 +23,6 @@ export default function ScreenPage() {
     else { music.current.pause(); music.current.currentTime = 0; }
   }, [state?.phase, state?.game.muted, started]);
 
-  // A ding on each new answer.
   useEffect(() => {
     if (!started || !state) return;
     if (state.revealedCount > lastRevealed.current && !state.game.muted) {
@@ -33,10 +33,12 @@ export default function ScreenPage() {
 
   if (!started) {
     return (
-      <main className="flex min-h-screen items-center justify-center">
+      <main className="stage flex min-h-screen flex-col items-center justify-center gap-10">
+        <img src="/live/title.webp" alt="" className="w-[70vw] max-w-5xl drop-shadow-2xl" />
         <button
           onClick={() => setStarted(true)}
-          className="rounded-3xl bg-[#F5A547] px-16 py-10 font-display text-5xl font-bold text-slate-900"
+          className="rounded-full px-20 py-8 font-display text-5xl font-bold text-slate-900 shadow-2xl"
+          style={{ background: GOLD }}
         >
           Tap to Start
         </button>
@@ -44,40 +46,41 @@ export default function ScreenPage() {
     );
   }
 
-  const name = state?.game.name ?? "LabFest";
   const phase = state?.phase ?? "LOBBY";
+  const total = state?.players.length ?? 0;
+  const answered = state?.answerCount ?? 0;
+  const pct = state?.timer.endsAt && state.game.timerSeconds
+    ? Math.max(0, Math.min(1, (seconds ?? 0) / state.game.timerSeconds))
+    : 1;
   const champion =
     state?.belt?.rows.find((p) => p.id === state?.championId) ??
     state?.scoreboard?.find((p) => p.id === state?.championId);
 
   return (
-    <main className="relative flex min-h-screen flex-col px-10 py-8">
+    <main className="stage relative flex min-h-screen flex-col px-12 py-8">
       <audio ref={music} src="/game/sounds/thinking.mp3" loop preload="auto" />
       <audio ref={ding} src="/game/sounds/ding.mp3" preload="auto" />
 
-      <header className="flex items-center justify-between">
-        <p className="font-display text-3xl font-bold" style={{ color: GOLD }}>{name}</p>
-        {state?.game.mode === "PRACTICE" && (
-          <span className="rounded-full bg-amber-500 px-4 py-1 text-lg font-bold text-slate-900">
-            PRACTICE
-          </span>
-        )}
+      <div className="beads" />
+
+      <header className="relative flex items-center justify-between">
+        <img src="/live/title.webp" alt="" className="h-20 w-auto drop-shadow-lg" />
+        <div className="flex items-center gap-3">
+          {state?.game.mode === "PRACTICE" && (
+            <span className="rounded-full bg-amber-400 px-5 py-2 text-xl font-bold text-slate-900">PRACTICE</span>
+          )}
+          {offline && <span className="rounded-full bg-red-500 px-5 py-2 text-xl font-bold">Reconnecting</span>}
+        </div>
       </header>
 
-      {offline && (
-        <p className="mt-2 text-center text-xl text-amber-300">Reconnecting…</p>
-      )}
-
-      <div className="flex flex-1 flex-col items-center justify-center text-center">
+      <div className="relative flex flex-1 flex-col items-center justify-center text-center">
         {phase === "LOBBY" && (
           <>
-            <h1 className="font-display text-8xl font-bold leading-none">{name}</h1>
-            <p className="mt-6 text-3xl text-white/70">Scan to play along</p>
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-6">
+            <img src="/live/title.webp" alt="" className="w-[60vw] max-w-4xl drop-shadow-2xl" />
+            <p className="mt-8 text-4xl font-semibold text-white/80">Scan the code on your table to play</p>
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-5">
               {state?.players.map((p) => (
-                <span key={p.id} className="rounded-2xl bg-white/10 px-8 py-4 text-4xl font-semibold">
-                  {p.name}
-                </span>
+                <span key={p.id} className="chip rounded-2xl px-10 py-5 text-4xl font-bold">{p.name}</span>
               ))}
             </div>
           </>
@@ -86,26 +89,39 @@ export default function ScreenPage() {
         {(phase === "PROMPT" || phase === "WRITING") && (
           <>
             {state?.prompt?.photo && (
-              <img src={state.prompt.photo} alt="" className="mb-8 max-h-[40vh] rounded-2xl" />
+              <img src={state.prompt.photo} alt="" className="mb-8 max-h-[36vh] rounded-3xl shadow-2xl" />
             )}
-            <h1 className="max-w-6xl font-display text-7xl font-bold leading-tight">
+            <h1 className="pop max-w-6xl font-display text-[5.5rem] font-black leading-[1.05] drop-shadow-lg">
               {state?.prompt?.text}
             </h1>
+
             {phase === "WRITING" && (
               <>
-                <p className="mt-10 font-display text-9xl font-bold" style={{ color: GOLD }}>
-                  {seconds ?? 0}
-                </p>
-                <p className="mt-4 text-4xl text-white/80">
-                  {state?.answerCount ?? 0} of {state?.players.length ?? 0} answered
-                </p>
-                <div className="mt-6 flex flex-wrap justify-center gap-4">
+                <div className="relative mt-10 h-56 w-56">
+                  <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
+                    <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="12" />
+                    <circle
+                      cx="60" cy="60" r="52" fill="none" strokeWidth="12" strokeLinecap="round"
+                      stroke={pct > 0.25 ? GOLD : "#ef4444"}
+                      strokeDasharray={2 * Math.PI * 52}
+                      strokeDashoffset={2 * Math.PI * 52 * (1 - pct)}
+                      style={{ transition: "stroke-dashoffset 0.4s linear, stroke 0.4s" }}
+                    />
+                  </svg>
+                  <span className="absolute inset-0 flex items-center justify-center font-display text-7xl font-black">
+                    {seconds ?? 0}
+                  </span>
+                </div>
+
+                <p className="mt-6 text-4xl font-bold text-white/85">{answered} of {total} answered</p>
+                <div className="mt-5 flex flex-wrap justify-center gap-4">
                   {state?.players.map((p) => (
                     <span
                       key={p.id}
-                      className={`rounded-xl px-6 py-3 text-2xl font-semibold ${
-                        p.answered ? "bg-[#0E8C4B] text-white" : "bg-white/10 text-white/50"
+                      className={`rounded-2xl px-8 py-4 text-3xl font-bold transition-all duration-300 ${
+                        p.answered ? "scale-105 text-white shadow-lg" : "text-white/40"
                       }`}
+                      style={{ background: p.answered ? GREEN : "rgba(255,255,255,0.08)" }}
                     >
                       {p.name}
                     </span>
@@ -119,40 +135,51 @@ export default function ScreenPage() {
         {["REVEAL", "VOTING", "RESULTS", "UNMASKED"].includes(phase) && (
           <>
             {state?.prompt?.round === "BELT" && state?.belt && (
-              <div className="mb-6 flex items-center justify-center gap-10">
+              <div className="mb-6 flex items-center justify-center gap-14">
                 {state.belt.rows.map((r) => (
-                  <div key={r.id} className="text-center">
-                    <p className="text-3xl font-semibold text-white/70">{r.name}</p>
-                    <p className="font-display text-6xl font-bold" style={{ color: GOLD }}>{r.wins}</p>
+                  <div key={r.id}>
+                    <p className="text-3xl font-bold text-white/70">{r.name}</p>
+                    <p className="font-display text-7xl font-black" style={{ color: GOLD }}>{r.wins}</p>
                   </div>
                 ))}
               </div>
             )}
-            <p className="mb-6 max-w-5xl text-4xl text-white/70">{state?.prompt?.text}</p>
+
+            <p className="mb-8 max-w-5xl text-4xl font-semibold text-white/75">{state?.prompt?.text}</p>
+
             {phase === "VOTING" && (
-              <p className="mb-6 font-display text-6xl font-bold" style={{ color: GOLD }}>
+              <p className="blink mb-8 font-display text-7xl font-black" style={{ color: GOLD }}>
                 Vote now on your phone
               </p>
             )}
-            <div className="w-full max-w-5xl space-y-5">
-              {state?.answers.map((a) => (
-                <div key={a.id} className="relative overflow-hidden rounded-2xl bg-white/10 p-6 text-left">
+
+            <div className="w-full max-w-6xl space-y-5">
+              {state?.answers.map((a, i) => (
+                <div
+                  key={a.id}
+                  className="fly relative overflow-hidden rounded-3xl p-7 text-left shadow-xl"
+                  style={{ background: "rgba(255,255,255,0.1)", animationDelay: `${i * 60}ms` }}
+                >
                   {a.percent != null && (
                     <div
-                      className="absolute inset-y-0 left-0 bg-[#7C3AED]/60 transition-all duration-700"
-                      style={{ width: `${a.percent}%` }}
+                      className="absolute inset-y-0 left-0"
+                      style={{
+                        width: `${a.percent}%`,
+                        background: `linear-gradient(90deg, ${PURPLE}, ${GREEN})`,
+                        transition: "width 1.2s cubic-bezier(.2,.8,.2,1)",
+                      }}
                     />
                   )}
-                  <div className="relative flex items-center justify-between gap-6">
-                    <span className="font-display text-5xl font-bold leading-tight">{a.text}</span>
+                  <div className="relative flex items-center justify-between gap-8">
+                    <span className="font-display text-5xl font-black leading-tight">{a.text}</span>
                     {a.percent != null && (
-                      <span className="shrink-0 text-5xl font-bold" style={{ color: GOLD }}>
+                      <span className="shrink-0 font-display text-6xl font-black" style={{ color: GOLD }}>
                         {a.percent}%
                       </span>
                     )}
                   </div>
                   {a.player && (
-                    <p className="relative mt-3 text-3xl font-semibold" style={{ color: GOLD }}>
+                    <p className="pop relative mt-3 text-4xl font-black" style={{ color: GOLD }}>
                       {a.player}
                     </p>
                   )}
@@ -164,12 +191,20 @@ export default function ScreenPage() {
 
         {phase === "SCOREBOARD" && (
           <>
-            <h1 className="mb-10 font-display text-7xl font-bold">Scoreboard</h1>
+            <h1 className="mb-10 font-display text-8xl font-black drop-shadow-lg">Scoreboard</h1>
             <div className="w-full max-w-4xl space-y-4">
               {state?.scoreboard?.map((p, i) => (
-                <div key={p.id} className="flex items-center justify-between rounded-2xl bg-white/10 px-8 py-5">
-                  <span className="text-4xl font-semibold">{i + 1}. {p.name}</span>
-                  <span className="text-4xl font-bold" style={{ color: GOLD }}>{p.points}</span>
+                <div
+                  key={p.id}
+                  className="fly flex items-center justify-between rounded-3xl px-10 py-6"
+                  style={{
+                    background: i === 0 ? GOLD : "rgba(255,255,255,0.1)",
+                    color: i === 0 ? "#0F172A" : "white",
+                    animationDelay: `${i * 80}ms`,
+                  }}
+                >
+                  <span className="text-5xl font-black">{i + 1}. {p.name}</span>
+                  <span className="text-5xl font-black">{p.points}</span>
                 </div>
               ))}
             </div>
@@ -178,10 +213,10 @@ export default function ScreenPage() {
 
         {phase === "BELT_INTRO" && (
           <>
-            <p className="text-4xl uppercase tracking-[0.3em] text-white/60">Belt Match</p>
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-10">
+            <p className="text-5xl font-bold uppercase tracking-[0.3em] text-white/60">Belt Match</p>
+            <div className="mt-12 flex flex-wrap items-center justify-center gap-16">
               {state?.belt?.rows.map((p) => (
-                <span key={p.id} className="font-display text-7xl font-bold">{p.name}</span>
+                <span key={p.id} className="pop font-display text-8xl font-black drop-shadow-lg">{p.name}</span>
               ))}
             </div>
           </>
@@ -189,14 +224,51 @@ export default function ScreenPage() {
 
         {phase === "CHAMPION" && (
           <>
-            <p className="text-4xl uppercase tracking-[0.3em] text-white/60">{name} Champion</p>
-            <h1 className="mt-6 font-display text-9xl font-bold" style={{ color: GOLD }}>
+            {[...Array(60)].map((_, i) => (
+              <span
+                key={i}
+                className="confetti"
+                style={{
+                  left: `${(i * 37) % 100}%`,
+                  background: [GOLD, PURPLE, GREEN][i % 3],
+                  animationDelay: `${(i % 20) * 0.15}s`,
+                }}
+              />
+            ))}
+            <p className="text-4xl font-bold uppercase tracking-[0.3em] text-white/70">Champion</p>
+            <h1 className="pop mt-6 font-display text-[9rem] font-black leading-none drop-shadow-2xl" style={{ color: GOLD }}>
               {champion?.name ?? "Champion"}
             </h1>
-            <p className="mt-8 font-display text-6xl font-bold">{state?.game.beltText}</p>
+            <p className="mt-8 font-display text-7xl font-black">{state?.game.beltText}</p>
           </>
         )}
       </div>
+
+      <style>{`
+        .stage {
+          background:
+            radial-gradient(1200px 700px at 15% -10%, rgba(124,58,237,0.55), transparent 60%),
+            radial-gradient(1000px 600px at 90% 10%, rgba(14,140,75,0.40), transparent 60%),
+            radial-gradient(900px 600px at 50% 110%, rgba(245,165,71,0.35), transparent 60%),
+            ${DEEP};
+        }
+        .beads {
+          position: absolute; inset: 0 0 auto 0; height: 10px;
+          background: repeating-linear-gradient(90deg, ${PURPLE} 0 60px, ${GOLD} 60px 120px, ${GREEN} 120px 180px);
+        }
+        .chip { background: rgba(255,255,255,0.12); }
+        @keyframes fly { from { opacity: 0; transform: translateY(28px) scale(0.97); } to { opacity: 1; transform: none; } }
+        .fly { animation: fly 0.45s cubic-bezier(.2,.8,.2,1) both; }
+        @keyframes pop { 0% { transform: scale(0.9); opacity: 0; } 60% { transform: scale(1.03); } 100% { transform: scale(1); opacity: 1; } }
+        .pop { animation: pop 0.5s cubic-bezier(.2,.8,.2,1) both; }
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.45; } }
+        .blink { animation: blink 1.4s ease-in-out infinite; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }
+        .confetti {
+          position: absolute; top: -5vh; width: 14px; height: 22px; border-radius: 3px;
+          animation: fall 3.2s linear infinite;
+        }
+      `}</style>
     </main>
   );
 }

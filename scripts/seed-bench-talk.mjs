@@ -10,6 +10,16 @@ const PROMPTS = [
   { round: "R1", text: "The one thing you should NOT yell at a dental convention" },
 ];
 
+async function renameGame() {
+  // The title art Brandi made names the game, so the setting follows it. Still
+  // editable in Setup right up to showtime.
+  const KEY = "bench-talk-name-v1";
+  if (await prisma.setting.findUnique({ where: { key: KEY } })) return;
+  await prisma.game.updateMany({ data: { name: "LabFest Say Whaaaat???" } });
+  await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
+  console.log("[bench-talk] game renamed to LabFest Say Whaaaat???");
+}
+
 async function main() {
   const KEY = "bench-talk-prompts-v2";
   if (await prisma.setting.findUnique({ where: { key: KEY } })) {
@@ -41,5 +51,6 @@ async function main() {
 }
 
 main()
+  .then(renameGame)
   .catch((e) => console.error("[bench-talk] skipped:", e?.message ?? e))
   .finally(() => prisma.$disconnect());

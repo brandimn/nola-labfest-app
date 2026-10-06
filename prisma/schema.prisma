@@ -260,7 +260,7 @@ model PasswordReset {
 model Game {
   id              String   @id @default(cuid())
   mode            String   @default("PRACTICE") // PRACTICE | LIVE
-  name            String   @default("LabFest Bench Talk")
+  name            String   @default("LabFest Say Whaaaat???")
   beltText        String   @default("Lab Nerds Unite")
   timerSeconds    Int      @default(60)
   answerMaxLength Int      @default(80)
