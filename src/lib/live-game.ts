@@ -131,7 +131,7 @@ export const GET_READY_MS = 6000;
 const AFTER_WRITING_MS = 3000;
 const AFTER_REVEAL_MS = 2000;
 // Voting closes itself once the room has gone quiet.
-const VOTES_SETTLED_MS = 6000;
+const VOTES_SETTLED_MS = 15000;
 // Then the names land a beat later.
 const RESULTS_HOLD_MS = 5000;
 

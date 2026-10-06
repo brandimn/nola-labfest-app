@@ -5,6 +5,34 @@ import { useCountdown, useLiveState, usePost } from "@/lib/live-client";
 
 type Prompt = { id: string; round: string; text: string; sortOrder: number; used: boolean; isFinale: boolean };
 
+// One button, named after whatever it is about to do, so the operator never has
+// to work out which control applies right now.
+const NEXT_LABEL: Record<string, string> = {
+  LOBBY: "Start the game",
+  PROMPT: "Open writing",
+  WRITING: "Call time",
+  REVEAL: "Open voting",
+  VOTING: "Show results",
+  RESULTS: "Reveal the names",
+  UNMASKED: "Scoreboard",
+  SCOREBOARD: "Next prompt",
+  BELT_INTRO: "First belt prompt",
+  CHAMPION: "Back to lobby",
+};
+
+const NEXT_HINT: Record<string, string> = {
+  LOBBY: "Puts the first prompt on the big screen",
+  PROMPT: "It opens on its own in a few seconds anyway",
+  WRITING: "Only if you do not want to wait for everyone",
+  REVEAL: "Opens by itself once every answer is up",
+  VOTING: "Opens results by itself once the votes stop",
+  RESULTS: "Names appear by themselves in a moment",
+  UNMASKED: "Shows the running scores",
+  SCOREBOARD: "Moves to the next prompt in your list",
+  BELT_INTRO: "Starts the head to head",
+  CHAMPION: "Resets the big screen",
+};
+
 export default function HostPage() {
   // fresh=1: the host must never be served a cached state after his own tap.
   const { state, offline } = useLiveState(1000, true);
@@ -111,6 +139,15 @@ export default function HostPage() {
       </div>
       {offline && <p className="mt-2 rounded bg-amber-500/20 p-2 text-center text-xs text-amber-200">Reconnecting…</p>}
       {error && <p className="mt-2 rounded bg-red-500/20 p-2 text-center text-sm text-red-200">{error}</p>}
+
+      {/* The one button. Everything below it is an override, not a step. */}
+      <button
+        onClick={() => act("NEXT")}
+        className="mt-4 w-full rounded-2xl bg-[#F5A547] px-4 py-7 text-center font-display text-3xl font-black text-slate-900 shadow-lg active:scale-[0.99]"
+      >
+        {NEXT_LABEL[phase] ?? "Next"}
+      </button>
+      <p className="mt-2 text-center text-sm text-white/60">{NEXT_HINT[phase] ?? ""}</p>
 
       {/* Writing controls */}
       {phase === "WRITING" && (

@@ -42,6 +42,82 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, mode });
     }
 
+    // The single button. Works out what comes next and does it, so nobody has
+    // to know which control applies right now.
+    case "NEXT": {
+      const phase = state.phase;
+
+      if (phase === "CHAMPION") {
+        await set({ phase: "LOBBY", currentPromptId: null, revealedCount: 0, unmasked: false });
+        return NextResponse.json({ ok: true, did: "Lobby" });
+      }
+
+      if (phase === "PROMPT") {
+        await set({
+          phase: "WRITING",
+          timerEndsAt: new Date(Date.now() + game.timerSeconds * 1000),
+          timerRemaining: null,
+        });
+        return NextResponse.json({ ok: true, did: "Writing is open" });
+      }
+      if (phase === "WRITING") {
+        await set({ timerEndsAt: new Date(), timerRemaining: null });
+        return NextResponse.json({ ok: true, did: "Time called" });
+      }
+      if (phase === "REVEAL") {
+        await set({ phase: "VOTING" });
+        return NextResponse.json({ ok: true, did: "Voting is open" });
+      }
+      if (phase === "VOTING") {
+        await set({ phase: "RESULTS" });
+        return NextResponse.json({ ok: true, did: "Results are up" });
+      }
+      if (phase === "RESULTS") {
+        await set({ phase: "UNMASKED", unmasked: true });
+        return NextResponse.json({ ok: true, did: "Names revealed" });
+      }
+      if (phase === "UNMASKED") {
+        // Mark the prompt played here, so Next can always find the right one.
+        if (state.currentPromptId) {
+          await prisma.gamePrompt.updateMany({
+            where: { id: state.currentPromptId }, data: { used: true },
+          });
+        }
+        await set({ phase: "SCOREBOARD" });
+        return NextResponse.json({ ok: true, did: "Scoreboard" });
+      }
+
+      // Lobby, a scoreboard, or the Belt Match intro: on to the next prompt.
+      const rounds = state.beltFinalists.length ? ["BELT"] : ["R1", "R2"];
+      const next = await prisma.gamePrompt.findFirst({
+        where: { gameId: game.id, used: false, round: { in: rounds } },
+        orderBy: [{ isFinale: "asc" }, { round: "asc" }, { sortOrder: "asc" }],
+      });
+
+      if (next) {
+        await set({
+          phase: "PROMPT", currentPromptId: next.id, revealedCount: 0, unmasked: false,
+          timerEndsAt: null, timerRemaining: null,
+          promptShownAt: new Date(), revealStartedAt: null,
+        });
+        return NextResponse.json({ ok: true, did: "Next prompt" });
+      }
+
+      // Rounds are done and the Belt Match has not started: start it.
+      if (!state.beltFinalists.length) {
+        const board = await scoreboardFor(game.id);
+        const finalists = beltFinalistsFrom(board);
+        await set({ phase: "BELT_INTRO", beltFinalists: finalists, beltWinners: [] });
+        return NextResponse.json({ ok: true, did: "Belt Match" });
+      }
+
+      // Belt prompts are done too. Crowning stays a deliberate choice.
+      return NextResponse.json(
+        { error: "That is every prompt. Crown the champion below." },
+        { status: 400 }
+      );
+    }
+
     case "SHOW_PROMPT": {
       const promptId = String(body.promptId ?? "");
       const prompt = await prisma.gamePrompt.findUnique({ where: { id: promptId } });
