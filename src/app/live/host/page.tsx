@@ -256,7 +256,47 @@ export default function HostPage() {
         <Btn on={() => act("MUTE", { muted: !state?.game.muted })} kind="quiet">
           {state?.game.muted ? "Unmute" : "Mute"}
         </Btn>
-        <a href="/live/setup" className="rounded-xl bg-white/10 px-4 py-4 text-center text-base font-bold">Setup</a>
+        <a href="/live/setup" className="rounded-xl bg-white/10 px-4 py-4 text-center text-base font-bold">
+          Setup
+        </a>
+      </section>
+
+      {/* Everything else lives on another screen, and typing addresses on a
+          phone is miserable. */}
+      <section className="mt-3">
+        <p className="mb-2 text-xs uppercase tracking-wider text-white/50">Open another screen</p>
+        <div className="grid grid-cols-2 gap-2">
+          <a
+            href="/live/screen"
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-xl bg-[#F5A547] px-3 py-4 text-center text-sm font-bold text-slate-900"
+          >
+            Big screen
+          </a>
+          <a href="/live/codes" className="rounded-xl bg-white/15 px-3 py-4 text-center text-sm font-bold">
+            QR codes
+          </a>
+          <a
+            href="/live/play"
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-xl bg-white/15 px-3 py-4 text-center text-sm font-bold"
+          >
+            Player view
+          </a>
+          <a
+            href="/live/vote"
+            target="_blank"
+            rel="noreferrer"
+            className="rounded-xl bg-white/15 px-3 py-4 text-center text-sm font-bold"
+          >
+            Voting view
+          </a>
+        </div>
+        <a href="/admin" className="mt-2 block rounded-xl bg-white/10 px-3 py-3 text-center text-sm font-semibold">
+          Back to admin
+        </a>
       </section>
     </main>
   );
