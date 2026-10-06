@@ -4,6 +4,20 @@ import { useEffect, useRef, useState } from "react";
 import { QRDisplay } from "@/components/qr-display";
 import { useCountdown, useLiveState } from "@/lib/live-client";
 
+// Which mascot pose belongs to which moment.
+const TOOTH: Record<string, string> = {
+  LOBBY: "mic",
+  PROMPT: "question",
+  WRITING: "question",
+  REVEAL: "peek",
+  VOTING: "megaphone",
+  RESULTS: "excited",
+  UNMASKED: "point",
+  SCOREBOARD: "thumbs",
+  BELT_INTRO: "scepter",
+  CHAMPION: "crown",
+};
+
 const PURPLE = "#7C3AED";
 const DEEP = "#3D1E50";
 const GREEN = "#0E8C4B";
@@ -97,6 +111,16 @@ export default function ScreenPage() {
       <audio ref={drumroll} src="/game/sounds/drumroll.mp3" preload="auto" />
 
       <div className="beads" />
+
+      {/* A different pose for each beat of the game. Bottom corner so it never
+          fights the prompt or the answers. */}
+      {TOOTH[phase] && (
+        <img
+          src={`/live/tooth/${TOOTH[phase]}.png`}
+          alt=""
+          className="bob tooth pointer-events-none absolute bottom-4 left-6 z-10 h-44 w-auto"
+        />
+      )}
 
       <header className="relative flex items-center justify-between">
         <img
@@ -300,6 +324,7 @@ export default function ScreenPage() {
                 }}
               />
             ))}
+            <img src="/live/tooth/crown.png" alt="" className="bob tooth mb-2 h-40 w-auto" />
             <p className="text-4xl font-bold uppercase tracking-[0.3em] text-white/70">Champion</p>
             <h1 className="pop mt-6 font-display text-[9rem] font-black leading-none drop-shadow-2xl" style={{ color: GOLD }}>
               {champion?.name ?? "Champion"}
@@ -312,11 +337,13 @@ export default function ScreenPage() {
       <style>{`
         .stage {
           background:
-            radial-gradient(1200px 700px at 15% -10%, rgba(124,58,237,0.55), transparent 60%),
-            radial-gradient(1000px 600px at 90% 10%, rgba(14,140,75,0.40), transparent 60%),
-            radial-gradient(900px 600px at 50% 110%, rgba(245,165,71,0.35), transparent 60%),
+            linear-gradient(rgba(27,10,43,0.78), rgba(27,10,43,0.88)),
+            url('/live/bg.webp') center/cover no-repeat,
             ${DEEP};
         }
+        @keyframes bob { 0%,100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-14px) rotate(2deg); } }
+        .bob { animation: bob 3.2s ease-in-out infinite; }
+        .tooth { filter: drop-shadow(0 10px 20px rgba(0,0,0,0.45)); }
         .beads {
           position: absolute; inset: 0 0 auto 0; height: 10px;
           background: repeating-linear-gradient(90deg, ${PURPLE} 0 60px, ${GOLD} 60px 120px, ${GREEN} 120px 180px);

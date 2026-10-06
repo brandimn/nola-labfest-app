@@ -100,6 +100,15 @@ export default function PlayPage() {
 
       {!writing ? (
         <div className="flex flex-1 flex-col items-center justify-center text-center">
+          <img
+            src={
+              benched ? "/live/tooth/shades.png"
+                : saved ? "/live/tooth/thumbs.png"
+                : "/live/tooth/question.png"
+            }
+            alt=""
+            className="mb-4 h-40 w-auto drop-shadow-xl"
+          />
           <p className="font-display text-3xl font-bold">
             {benched ? "Belt Match" : saved ? "Locked in" : "Get ready"}
           </p>

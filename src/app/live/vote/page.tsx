@@ -52,6 +52,11 @@ export default function VotePage() {
 
       {!voting && (
         <div className="flex flex-1 flex-col items-center justify-center text-center">
+          <img
+            src={votedFor ? "/live/tooth/thumbs.png" : "/live/tooth/question.png"}
+            alt=""
+            className="mb-4 h-40 w-auto drop-shadow-xl"
+          />
           <p className="font-display text-3xl font-bold">Hang tight</p>
           <p className="mt-2 text-sm text-white/70">
             {votedFor ? "Vote counted. Next one coming up." : "Voting opens in a moment."}
@@ -66,6 +71,7 @@ export default function VotePage() {
           </p>
           {votedFor ? (
             <div className="flex flex-1 flex-col items-center justify-center text-center">
+              <img src="/live/tooth/cheer.png" alt="" className="mb-4 h-40 w-auto drop-shadow-xl" />
               <p className="font-display text-3xl font-bold text-[#0E8C4B]">Vote counted</p>
               <p className="mt-2 text-sm text-white/70">Look at the big screen.</p>
             </div>
