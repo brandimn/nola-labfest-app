@@ -90,24 +90,9 @@ export default function ScreenPage() {
     lastPhase.current = state.phase;
   }, [state?.phase, state?.game.muted, started, state]);
 
-  if (!started) {
-    return (
-      /* Reads as a title card if the room happens to see it: the whole screen is
-         the button and the instruction is small enough to vanish from the back
-         of a ballroom. */
-      <main
-        onClick={() => setStarted(true)}
-        className="stage flex min-h-screen cursor-pointer flex-col items-center justify-center gap-6"
-      >
-        <div className="beads" />
-        <img src="/live/title.webp" alt="" className="max-h-[55vh] w-auto max-w-[80vw] drop-shadow-2xl" />
-        <p className="font-display text-4xl font-black" style={{ color: GOLD }}>
-          Coming up next
-        </p>
-        <p className="absolute bottom-6 text-sm text-white/35">Tap anywhere to begin</p>
-      </main>
-    );
-  }
+  // The tap only unlocks audio. The screen always shows the game, so a preview
+  // lands straight away and a reload mid show comes back where it should rather
+  // than dropping to a title card nobody is watching for.
 
   const phase = state?.phase ?? "LOBBY";
   const total = state?.players.length ?? 0;
@@ -127,6 +112,15 @@ export default function ScreenPage() {
       <audio ref={drumroll} src="/game/sounds/drumroll.mp3" preload="auto" />
 
       <div className="beads" />
+
+      {!started && (
+        <button
+          onClick={() => setStarted(true)}
+          className="absolute bottom-5 left-1/2 z-20 -translate-x-1/2 rounded-full bg-white/15 px-6 py-3 text-lg font-semibold backdrop-blur"
+        >
+          Tap once for sound
+        </button>
+      )}
 
       {/* A different pose for each beat of the game. Bottom corner so it never
           fights the prompt or the answers. */}
