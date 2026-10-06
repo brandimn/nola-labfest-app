@@ -105,18 +105,31 @@ async function moveRelations(fromId, toId) {
   });
   await prisma.favorite.updateMany({ where: { userId: fromId }, data: { userId: toId } });
 
-  await prisma.galleryPhoto.updateMany({ where: { userId: fromId }, data: { userId: toId } });
+  await prisma.galleryPhoto.updateMany({ where: { uploaderId: fromId }, data: { uploaderId: toId } });
+  // An announcement that was already sent has to keep an author, so hand it to
+  // the survivor rather than lose it.
+  await prisma.announcement.updateMany({ where: { sentById: fromId }, data: { sentById: toId } });
   // One booth vote per person, and it is a bit of fun rather than data worth
   // reconciling. The survivor keeps theirs.
   await prisma.boothVote.deleteMany({ where: { attendeeId: fromId } });
   await prisma.pushSubscription.deleteMany({ where: { userId: fromId } });
 }
 
-// Let go of anything that would block the delete, then delete.
+// Let go of anything that would block the delete, then delete. Returns false
+// if the account was left in place.
 async function removeUser(u) {
+  // Announcements require an author, and there is nobody to hand them to when
+  // the account is simply going away. Leave the account rather than destroy
+  // the sent history, and say so.
+  const sent = await prisma.announcement.count({ where: { sentById: u.id } });
+  if (sent > 0) {
+    console.log(`[cleanup] KEPT ${u.name} <${u.email}>: sent ${sent} announcement(s), remove by hand if you mean to`);
+    return false;
+  }
   await prisma.vendor.updateMany({ where: { userId: u.id }, data: { userId: null } });
   await prisma.speaker.updateMany({ where: { userId: u.id }, data: { userId: null } });
   await prisma.user.delete({ where: { id: u.id } });
+  return true;
 }
 
 // Fill any gap on the surviving record from the one going away, then delete it.
@@ -150,11 +163,15 @@ async function snapshot() {
     orderBy: { name: "asc" },
   });
   const payload = JSON.stringify({ takenAt: new Date().toISOString(), users, vendors });
-  await prisma.setting.upsert({
-    where: { key: SNAPSHOT_KEY },
-    create: { key: SNAPSHOT_KEY, value: payload },
-    update: { value: payload },
-  });
+  // Never overwrite an existing snapshot. If this script has to be run twice,
+  // the second run would otherwise replace the untouched roster with the
+  // already-reduced one, which is exactly the copy worth keeping.
+  const existing = await prisma.setting.findUnique({ where: { key: SNAPSHOT_KEY } });
+  if (existing) {
+    console.log(`[cleanup] snapshot already taken earlier, keeping that one (${existing.value.length} bytes)`);
+    return;
+  }
+  await prisma.setting.create({ data: { key: SNAPSHOT_KEY, value: payload } });
   // Read it straight back. A snapshot that did not land is worse than none,
   // because it would let the deletes below go ahead on a false promise.
   const check = await prisma.setting.findUnique({ where: { key: SNAPSHOT_KEY } });
@@ -198,8 +215,9 @@ async function main() {
     return;
   }
   for (const u of doomed) {
-    await removeUser(u);
-    console.log(`[cleanup] REMOVED, not coming: ${u.name} <${u.email}>`);
+    if (await removeUser(u)) {
+      console.log(`[cleanup] REMOVED, not coming: ${u.name} <${u.email}>`);
+    }
   }
   const missed = NOT_COMING.filter((n) => !doomed.some((d) => norm(d.name) === norm(n)));
   if (missed.length) {
@@ -314,5 +332,12 @@ async function main() {
 }
 
 main()
-  .catch((e) => console.error("[cleanup] FAILED, nothing further changed:", e?.message ?? e))
+  .catch((e) => {
+    // Prisma validation errors carry an empty message, which hid the cause
+    // once already. Print everything that might name it.
+    console.error("[cleanup] FAILED, nothing further changed");
+    console.error(`[cleanup] code: ${e?.code ?? "none"}`);
+    console.error(`[cleanup] message: ${e?.message || "(empty)"}`);
+    console.error(`[cleanup] detail: ${String(e).slice(0, 4000)}`);
+  })
   .finally(() => prisma.$disconnect());
