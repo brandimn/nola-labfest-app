@@ -349,6 +349,9 @@ model GameState {
   // Set while paused, cleared on resume.
   timerRemaining  Int?
   revealedCount   Int       @default(0)
+  // Set when the reveal starts. How many answers are showing is worked out from
+  // how long ago that was, so every screen agrees and a refresh lands right.
+  revealStartedAt DateTime?
   unmasked        Boolean   @default(false)
   // Two normally, three when the second place is tied.
   beltFinalists   String[]  @default([])

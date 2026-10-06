@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { HOST_COOKIE, hostPin, isHost } from "@/lib/live-host";
-import { beltFinalistsFrom, beltStanding, getActiveGame, getOrCreateGame, getState, scoreboardFor, shuffled } from "@/lib/live-game";
+import { REVEAL_GAP_MS, beltFinalistsFrom, beltStanding, getActiveGame, getOrCreateGame, getState, scoreboardFor, shuffled } from "@/lib/live-game";
 
 export const dynamic = "force-dynamic";
 
@@ -101,12 +101,18 @@ export async function POST(req: NextRequest) {
       for (const a of answers.filter((x) => !x.text.trim())) {
         await prisma.gameAnswer.update({ where: { id: a.id }, data: { displayOrder: 999 } });
       }
-      await set({ phase: "REVEAL", revealedCount: 0, unmasked: false });
+      await set({
+        phase: "REVEAL", revealedCount: 0, unmasked: false,
+        revealStartedAt: new Date(),
+      });
       return NextResponse.json({ ok: true, total: order.length });
     }
 
     case "REVEAL_NEXT": {
-      await set({ revealedCount: state.revealedCount + 1 });
+      // Impatience button. Pulls the start time back one beat so the next
+      // answer lands immediately and the rest keep their rhythm.
+      const startedAt = state.revealStartedAt ?? new Date();
+      await set({ revealStartedAt: new Date(startedAt.getTime() - REVEAL_GAP_MS) });
       return NextResponse.json({ ok: true });
     }
 

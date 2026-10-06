@@ -63,6 +63,30 @@ export async function POST(req: NextRequest) {
       create: { promptId: state.currentPromptId, playerId: player.id, text },
       update: { text },
     });
+
+    // Once everyone who is still in has answered, stop the clock. Waiting for
+    // the operator to notice and tap End now is the choppiest part of the show.
+    const eligible =
+      prompt?.round === "BELT"
+        ? state.beltFinalists
+        : (await prisma.gamePlayer.findMany({
+            where: { gameId: game.id }, select: { id: true },
+          })).map((p) => p.id);
+
+    if (eligible.length) {
+      const answered = await prisma.gameAnswer.findMany({
+        where: { promptId: state.currentPromptId, playerId: { in: eligible } },
+        select: { text: true },
+      });
+      const done = answered.filter((a) => a.text.trim()).length;
+      if (done >= eligible.length && state.timerEndsAt && state.timerEndsAt.getTime() > Date.now()) {
+        await prisma.gameState.update({
+          where: { gameId: game.id },
+          data: { timerEndsAt: new Date(), timerRemaining: null },
+        });
+      }
+    }
+
     return NextResponse.json({ ok: true });
   }
 

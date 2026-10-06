@@ -34,6 +34,8 @@ export type LiveState = {
   unmasked: boolean;
   answers: { id: string; text: string; votes: number | null; percent: number | null; player: string | null }[];
   answerCount: number;
+  revealTotal: number;
+  revealDone: boolean;
   beltFinalists: string[];
   belt: {
     rows: { id: string; name: string; wins: number }[];

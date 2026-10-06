@@ -108,3 +108,14 @@ export function shuffled<T>(items: T[]) {
   }
   return out;
 }
+
+/** Answers appear on their own, a beat apart, once the reveal starts. Derived
+ *  from one timestamp rather than ticked forward by whoever is watching, so
+ *  every screen shows the same thing and a refresh lands in the right place. */
+export const REVEAL_GAP_MS = 2200;
+
+export function revealedSoFar(startedAt: Date | null, total: number, now = Date.now()) {
+  if (!startedAt) return 0;
+  const elapsed = now - startedAt.getTime();
+  return Math.max(0, Math.min(total, Math.floor(elapsed / REVEAL_GAP_MS) + 1));
+}

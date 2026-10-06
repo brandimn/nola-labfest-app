@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { ATTRIBUTED_PHASES, beltStanding, getActiveGame, getState, scoreboardFor, Phase } from "@/lib/live-game";
+import { ATTRIBUTED_PHASES, beltStanding, getActiveGame, getState, revealedSoFar, scoreboardFor, Phase } from "@/lib/live-game";
 
 // Every screen polls this. Hundreds of phones at once, so it stays small and is
 // cached for a second at the edge. The host passes ?fresh=1 to skip the cache so
@@ -41,6 +41,13 @@ export async function GET(req: NextRequest) {
     : [];
 
   const answeredPlayerIds = answers.filter((a) => a.text.trim()).map((a) => a.playerId);
+  const withText = answers.filter((a) => a.text.trim());
+  // The reveal paces itself; revealedCount in the row is only a floor the host
+  // can push forward by skipping ahead.
+  const revealed =
+    phase === "REVEAL" || phase === "VOTING"
+      ? Math.max(state.revealedCount, revealedSoFar(state.revealStartedAt, withText.length))
+      : state.revealedCount;
   const showAnswers = ["REVEAL", "VOTING", "RESULTS", "UNMASKED"].includes(phase);
   const showCounts = ["RESULTS", "UNMASKED"].includes(phase);
   const totalVotes = answers.reduce((n, a) => n + a._count.votes, 0);
@@ -78,11 +85,11 @@ export async function GET(req: NextRequest) {
       remaining: state.timerRemaining,
       paused: state.timerRemaining != null,
     },
-    revealedCount: state.revealedCount,
+    revealedCount: revealed,
     unmasked: state.unmasked,
     answers: showAnswers
       ? answers
-          .slice(0, phase === "REVEAL" ? state.revealedCount : answers.length)
+          .slice(0, phase === "REVEAL" ? revealed : answers.length)
           .map((a) => ({
             id: a.id,
             text: a.text,
@@ -92,7 +99,9 @@ export async function GET(req: NextRequest) {
             player: attributed ? players.find((p) => p.id === a.playerId)?.name ?? null : null,
           }))
       : [],
-    answerCount: answers.filter((a) => a.text.trim()).length,
+    answerCount: withText.length,
+    revealTotal: withText.length,
+    revealDone: phase !== "REVEAL" || revealed >= withText.length,
     beltFinalists: state.beltFinalists,
     belt: state.beltFinalists.length
       ? beltStanding(

@@ -63,6 +63,8 @@ export default function HostPage() {
   }
 
   const phase = state?.phase ?? "LOBBY";
+  const everyoneAnswered =
+    (state?.players.length ?? 0) > 0 && state?.answerCount === state?.players.length;
   const Btn = ({ on, children, kind = "normal" }: { on: () => void; children: React.ReactNode; kind?: "normal" | "go" | "quiet" }) => (
     <button
       onClick={on}
@@ -98,6 +100,11 @@ export default function HostPage() {
           <p className="mt-1 text-center text-sm text-white/70">
             {state?.answerCount ?? 0} of {state?.players.length ?? 0} answered
           </p>
+          {everyoneAnswered && (
+            <p className="mt-2 rounded-lg bg-[#0E8C4B]/30 p-2 text-center text-sm font-bold">
+              Everyone is in. The clock stopped itself.
+            </p>
+          )}
           <div className="mt-3 grid grid-cols-3 gap-2">
             {state?.timer.paused
               ? <Btn on={() => act("RESUME_TIMER")}>Resume</Btn>
@@ -147,11 +154,21 @@ export default function HostPage() {
       {/* Main flow */}
       <section className="mt-4 grid grid-cols-2 gap-2">
         {phase === "PROMPT" && <Btn on={() => act("START_TIMER")} kind="go">Start timer</Btn>}
-        {(phase === "WRITING" || phase === "PROMPT") && <Btn on={() => act("START_REVEAL")}>Start reveal</Btn>}
+        {(phase === "WRITING" || phase === "PROMPT") && (
+          <Btn on={() => act("START_REVEAL")} kind={everyoneAnswered ? "go" : "normal"}>
+            {everyoneAnswered ? "Everyone is in. Reveal" : "Start reveal"}
+          </Btn>
+        )}
         {phase === "REVEAL" && (
           <>
-            <Btn on={() => act("REVEAL_NEXT")} kind="go">Reveal next answer</Btn>
-            <Btn on={() => act("OPEN_VOTING")}>Open voting</Btn>
+            {!state?.revealDone ? (
+              <Btn on={() => act("REVEAL_NEXT")} kind="quiet">Skip ahead</Btn>
+            ) : (
+              <span className="rounded-xl bg-white/5 px-4 py-4 text-center text-sm text-white/50">
+                All answers shown
+              </span>
+            )}
+            <Btn on={() => act("OPEN_VOTING")} kind="go">Open voting</Btn>
           </>
         )}
         {phase === "VOTING" && (
@@ -165,6 +182,12 @@ export default function HostPage() {
         {phase === "SCOREBOARD" && <Btn on={() => act("START_BELT")} kind="go">Start Belt Match</Btn>}
         {["SCOREBOARD", "BELT_INTRO", "UNMASKED"].includes(phase) && <Btn on={() => act("LOBBY")} kind="quiet">Back to lobby</Btn>}
       </section>
+
+      {phase === "REVEAL" && (
+        <p className="mt-3 text-center text-sm text-white/60">
+          Revealing on its own, {state?.revealedCount ?? 0} of {state?.revealTotal ?? 0} shown
+        </p>
+      )}
 
       {/* Applause fallback and tie breaking */}
       {["REVEAL", "VOTING", "RESULTS"].includes(phase) && (state?.answers.length ?? 0) > 0 && (
