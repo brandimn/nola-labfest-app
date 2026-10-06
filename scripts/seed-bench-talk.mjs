@@ -7,10 +7,11 @@ const PROMPTS = [
   { round: "R1", text: "Your lab's OnlyFans name" },
   { round: "R1", text: 'The real translation of "can you rush this one?"' },
   { round: "R1", text: "Your worst pickup line to use at a dental convention" },
+  { round: "R1", text: "The one thing you should NOT yell at a dental convention" },
 ];
 
 async function main() {
-  const KEY = "bench-talk-prompts-v1";
+  const KEY = "bench-talk-prompts-v2";
   if (await prisma.setting.findUnique({ where: { key: KEY } })) {
     console.log("[bench-talk] prompts: already done, skipped");
     return;
