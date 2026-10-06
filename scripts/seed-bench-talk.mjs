@@ -42,6 +42,42 @@ async function captionPrompts() {
   await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
 }
 
+async function beltPrompts() {
+  const KEY = "bench-talk-belt-v1";
+  if (await prisma.setting.findUnique({ where: { key: KEY } })) {
+    console.log("[bench-talk] belt prompts: already done, skipped");
+    return;
+  }
+  const game =
+    (await prisma.game.findFirst({ where: { mode: "LIVE" } })) ??
+    (await prisma.game.findFirst({ where: { mode: "PRACTICE" } }));
+  if (!game) return;
+
+  // Finale last: the sort in the Next button puts isFinale at the end.
+  const BELT = [
+    { text: "Something Nowak should never sell", isFinale: false },
+    { text: "Shawn's secret talent that nobody knows about", isFinale: false },
+    { text: "What happens at LabFest stays at LabFest, except ___", isFinale: true },
+  ];
+  const added = [];
+  for (const b of BELT) {
+    const exists = await prisma.gamePrompt.findFirst({
+      where: { gameId: game.id, text: b.text },
+    });
+    if (exists) continue;
+    const count = await prisma.gamePrompt.count({ where: { gameId: game.id, round: "BELT" } });
+    await prisma.gamePrompt.create({
+      data: {
+        gameId: game.id, round: "BELT", text: b.text,
+        sortOrder: count, isFinale: b.isFinale,
+      },
+    });
+    added.push(b.text.slice(0, 32));
+  }
+  console.log(`[bench-talk] belt prompts added (${added.length}): ${added.join(" | ") || "none"}`);
+  await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
+}
+
 async function renameGame() {
   // The title art Brandi made names the game, so the setting follows it. Still
   // editable in Setup right up to showtime.
@@ -85,5 +121,6 @@ async function main() {
 main()
   .then(renameGame)
   .then(captionPrompts)
+  .then(beltPrompts)
   .catch((e) => console.error("[bench-talk] skipped:", e?.message ?? e))
   .finally(() => prisma.$disconnect());
