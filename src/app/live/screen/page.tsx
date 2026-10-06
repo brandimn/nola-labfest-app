@@ -20,7 +20,9 @@ export default function ScreenPage() {
   const music = useRef<HTMLAudioElement | null>(null);
   const lobby = useRef<HTMLAudioElement | null>(null);
   const ding = useRef<HTMLAudioElement | null>(null);
+  const drumroll = useRef<HTMLAudioElement | null>(null);
   const lastRevealed = useRef(0);
+  const lastPhase = useRef<string>("");
 
   // Brass band under the writing timer, jazz club in the lobby. Only one plays
   // at a time, and Mute on the controller silences both.
@@ -42,6 +44,7 @@ export default function ScreenPage() {
     }
   }, [state?.phase, state?.game.muted, started]);
 
+  // A ding on each answer as it lands.
   useEffect(() => {
     if (!started || !state) return;
     if (state.revealedCount > lastRevealed.current && !state.game.muted) {
@@ -49,6 +52,16 @@ export default function ScreenPage() {
     }
     lastRevealed.current = state.revealedCount;
   }, [state?.revealedCount, state?.game.muted, started, state]);
+
+  // A drumroll the moment the operator calls for results, under the bars filling.
+  useEffect(() => {
+    if (!started || !state) return;
+    const became = state.phase !== lastPhase.current;
+    if (became && state.phase === "RESULTS" && !state.game.muted) {
+      drumroll.current?.play().catch(() => {});
+    }
+    lastPhase.current = state.phase;
+  }, [state?.phase, state?.game.muted, started, state]);
 
   if (!started) {
     return (
@@ -81,6 +94,7 @@ export default function ScreenPage() {
       <audio ref={music} src="/game/sounds/thinking.mp3" loop preload="auto" />
       <audio ref={lobby} src="/game/sounds/lobby.mp3" loop preload="auto" />
       <audio ref={ding} src="/game/sounds/ding.mp3" preload="auto" />
+      <audio ref={drumroll} src="/game/sounds/drumroll.mp3" preload="auto" />
 
       <div className="beads" />
 
