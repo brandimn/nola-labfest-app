@@ -11,13 +11,17 @@ type Role = "ATTENDEE" | "VENDOR" | "SPEAKER" | "ADMIN";
 export async function requireUser(opts?: { skipPasswordGate?: boolean }) {
   const session = await getServerSession(authOptions);
   if (!session?.user) redirect("/login");
-  if (!opts?.skipPasswordGate) {
-    const me = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { mustChangePassword: true },
-    });
-    if (me?.mustChangePassword) redirect("/change-password");
-  }
+  // A signed in token can outlive the account it points at, for example if the
+  // record was merged or removed. Without this the pages render blank and the
+  // sign out button is unreachable, which leaves someone locked in with no way
+  // back to the login screen.
+  const me = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { mustChangePassword: true },
+  });
+  if (!me) redirect("/login?stale=1");
+  if (!opts?.skipPasswordGate && me.mustChangePassword) redirect("/change-password");
+
   return session.user;
 }
 

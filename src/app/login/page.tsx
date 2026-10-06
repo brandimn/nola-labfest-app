@@ -96,6 +96,8 @@ function LoginInner() {
 }
 
 export default function LoginPage() {
+  const staleSession =
+    typeof window !== "undefined" && window.location.search.includes("stale=1");
   return (
     <Suspense fallback={<div className="min-h-screen" />}>
       <LoginInner />

@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/session";
 import { SignOutButton } from "@/components/sign-out-button";
@@ -12,7 +13,7 @@ export default async function MePage() {
     where: { id: user.id },
     include: { ownedVendor: true, ownedSpeaker: true, boothStaffOf: true },
   });
-  if (!me) return null;
+  if (!me) redirect("/login?stale=1");
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-6">
