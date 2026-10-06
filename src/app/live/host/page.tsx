@@ -17,12 +17,31 @@ export default function HostPage() {
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [typeFor, setTypeFor] = useState<string | null>(null);
   const [typed, setTyped] = useState("");
+  // Counts for the operator only, so he knows whether anyone has voted before
+  // calling results. Never part of the shared state the big screen reads.
+  const [votes, setVotes] = useState<{ total: number; byAnswer: Record<string, number> }>({
+    total: 0, byAnswer: {},
+  });
 
   async function loadPrompts() {
     const r = await fetch("/api/live/prompts", { cache: "no-store" });
     if (r.ok) setPrompts(await r.json());
   }
   useEffect(() => { if (authed) loadPrompts(); }, [authed]);
+
+  useEffect(() => {
+    if (!authed) return;
+    let stop = false;
+    const tick = async () => {
+      try {
+        const r = await fetch("/api/live/votes", { cache: "no-store" });
+        if (r.ok) setVotes(await r.json());
+      } catch { /* keep the last count */ }
+      if (!stop) setTimeout(tick, 1200);
+    };
+    tick();
+    return () => { stop = true; };
+  }, [authed]);
 
   async function act(action: string, extra: Record<string, unknown> = {}) {
     setError("");
@@ -208,9 +227,19 @@ export default function HostPage() {
         </p>
       )}
       {phase === "VOTING" && (
-        <p className="mt-3 text-center text-sm text-white/60">
-          Voting is open. Tap Show results when the room has had long enough.
-        </p>
+        <section className="mt-3 rounded-2xl bg-white/5 p-4 text-center">
+          <p className="font-display text-5xl font-black" style={{ color: "#F5A547" }}>
+            {votes.total}
+          </p>
+          <p className="text-sm text-white/70">
+            {votes.total === 1 ? "vote in" : "votes in"}. Only you can see this.
+          </p>
+          {votes.total === 0 && (
+            <p className="mt-2 rounded-lg bg-amber-500/20 p-2 text-sm">
+              Nobody has voted yet. Results now would show an empty board.
+            </p>
+          )}
+        </section>
       )}
 
       {/* Applause fallback and tie breaking */}
@@ -227,7 +256,9 @@ export default function HostPage() {
                 className="w-full rounded-lg bg-white/10 p-3 text-left text-sm"
               >
                 {a.text}
-                {a.votes != null && <span className="ml-2 text-white/50">({a.votes})</span>}
+                <span className="ml-2 text-white/50">
+                  ({a.votes ?? votes.byAnswer[a.id] ?? 0})
+                </span>
               </button>
             ))}
           </div>

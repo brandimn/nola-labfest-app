@@ -100,11 +100,12 @@ export async function GET(req: NextRequest) {
             id: a.id,
             text: a.text,
             votes: showCounts ? a._count.votes : null,
-            percent: showCounts && totalVotes ? Math.round((a._count.votes / totalVotes) * 100) : null,
+            percent: showCounts ? (totalVotes ? Math.round((a._count.votes / totalVotes) * 100) : 0) : null,
             // Absent entirely until the unmask.
             player: attributed ? players.find((p) => p.id === a.playerId)?.name ?? null : null,
           }))
       : [],
+    totalVotes: showCounts ? totalVotes : null,
     answerCount: withText.length,
     revealTotal: withText.length,
     revealDone: phase !== "REVEAL" || revealed >= withText.length,

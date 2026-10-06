@@ -241,6 +241,11 @@ export default function ScreenPage() {
                 Vote now on your phone
               </p>
             )}
+            {phase === "RESULTS" && (
+              <p className="pop mb-8 font-display text-7xl font-black" style={{ color: GOLD }}>
+                {state?.totalVotes === 0 ? "No votes in" : "Results"}
+              </p>
+            )}
             {phase === "VOTING" && voteUrl && (
               <div className="absolute bottom-6 right-6 rounded-2xl bg-white p-3 text-center shadow-xl">
                 <QRDisplay value={voteUrl} size={130} />
