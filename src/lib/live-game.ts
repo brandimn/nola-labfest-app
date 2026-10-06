@@ -154,6 +154,38 @@ export async function advanceIfDue(gameId: string) {
     return;
   }
 
+  // Everyone who is still in has answered: stop the clock. Checked on every
+  // poll rather than only when a phone submits, so it also catches the operator
+  // typing for someone and cannot be missed by a single unlucky request.
+  if (state.phase === "WRITING" && state.timerEndsAt && state.timerEndsAt.getTime() > now) {
+    const prompt = await prisma.gamePrompt.findUnique({
+      where: { id: state.currentPromptId },
+      select: { round: true },
+    });
+    const eligible =
+      prompt?.round === "BELT"
+        ? state.beltFinalists
+        : (
+            await prisma.gamePlayer.findMany({
+              where: { gameId }, select: { id: true },
+            })
+          ).map((p) => p.id);
+
+    if (eligible.length) {
+      const answers = await prisma.gameAnswer.findMany({
+        where: { promptId: state.currentPromptId, playerId: { in: eligible } },
+        select: { text: true },
+      });
+      if (answers.filter((a) => a.text.trim()).length >= eligible.length) {
+        await prisma.gameState.updateMany({
+          where: { gameId, phase: "WRITING" },
+          data: { timerEndsAt: new Date(), timerRemaining: null },
+        });
+        return;
+      }
+    }
+  }
+
   // Writing is over and everyone is locked in: start showing answers.
   if (
     state.phase === "WRITING" &&
