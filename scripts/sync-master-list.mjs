@@ -15,16 +15,37 @@ const SHARED = "Labfest26";
 
 const squash = (s) => (s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
+// Listed on the vendors page as a sponsor, but did not buy a booth, so their
+// people get a badge and no lead scanning. This has to live here rather than
+// be a one off fix: the attach step below runs on every deploy and would
+// quietly give them scanning back each time.
+const NO_SCANNING = new Set(["gc"]);
+
 async function main() {
   const hash = await bcrypt.hash(SHARED, 10);
   const booths = await prisma.vendor.findMany({ select: { id: true, name: true } });
 
+  // Make sure a sponsor who never bought a booth has nobody attached to it,
+  // every run, however they got there.
+  for (const b of booths.filter((v) => NO_SCANNING.has(squash(v.name)))) {
+    const staff = await prisma.user.updateMany({ where: { vendorId: b.id }, data: { vendorId: null } });
+    const owner = await prisma.vendor.updateMany({
+      where: { id: b.id, userId: { not: null } }, data: { userId: null },
+    });
+    if (staff.count || owner.count) {
+      console.log(`[master] ${b.name} is a sponsor without a booth: detached ${staff.count} staff, ${owner.count} owner`);
+    }
+  }
+
+  // Booths anyone may be attached to. A sponsor without a booth is not one.
+  const attachable = booths.filter((b) => !NO_SCANNING.has(squash(b.name)));
+
   const boothFor = (company) => {
     const c = squash(company);
-    if (!c) return null;
+    if (!c || NO_SCANNING.has(c)) return null;
     return (
-      booths.find((b) => squash(b.name) === c) ??
-      booths.find((b) => {
+      attachable.find((b) => squash(b.name) === c) ??
+      attachable.find((b) => {
         const n = squash(b.name);
         return n.length >= 4 && (c.startsWith(n) || n.startsWith(c));
       }) ??
