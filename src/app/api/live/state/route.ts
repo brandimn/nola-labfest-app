@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { ATTRIBUTED_PHASES, beltStanding, getActiveGame, getState, revealedSoFar, scoreboardFor, Phase } from "@/lib/live-game";
+import { ATTRIBUTED_PHASES, advanceIfDue, beltStanding, getActiveGame, getState, revealedSoFar, scoreboardFor, Phase } from "@/lib/live-game";
 
 // Every screen polls this. Hundreds of phones at once, so it stays small and is
 // cached for a second at the edge. The host passes ?fresh=1 to skip the cache so
@@ -11,6 +11,8 @@ export async function GET(req: NextRequest) {
   const fresh = req.nextUrl.searchParams.get("fresh") === "1";
 
   const game = await getActiveGame();
+  // Move the game along before reading it, so the answer below is already current.
+  await advanceIfDue(game.id);
   const state = await getState(game.id);
   const phase = state.phase as Phase;
   const attributed = ATTRIBUTED_PHASES.includes(phase);

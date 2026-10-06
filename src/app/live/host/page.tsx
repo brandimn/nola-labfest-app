@@ -163,9 +163,9 @@ export default function HostPage() {
       {/* Main flow */}
       <section className="mt-4 grid grid-cols-2 gap-2">
         {phase === "PROMPT" && <Btn on={() => act("START_TIMER")} kind="go">Start timer</Btn>}
-        {(phase === "WRITING" || phase === "PROMPT") && (
-          <Btn on={() => act("START_REVEAL")} kind={everyoneAnswered ? "go" : "normal"}>
-            {everyoneAnswered ? "Everyone is in. Reveal" : "Start reveal"}
+        {phase === "WRITING" && (
+          <Btn on={() => act("START_REVEAL")} kind={everyoneAnswered ? "go" : "quiet"}>
+            {everyoneAnswered ? "Reveal now" : "Skip to reveal"}
           </Btn>
         )}
         {phase === "REVEAL" && (
@@ -174,10 +174,10 @@ export default function HostPage() {
               <Btn on={() => act("REVEAL_NEXT")} kind="quiet">Skip ahead</Btn>
             ) : (
               <span className="rounded-xl bg-white/5 px-4 py-4 text-center text-sm text-white/50">
-                All answers shown
+                Opening the vote…
               </span>
             )}
-            <Btn on={() => act("OPEN_VOTING")} kind="go">Open voting</Btn>
+            <Btn on={() => act("OPEN_VOTING")} kind="quiet">Open voting now</Btn>
           </>
         )}
         {phase === "VOTING" && (
@@ -194,7 +194,18 @@ export default function HostPage() {
 
       {phase === "REVEAL" && (
         <p className="mt-3 text-center text-sm text-white/60">
-          Revealing on its own, {state?.revealedCount ?? 0} of {state?.revealTotal ?? 0} shown
+          Revealing on its own, {state?.revealedCount ?? 0} of {state?.revealTotal ?? 0} shown.
+          Voting opens by itself when they are all up.
+        </p>
+      )}
+      {phase === "WRITING" && everyoneAnswered && (
+        <p className="mt-3 text-center text-sm text-white/60">
+          Answers start showing in a moment. Nothing to tap.
+        </p>
+      )}
+      {phase === "VOTING" && (
+        <p className="mt-3 text-center text-sm text-white/60">
+          Voting is open. Tap Show results when the room has had long enough.
         </p>
       )}
 

@@ -119,3 +119,60 @@ export function revealedSoFar(startedAt: Date | null, total: number, now = Date.
   const elapsed = now - startedAt.getTime();
   return Math.max(0, Math.min(total, Math.floor(elapsed / REVEAL_GAP_MS) + 1));
 }
+
+/** Beats where the game has nothing to decide, so it moves itself. The host
+ *  still owns the moments that need a person: which prompt, when writing opens,
+ *  when results land and when names are revealed.
+ *
+ *  Driven off the clock on each poll rather than a background job, because
+ *  there is no server to run one on. Every write is conditional on the phase it
+ *  expects, so several screens polling at once cannot apply it twice. */
+const AFTER_WRITING_MS = 3000;
+const AFTER_REVEAL_MS = 2000;
+
+export async function advanceIfDue(gameId: string) {
+  const { prisma } = await import("@/lib/prisma");
+  const state = await prisma.gameState.findUnique({ where: { gameId } });
+  if (!state?.currentPromptId) return;
+  const now = Date.now();
+
+  // Writing is over and everyone is locked in: start showing answers.
+  if (
+    state.phase === "WRITING" &&
+    state.timerEndsAt &&
+    now - state.timerEndsAt.getTime() > AFTER_WRITING_MS
+  ) {
+    const answers = await prisma.gameAnswer.findMany({
+      where: { promptId: state.currentPromptId },
+    });
+    const withText = answers.filter((a) => a.text.trim());
+    const order = shuffled(withText);
+    await prisma.$transaction([
+      ...order.map((a, i) =>
+        prisma.gameAnswer.update({ where: { id: a.id }, data: { displayOrder: i } })
+      ),
+      ...answers
+        .filter((a) => !a.text.trim())
+        .map((a) => prisma.gameAnswer.update({ where: { id: a.id }, data: { displayOrder: 999 } })),
+      prisma.gameState.updateMany({
+        where: { gameId, phase: "WRITING" },
+        data: { phase: "REVEAL", revealedCount: 0, unmasked: false, revealStartedAt: new Date() },
+      }),
+    ]);
+    return;
+  }
+
+  // Every answer is up and nobody votes before the end anyway: open the vote.
+  if (state.phase === "REVEAL" && state.revealStartedAt) {
+    const total = await prisma.gameAnswer.count({
+      where: { promptId: state.currentPromptId, NOT: { text: "" } },
+    });
+    const shownFor = now - (state.revealStartedAt.getTime() + total * REVEAL_GAP_MS);
+    if (total > 0 && shownFor > AFTER_REVEAL_MS) {
+      await prisma.gameState.updateMany({
+        where: { gameId, phase: "REVEAL" },
+        data: { phase: "VOTING" },
+      });
+    }
+  }
+}
