@@ -28,7 +28,11 @@ export async function POST(req: NextRequest) {
   const game = await getActiveGame();
   const state = await getState(game.id);
   const set = (data: Record<string, unknown>) =>
-    prisma.gameState.update({ where: { gameId: game.id }, data });
+    prisma.gameState.update({
+      where: { gameId: game.id },
+      // Stamp when the phase changed so the later beats can time themselves.
+      data: "phase" in data ? { ...data, phaseAt: new Date() } : data,
+    });
 
   switch (action) {
     case "SET_MODE": {

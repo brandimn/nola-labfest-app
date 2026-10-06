@@ -204,12 +204,9 @@ export default function HostPage() {
           </>
         )}
         {phase === "VOTING" && (
-          <>
-            <Btn on={() => act("CLOSE_VOTING")}>Close voting</Btn>
-            <Btn on={() => act("SHOW_RESULTS")} kind="go">Show results</Btn>
-          </>
+          <Btn on={() => act("SHOW_RESULTS")} kind="quiet">Show results now</Btn>
         )}
-        {phase === "RESULTS" && <Btn on={() => act("UNMASK")} kind="go">Unmask</Btn>}
+        {phase === "RESULTS" && <Btn on={() => act("UNMASK")} kind="quiet">Unmask now</Btn>}
         {["RESULTS", "UNMASKED"].includes(phase) && <Btn on={() => act("SHOW_SCOREBOARD")}>Scoreboard</Btn>}
         {phase === "SCOREBOARD" && <Btn on={() => act("START_BELT")} kind="go">Start Belt Match</Btn>}
         {["SCOREBOARD", "BELT_INTRO", "UNMASKED"].includes(phase) && <Btn on={() => act("LOBBY")} kind="quiet">Back to lobby</Btn>}
@@ -234,12 +231,27 @@ export default function HostPage() {
           <p className="text-sm text-white/70">
             {votes.total === 1 ? "vote in" : "votes in"}. Only you can see this.
           </p>
-          {votes.total === 0 && (
+          {votes.total === 0 ? (
             <p className="mt-2 rounded-lg bg-amber-500/20 p-2 text-sm">
-              Nobody has voted yet. Results now would show an empty board.
+              Nobody has voted yet. Waiting for the first vote.
+            </p>
+          ) : (
+            <p className="mt-2 text-sm text-white/60">
+              Results show themselves once the votes stop coming in.
             </p>
           )}
         </section>
+      )}
+
+      {phase === "RESULTS" && (
+        <p className="mt-3 text-center text-sm text-white/60">
+          Names appear in a moment. Nothing to tap.
+        </p>
+      )}
+      {phase === "UNMASKED" && (
+        <p className="mt-3 text-center text-sm text-white/60">
+          That is the prompt done. Pick the next one below, or show the scoreboard.
+        </p>
       )}
 
       {/* Applause fallback and tie breaking */}

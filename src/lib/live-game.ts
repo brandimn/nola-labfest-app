@@ -130,6 +130,10 @@ export function revealedSoFar(startedAt: Date | null, total: number, now = Date.
 export const GET_READY_MS = 6000;
 const AFTER_WRITING_MS = 3000;
 const AFTER_REVEAL_MS = 2000;
+// Voting closes itself once the room has gone quiet.
+const VOTES_SETTLED_MS = 6000;
+// Then the names land a beat later.
+const RESULTS_HOLD_MS = 5000;
 
 export async function advanceIfDue(gameId: string) {
   const { prisma } = await import("@/lib/prisma");
@@ -147,6 +151,7 @@ export async function advanceIfDue(gameId: string) {
           phase: "WRITING",
           timerEndsAt: new Date(now + (game?.timerSeconds ?? 60) * 1000),
           timerRemaining: null,
+          phaseAt: new Date(),
         },
       });
       return;
@@ -206,9 +211,39 @@ export async function advanceIfDue(gameId: string) {
         .map((a) => prisma.gameAnswer.update({ where: { id: a.id }, data: { displayOrder: 999 } })),
       prisma.gameState.updateMany({
         where: { gameId, phase: "WRITING" },
-        data: { phase: "REVEAL", revealedCount: 0, unmasked: false, revealStartedAt: new Date() },
+        data: {
+          phase: "REVEAL", revealedCount: 0, unmasked: false,
+          revealStartedAt: new Date(), phaseAt: new Date(),
+        },
       }),
     ]);
+    return;
+  }
+
+  // The room has stopped voting: show the result.
+  if (state.phase === "VOTING") {
+    const last = await prisma.gameVote.findFirst({
+      where: { promptId: state.currentPromptId },
+      orderBy: { votedAt: "desc" },
+      select: { votedAt: true },
+    });
+    if (last && now - last.votedAt.getTime() > VOTES_SETTLED_MS) {
+      await prisma.gameState.updateMany({
+        where: { gameId, phase: "VOTING" },
+        data: { phase: "RESULTS", phaseAt: new Date() },
+      });
+    }
+    return;
+  }
+
+  // The bars have filled: reveal who wrote what.
+  if (state.phase === "RESULTS" && state.phaseAt) {
+    if (now - state.phaseAt.getTime() > RESULTS_HOLD_MS) {
+      await prisma.gameState.updateMany({
+        where: { gameId, phase: "RESULTS" },
+        data: { phase: "UNMASKED", unmasked: true, phaseAt: new Date() },
+      });
+    }
     return;
   }
 
@@ -221,7 +256,7 @@ export async function advanceIfDue(gameId: string) {
     if (total > 0 && shownFor > AFTER_REVEAL_MS) {
       await prisma.gameState.updateMany({
         where: { gameId, phase: "REVEAL" },
-        data: { phase: "VOTING" },
+        data: { phase: "VOTING", phaseAt: new Date() },
       });
     }
   }

@@ -355,6 +355,9 @@ model GameState {
   // When the prompt went up. Writing opens a few seconds later on its own, so
   // the host can read it out without anyone tapping anything.
   promptShownAt   DateTime?
+  // When the current phase began. Lets the later beats time themselves without
+  // anyone tapping.
+  phaseAt         DateTime?
   unmasked        Boolean   @default(false)
   // Two normally, three when the second place is tied.
   beltFinalists   String[]  @default([])
