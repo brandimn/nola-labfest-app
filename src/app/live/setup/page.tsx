@@ -203,10 +203,18 @@ export default function SetupPage() {
       <section className="mt-5 rounded-2xl bg-white/5 p-4">
         <h2 className="font-display text-lg font-bold">Have a look at any screen</h2>
         <p className="mt-1 text-sm text-white/60">
-          Jumps the big screen straight to that moment so you can see how it looks. The game
-          freezes while you do, so nothing moves on by itself. Open the big screen in another tab
-          first.
+          These change the <strong>big screen</strong>, not this page. Open it first, put the two
+          windows side by side, then tap through. The game freezes while you look so nothing
+          moves on by itself.
         </p>
+        <a
+          href="/live/screen"
+          target="_blank"
+          rel="noreferrer"
+          className="mt-3 block rounded-xl bg-[#F5A547] p-3 text-center font-bold text-slate-900"
+        >
+          Open the big screen first
+        </a>
         <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
           {([
             ["LOBBY", "Lobby"],
