@@ -34,7 +34,7 @@ export default function ScreenPage() {
   if (!started) {
     return (
       <main className="stage flex min-h-screen flex-col items-center justify-center gap-10">
-        <img src="/live/title.webp" alt="" className="w-[70vw] max-w-5xl drop-shadow-2xl" />
+        <img src="/live/title.webp" alt="" className="max-h-[55vh] w-auto max-w-[80vw] drop-shadow-2xl" />
         <button
           onClick={() => setStarted(true)}
           className="rounded-full px-20 py-8 font-display text-5xl font-bold text-slate-900 shadow-2xl"
@@ -57,14 +57,18 @@ export default function ScreenPage() {
     state?.scoreboard?.find((p) => p.id === state?.championId);
 
   return (
-    <main className="stage relative flex min-h-screen flex-col px-12 py-8">
+    <main className="stage relative flex h-screen flex-col overflow-hidden px-12 py-6">
       <audio ref={music} src="/game/sounds/thinking.mp3" loop preload="auto" />
       <audio ref={ding} src="/game/sounds/ding.mp3" preload="auto" />
 
       <div className="beads" />
 
       <header className="relative flex items-center justify-between">
-        <img src="/live/title.webp" alt="" className="h-20 w-auto drop-shadow-lg" />
+        <img
+          src="/live/title.webp"
+          alt=""
+          className={`h-16 w-auto drop-shadow-lg ${phase === "LOBBY" ? "invisible" : ""}`}
+        />
         <div className="flex items-center gap-3">
           {state?.game.mode === "PRACTICE" && (
             <span className="rounded-full bg-amber-400 px-5 py-2 text-xl font-bold text-slate-900">PRACTICE</span>
@@ -76,9 +80,13 @@ export default function ScreenPage() {
       <div className="relative flex flex-1 flex-col items-center justify-center text-center">
         {phase === "LOBBY" && (
           <>
-            <img src="/live/title.webp" alt="" className="w-[60vw] max-w-4xl drop-shadow-2xl" />
-            <p className="mt-8 text-4xl font-semibold text-white/80">Scan the code on your table to play</p>
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-5">
+            <img
+              src="/live/title.webp"
+              alt=""
+              className="max-h-[52vh] w-auto max-w-[80vw] drop-shadow-2xl"
+            />
+            <p className="mt-6 text-4xl font-semibold text-white/80">Scan the code on your table to play</p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               {state?.players.map((p) => (
                 <span key={p.id} className="chip rounded-2xl px-10 py-5 text-4xl font-bold">{p.name}</span>
               ))}
