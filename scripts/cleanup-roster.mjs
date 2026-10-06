@@ -18,7 +18,10 @@ import fs from "node:fs";
 import path from "node:path";
 
 const prisma = new PrismaClient();
-const RUN_KEY = "roster-cleanup-2026-10-06";
+// Bumped to let the run repeat after a late addition to ALIASES. Repeating is
+// safe: the snapshot is never overwritten, the removals find nobody left, and
+// a merge only fires where a duplicate still exists.
+const RUN_KEY = "roster-cleanup-2026-10-06-v2";
 const SNAPSHOT_KEY = "roster-snapshot-2026-10-06";
 
 const norm = (s) => (s ?? "").toLowerCase().replace(/[^a-z]/g, "");
@@ -63,6 +66,9 @@ const ALIASES = [
   { badgeName: "Tom Heusing", emails: ["thomasheusing@aidite.com"] },
   { badgeName: "Ryan Solorzano, CDT", emails: ["ryan.solorzano@pac-dent.com"] },
   { badgeName: "Amy Bird", emails: ["amy.byrd@dentsplysirona.com"] },
+  // Same mailbox name at shining3d.com and .us, and the master list calls her
+  // Grace, so the same-name pass never saw these two as one person.
+  { badgeName: "Gratiela Gomez", emails: ["gratiela@shining3d.us"] },
 ];
 
 // If the script ever matches more than this for removal my name matching is
@@ -292,30 +298,17 @@ async function main() {
     console.log(`    [${p.badgeType ?? "-"}] ${p.name} | ${p.company ?? "no company"} | ${p.state ?? "-"}`);
   }
 
-  const booths = await prisma.vendor.findMany({ select: { id: true, name: true } });
-  const bySquash = new Map(booths.map((b) => [squash(b.name), b]));
+  // Report only. Attaching people to booths belongs to sync-master-list.mjs,
+  // which knows which sponsors never bought one. An earlier version of this
+  // matched loosely enough on company name to hand GC scanning it had not
+  // paid for, so it does not get to write here any more.
   const loose = await prisma.user.findMany({
     where: { badgeType: "VENDOR", vendorId: null, ownedVendor: null },
-    select: { id: true, name: true, email: true, company: true },
+    select: { name: true, email: true, company: true },
     orderBy: { name: "asc" },
   });
-  let attached = 0;
-  const stillLoose = [];
+  console.log(`[cleanup] ${loose.length} vendor-badged people with no booth:`);
   for (const u of loose) {
-    const key = squash(u.company);
-    const hit =
-      bySquash.get(key) ??
-      booths.find((b) => key && (squash(b.name).includes(key) || key.includes(squash(b.name))));
-    if (hit) {
-      await prisma.user.update({ where: { id: u.id }, data: { vendorId: hit.id } });
-      console.log(`[cleanup] attached ${u.name} to booth ${hit.name}`);
-      attached += 1;
-    } else {
-      stillLoose.push(u);
-    }
-  }
-  console.log(`[cleanup] ${attached} vendor staff attached to a booth; ${stillLoose.length} with no booth:`);
-  for (const u of stillLoose) {
     console.log(`    ${u.name} <${u.email}> | ${u.company ?? "no company"}`);
   }
 

@@ -1745,7 +1745,7 @@
   "email": "jim.sommers@gc.dental",
   "state": "Texas",
   "badgeType": "VENDOR",
-  "isVendor": true,
+  "isVendor": false,
   "isSpeaker": false,
   "isNowak": false
  },
@@ -1755,7 +1755,7 @@
   "email": "christian.scull@gc.dental",
   "state": "Florida",
   "badgeType": "VENDOR",
-  "isVendor": true,
+  "isVendor": false,
   "isSpeaker": false,
   "isNowak": false
  },
