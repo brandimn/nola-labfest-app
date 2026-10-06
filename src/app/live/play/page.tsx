@@ -56,23 +56,27 @@ export default function PlayPage() {
   if (!me) {
     return (
       <main className="mx-auto max-w-md px-4 py-8">
-        <p className="text-center text-[11px] font-bold uppercase tracking-[0.3em] text-[#F5A547]">
-          {state?.game.name ?? "LabFest"}
+        <img src="/live/title.webp" alt="" className="mx-auto w-full max-w-xs rounded-xl shadow-lg" />
+        <h1 className="mt-6 text-center font-display text-4xl font-black">You are on stage</h1>
+        <p className="mt-2 text-center text-base text-white/70">
+          Tap your name. This phone is yours for the whole game.
         </p>
-        <h1 className="mt-4 text-center font-display text-3xl font-bold">Who are you?</h1>
-        <p className="mt-2 text-center text-sm text-white/70">Tap your name. This phone is yours for the game.</p>
         <div className="mt-6 space-y-3">
           {state?.players.map((p) => (
             <button
               key={p.id}
               onClick={() => claim(p.id)}
               disabled={p.claimed}
-              className="w-full rounded-2xl bg-white/10 p-4 text-xl font-semibold disabled:opacity-40"
+              className="w-full rounded-2xl bg-white/10 p-5 text-2xl font-bold shadow active:scale-[0.98] disabled:opacity-40"
             >
               {p.name}{p.claimed ? " (taken)" : ""}
             </button>
           ))}
-          {!state?.players.length && <p className="text-center text-sm text-white/60">No players loaded yet.</p>}
+          {!state?.players.length && (
+            <p className="rounded-xl bg-white/5 p-4 text-center text-sm text-white/60">
+              The lineup is not loaded yet. Your host is still setting up.
+            </p>
+          )}
         </div>
         {error && <p className="mt-4 text-center text-sm text-red-300">{error}</p>}
       </main>

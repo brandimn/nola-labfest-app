@@ -107,6 +107,11 @@ export default function ScreenPage() {
                 <span key={p.id} className="chip rounded-2xl px-10 py-5 text-4xl font-bold">{p.name}</span>
               ))}
             </div>
+            {!state?.players.length && (
+              <p className="mt-6 text-3xl font-semibold text-white/50">
+                Waiting on the lineup. Add the players in Setup.
+              </p>
+            )}
           </>
         )}
 

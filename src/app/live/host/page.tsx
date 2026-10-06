@@ -134,6 +134,15 @@ export default function HostPage() {
         </section>
       )}
 
+      {!state?.players.length && (
+        <div className="mt-4 rounded-2xl bg-amber-500/20 p-4 text-sm">
+          <p className="font-bold">No players yet.</p>
+          <p className="mt-1 text-white/80">
+            Tap Setup below and add the six finalists. Nothing else works until there are players.
+          </p>
+        </div>
+      )}
+
       {/* Main flow */}
       <section className="mt-4 grid grid-cols-2 gap-2">
         {phase === "PROMPT" && <Btn on={() => act("START_TIMER")} kind="go">Start timer</Btn>}
