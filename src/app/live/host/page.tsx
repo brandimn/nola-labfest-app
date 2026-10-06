@@ -37,7 +37,8 @@ export default function HostPage() {
   if (!authed) {
     return (
       <main className="mx-auto max-w-sm px-4 py-16">
-        <h1 className="text-center font-display text-3xl font-bold">Host</h1>
+        <h1 className="text-center font-display text-3xl font-bold">Game controls</h1>
+        <p className="mt-2 text-center text-sm text-white/60">For whoever is running the game, not the person on the mic.</p>
         <input
           value={pin}
           onChange={(e) => setPin(e.target.value)}

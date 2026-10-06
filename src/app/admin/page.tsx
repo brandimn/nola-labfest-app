@@ -63,7 +63,7 @@ export default async function AdminHome() {
         <AdminTile href="/admin/settings" icon={Settings} label="Settings" />
         <AdminTile href="/admin/email-preview" icon={Mail} label="Email Preview" />
         <AdminTile href="/admin/import-roster" icon={Upload} label="Import Roster" />
-        <AdminTile href="/live/host" icon={Gamepad2} label="Bench Talk" />
+        <AdminTile href="/live/host" icon={Gamepad2} label="Say Whaaaat???" />
         <AdminTile href="/admin/booth-cleanup" icon={Wrench} label="Booth Cleanup" />
       </div>
 
