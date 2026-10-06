@@ -25,7 +25,6 @@ const RUN_KEY = "roster-cleanup-2026-10-06-v2";
 const SNAPSHOT_KEY = "roster-snapshot-2026-10-06";
 
 const norm = (s) => (s ?? "").toLowerCase().replace(/[^a-z]/g, "");
-const squash = (s) => (s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
 // Confirmed not coming. Matched on name, and only ever against someone who is
 // NOT on the master list, so this cannot reach a real attendee who happens to
