@@ -24,7 +24,7 @@ const SHARED_PASSWORD = "Labfest26";
 // Bumped to let the run repeat after a late addition to ALIASES. Repeating is
 // safe: the snapshot is never overwritten, the removals find nobody left, and
 // a merge only fires where a duplicate still exists.
-const RUN_KEY = "roster-cleanup-2026-10-06-v3";
+const RUN_KEY = "roster-cleanup-2026-10-06-v4";
 const SNAPSHOT_KEY = "roster-snapshot-2026-10-06";
 
 const norm = (s) => (s ?? "").toLowerCase().replace(/[^a-z]/g, "");
@@ -73,6 +73,8 @@ const ALIASES = [
   { badgeName: "Gratiela Gomez", emails: ["gratiela@shining3d.us"] },
   // The master list has him as Joshua, the badge row as Josh.
   { badgeName: "Josh Williams", emails: ["jwilliams@gpsdental.com"] },
+  // The Dr. on the front of the badge row kept these two apart.
+  { badgeName: "Dr. Jorge Aguilar", emails: ["fleurdelisdental@gmail.com"] },
 ];
 
 // Real addresses Brandi supplied for people who were stuck on a placeholder.

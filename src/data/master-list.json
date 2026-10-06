@@ -1788,5 +1788,105 @@
   "isVendor": false,
   "isSpeaker": false,
   "isNowak": false
+ },
+ {
+  "name": "Edwin Key",
+  "company": "LSU School of Dentistry",
+  "email": "edwin-key@labfest.badge",
+  "state": "Louisiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "David Tran",
+  "company": "LSU School of Dentistry",
+  "email": "david-tran@labfest.badge",
+  "state": "Louisiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Suleiman Hamdan",
+  "company": "LSU School of Dentistry",
+  "email": "suleiman-hamdan@labfest.badge",
+  "state": "Louisiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Tim Congnvich",
+  "company": "LSU School of Dentistry",
+  "email": "tim-congnvich@labfest.badge",
+  "state": "Louisiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Mike Boutte",
+  "company": "LSU School of Dentistry",
+  "email": "mike-boutte@labfest.badge",
+  "state": "Louisiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Amber Newell",
+  "company": "3D Systems",
+  "email": "amber-newell@labfest.badge",
+  "state": "Florida",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Mike Bergeron",
+  "company": "",
+  "email": "mike-bergeron@labfest.badge",
+  "state": "Louisiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Melissa Bergeron",
+  "company": "",
+  "email": "melissa-bergeron@labfest.badge",
+  "state": "Louisiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Grace Sommers",
+  "company": "GC America",
+  "email": "grace-sommers@labfest.badge",
+  "state": "",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Carol Calhoun",
+  "company": "Bayou Crown & Bridge",
+  "email": "carol-calhoun@labfest.badge",
+  "state": "Louisiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
  }
 ]
