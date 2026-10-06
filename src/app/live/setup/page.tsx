@@ -12,16 +12,11 @@ type Data = {
   prompts: Prompt[];
 };
 
-const ROUNDS: [string, string][] = [
-  ["R1", "Round 1"], ["R2", "Round 2 caption"], ["BELT", "Belt Match"], ["BONUS", "Bonus"],
-];
-
 export default function SetupPage() {
   const post = usePost();
   const [data, setData] = useState<Data | null>(null);
   const [error, setError] = useState("");
   const [note, setNote] = useState("");
-  const [newPrompt, setNewPrompt] = useState({ round: "R1", text: "" });
   const [newPlayer, setNewPlayer] = useState("");
 
   const load = useCallback(async () => {
@@ -151,82 +146,46 @@ export default function SetupPage() {
         </div>
       </section>
 
-      <section className="mt-5 rounded-2xl bg-white/5 p-4">
-        <p className="mb-3 text-xs uppercase tracking-wider text-white/50">Prompts</p>
-        <div className="flex gap-2">
-          <select
-            value={newPrompt.round}
-            onChange={(e) => setNewPrompt((s) => ({ ...s, round: e.target.value }))}
-            className="rounded-lg bg-white p-2 text-slate-900"
-          >
-            {ROUNDS.map(([v, label]) => <option key={v} value={v}>{label}</option>)}
-          </select>
-          <input
-            value={newPrompt.text}
-            onChange={(e) => setNewPrompt((s) => ({ ...s, text: e.target.value }))}
-            placeholder="New prompt"
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && newPrompt.text.trim()) {
-                act("ADD_PROMPT", newPrompt);
-                setNewPrompt({ round: newPrompt.round, text: "" });
-              }
-            }}
-            className="flex-1 rounded-lg bg-white p-2 text-slate-900"
-          />
-          <button
-            onClick={() => { if (newPrompt.text.trim()) { act("ADD_PROMPT", newPrompt); setNewPrompt({ round: newPrompt.round, text: "" }); } }}
-            className="rounded bg-[#F5A547] px-4 py-2 font-bold text-slate-900"
-          >
-            Add
-          </button>
-        </div>
+      <PromptSection
+        round="R1"
+        title="Round 1: Free for all"
+        blurb="All six players answer. Type the prompt and press Add."
+        prompts={data.prompts.filter((p) => p.round === "R1")}
+        onAdd={(text) => act("ADD_PROMPT", { round: "R1", text })}
+        onSave={(id, text, isFinale) => act("SAVE_PROMPT", { id, text, isFinale })}
+        onDelete={(id) => act("DELETE_PROMPT", { id })}
+        onMove={(id, direction) => act("MOVE_PROMPT", { id, direction })}
+      />
 
-        {ROUNDS.map(([round, label]) => {
-          const list = data.prompts.filter((p) => p.round === round);
-          if (!list.length) return null;
-          return (
-            <div key={round} className="mt-4">
-              <p className="mb-2 text-sm font-semibold text-white/70">{label}</p>
-              <div className="space-y-2">
-                {list.map((p) => (
-                  <div key={p.id} className="rounded-xl bg-white/10 p-3">
-                    <textarea
-                      defaultValue={p.text}
-                      onBlur={(e) => act("SAVE_PROMPT", { id: p.id, text: e.target.value, isFinale: p.isFinale })}
-                      rows={2}
-                      className="w-full rounded-lg bg-white p-2 text-slate-900"
-                    />
-                    <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
-                      <button onClick={() => act("MOVE_PROMPT", { id: p.id, direction: -1 })} className="rounded bg-white/15 px-2 py-1">↑</button>
-                      <button onClick={() => act("MOVE_PROMPT", { id: p.id, direction: 1 })} className="rounded bg-white/15 px-2 py-1">↓</button>
-                      <label className="flex items-center gap-1">
-                        <input
-                          type="checkbox" defaultChecked={p.isFinale}
-                          onChange={(e) => act("SAVE_PROMPT", { id: p.id, text: p.text, isFinale: e.target.checked })}
-                        />
-                        Finale
-                      </label>
-                      {round === "R2" && (
-                        <label className="cursor-pointer rounded bg-white/15 px-2 py-1">
-                          {p.hasPhoto ? "Replace photo" : "Add photo"}
-                          <input
-                            type="file" accept="image/*" className="hidden"
-                            onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadPhoto(p.id, f); }}
-                          />
-                        </label>
-                      )}
-                      {p.hasPhoto && <span className="text-[#7ddc9f]">photo ✓</span>}
-                      <button onClick={() => act("DELETE_PROMPT", { id: p.id })} className="ml-auto rounded bg-red-500/70 px-2 py-1 font-bold">
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </section>
+      <PromptSection
+        round="R2"
+        title="Round 2: Caption this"
+        blurb="Upload a photo. All six write a caption for it. No typing needed here."
+        photoOnly
+        prompts={data.prompts.filter((p) => p.round === "R2")}
+        onAdd={(text) => act("ADD_PROMPT", { round: "R2", text })}
+        onAddPhoto={async (file) => {
+          const raw = await readFileAsDataUrl(file);
+          const small = await shrinkImage(raw, 1200);
+          await act("ADD_PROMPT", { round: "R2", text: "Caption this", imageUrl: small });
+        }}
+        onPhoto={uploadPhoto}
+        onSave={(id, text, isFinale) => act("SAVE_PROMPT", { id, text, isFinale })}
+        onDelete={(id) => act("DELETE_PROMPT", { id })}
+        onMove={(id, direction) => act("MOVE_PROMPT", { id, direction })}
+      />
+
+      <PromptSection
+        round="BELT"
+        title="Belt Match"
+        blurb="The final two players only, after both rounds. Tick Finale on the one you want played last."
+        showFinale
+        prompts={data.prompts.filter((p) => p.round === "BELT")}
+        onAdd={(text) => act("ADD_PROMPT", { round: "BELT", text })}
+        onSave={(id, text, isFinale) => act("SAVE_PROMPT", { id, text, isFinale })}
+        onDelete={(id) => act("DELETE_PROMPT", { id })}
+        onMove={(id, direction) => act("MOVE_PROMPT", { id, direction })}
+      />
 
       <section className="mt-5 rounded-2xl bg-white/5 p-4">
         <p className="mb-3 text-xs uppercase tracking-wider text-white/50">Practice and reset</p>
@@ -277,5 +236,131 @@ function ResetButton({ onConfirm }: { onConfirm: () => void }) {
         </button>
       </div>
     </div>
+  );
+}
+
+
+/** One clearly labelled block per round, in the order they are played, so there
+ *  is never a question of which prompt belongs where. */
+function PromptSection({
+  round, title, blurb, prompts, onAdd, onAddPhoto, onPhoto, onSave, onDelete, onMove,
+  photoOnly = false, showFinale = false,
+}: {
+  round: string;
+  title: string;
+  blurb: string;
+  prompts: Prompt[];
+  onAdd: (text: string) => void;
+  onAddPhoto?: (file: File) => void;
+  onPhoto?: (promptId: string, file: File) => void;
+  onSave: (id: string, text: string, isFinale: boolean) => void;
+  onDelete: (id: string) => void;
+  onMove: (id: string, direction: number) => void;
+  photoOnly?: boolean;
+  showFinale?: boolean;
+}) {
+  const [text, setText] = useState("");
+
+  return (
+    <section className="mt-5 rounded-2xl bg-white/5 p-4">
+      <h2 className="font-display text-lg font-bold">{title}</h2>
+      <p className="mt-1 text-sm text-white/60">{blurb}</p>
+      <p className="mt-1 text-xs text-white/40">
+        {prompts.length} {prompts.length === 1 ? "prompt" : "prompts"}
+      </p>
+
+      {photoOnly ? (
+        <label className="mt-3 block cursor-pointer rounded-xl bg-[#F5A547] p-4 text-center font-bold text-slate-900">
+          + Add a photo
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f && onAddPhoto) onAddPhoto(f);
+              e.target.value = "";
+            }}
+          />
+        </label>
+      ) : (
+        <div className="mt-3 flex gap-2">
+          <input
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && text.trim()) { onAdd(text.trim()); setText(""); }
+            }}
+            placeholder="Type a prompt, then press Add"
+            className="flex-1 rounded-lg bg-white p-3 text-slate-900"
+          />
+          <button
+            onClick={() => { if (text.trim()) { onAdd(text.trim()); setText(""); } }}
+            className="rounded-lg bg-[#F5A547] px-5 py-3 font-bold text-slate-900"
+          >
+            Add
+          </button>
+        </div>
+      )}
+
+      <div className="mt-3 space-y-2">
+        {prompts.map((p, i) => (
+          <div key={p.id} className="rounded-xl bg-white/10 p-3">
+            <div className="flex items-start gap-3">
+              <span className="mt-2 text-sm font-bold text-white/40">{i + 1}</span>
+              <div className="flex-1">
+                {p.hasPhoto && (
+                  <img
+                    src={`/api/live/photo/${p.id}`}
+                    alt=""
+                    className="mb-2 max-h-32 w-auto rounded-lg"
+                    onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+                  />
+                )}
+                <textarea
+                  defaultValue={p.text}
+                  onBlur={(e) => onSave(p.id, e.target.value, p.isFinale)}
+                  rows={2}
+                  className="w-full rounded-lg bg-white p-2 text-slate-900"
+                />
+              </div>
+            </div>
+
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-xs">
+              <button onClick={() => onMove(p.id, -1)} className="rounded bg-white/15 px-2 py-1">↑</button>
+              <button onClick={() => onMove(p.id, 1)} className="rounded bg-white/15 px-2 py-1">↓</button>
+              {showFinale && (
+                <label className="flex items-center gap-1">
+                  <input
+                    type="checkbox"
+                    defaultChecked={p.isFinale}
+                    onChange={(e) => onSave(p.id, p.text, e.target.checked)}
+                  />
+                  Finale, play last
+                </label>
+              )}
+              {round === "R2" && onPhoto && (
+                <label className="cursor-pointer rounded bg-white/15 px-2 py-1">
+                  {p.hasPhoto ? "Replace photo" : "Add photo"}
+                  <input
+                    type="file" accept="image/*" className="hidden"
+                    onChange={(e) => { const f = e.target.files?.[0]; if (f) onPhoto(p.id, f); e.target.value = ""; }}
+                  />
+                </label>
+              )}
+              <button onClick={() => onDelete(p.id)} className="ml-auto rounded bg-red-500/70 px-2 py-1 font-bold">
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {!prompts.length && (
+          <p className="rounded-lg bg-white/5 p-3 text-sm text-white/50">
+            Nothing here yet.
+          </p>
+        )}
+      </div>
+    </section>
   );
 }
