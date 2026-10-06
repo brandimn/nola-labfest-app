@@ -1,0 +1,1792 @@
+[
+ {
+  "name": "Carrie Ling",
+  "company": "Lifelike Dental Studio",
+  "email": "carrie@lifelikedental.com",
+  "state": "Texas",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Chris Ling",
+  "company": "Lifelike Dental Studio",
+  "email": "chris@lifelikedental.com",
+  "state": "Texas",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Veronika Perrone",
+  "company": "Detax Materials Inc.",
+  "email": "veronika.perrone@detax.de",
+  "state": "California",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Thomas Allegretti",
+  "company": "Detax Materials Inc.",
+  "email": "thomas.allegretti@detax.de",
+  "state": "California",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Mark Castanheiro",
+  "company": "Quatro Air Technologies",
+  "email": "mark.castanheiro@quatroair.com",
+  "state": "Quebec, Canada",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "David Garceau",
+  "company": "Quatro Air Technologies",
+  "email": "david.garceau@diversitech.ca",
+  "state": "Quebec, Canada",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Robert Nickoloff",
+  "company": "Dreve America",
+  "email": "robert.nickoloff@dreve-america.com",
+  "state": "Minnesota",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Shanell Francis",
+  "company": "Miracle Dental Lab",
+  "email": "sfrancis@miracledental.biz",
+  "state": "Texas",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Robert Teachout",
+  "company": "Patriot Dental Lab",
+  "email": "rob@patriotdentallab.com",
+  "state": "Michigan",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Chrystal Teachout",
+  "company": "Patriot Dental Lab",
+  "email": "chrystal@patriotdentallab.com",
+  "state": "Michigan",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Chad Mathews",
+  "company": "Patriot Dental Lab",
+  "email": "chad@patriotdentallab.com",
+  "state": "Michigan",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Miranda Belmonte",
+  "company": "Patriot Dental Lab",
+  "email": "miranda@patriotdentallab.com",
+  "state": "Michigan",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Shawn Nowak",
+  "company": "Nowak Dental Supplies",
+  "email": "shawn@nowakdental.com",
+  "state": "Mississippi",
+  "badgeType": "NOWAK",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": true
+ },
+ {
+  "name": "Brandi Nowak",
+  "company": "Nowak Dental Supplies",
+  "email": "brandi@nowakdental.com",
+  "state": "Louisiana",
+  "badgeType": "NOWAK",
+  "isVendor": false,
+  "isSpeaker": true,
+  "isNowak": true
+ },
+ {
+  "name": "Jeff Dalton",
+  "company": "Nowak Dental Supplies",
+  "email": "jdalton@nowakdental.com",
+  "state": "Louisiana",
+  "badgeType": "NOWAK",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": true
+ },
+ {
+  "name": "Kimmie Nowak",
+  "company": "Nowak Dental Supplies",
+  "email": "knowak@nowakdental.com",
+  "state": "Mississippi",
+  "badgeType": "NOWAK",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": true
+ },
+ {
+  "name": "Marybeth Starr",
+  "company": "Nowak Dental Supplies",
+  "email": "marybeth@nowakdental.com",
+  "state": "Missouri",
+  "badgeType": "NOWAK",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": true
+ },
+ {
+  "name": "Haijin Yang",
+  "company": "Nowak Dental Supplies",
+  "email": "haijin@nowakdental.com",
+  "state": "Massachusetts",
+  "badgeType": "NOWAK",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": true
+ },
+ {
+  "name": "Brett Hovis",
+  "company": "Nowak Dental Supplies",
+  "email": "brett.hovis@nowakdental.com",
+  "state": "South Carolina",
+  "badgeType": "NOWAK",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": true
+ },
+ {
+  "name": "Jude Grayson",
+  "company": "Execute and Kill It",
+  "email": "executeandkillit@gmail.com",
+  "state": "Mississippi",
+  "badgeType": "SPEAKER",
+  "isVendor": false,
+  "isSpeaker": true,
+  "isNowak": false
+ },
+ {
+  "name": "Bernard Ory",
+  "company": "Your Extensions/Profitable Stylist",
+  "email": "orybernard@gmail.com",
+  "state": "Louisiana",
+  "badgeType": "SPEAKER",
+  "isVendor": false,
+  "isSpeaker": true,
+  "isNowak": false
+ },
+ {
+  "name": "Arlene Sjogren",
+  "company": "Digital Dental",
+  "email": "arlene@pivotdigitaldentalsolutions.com",
+  "state": "California",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Erik Sjogren",
+  "company": "Digital Dental",
+  "email": "erik@pivotdigitaldentalsolutions.com",
+  "state": "California",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Mark Schwer",
+  "company": "Kuraray America, Inc.",
+  "email": "mark.schwer@kuraray.com",
+  "state": "New York",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Claudia Fernandez",
+  "company": "Kuraray America, Inc.",
+  "email": "claudia.fernandez@kuraray.com",
+  "state": "New York",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Maurice Munoz",
+  "company": "Kuraray America, Inc.",
+  "email": "maurice.munoz@kuraray.com",
+  "state": "New York",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Duff Wilson",
+  "company": "Wilson Dental Laboratory, Inc",
+  "email": "wilsondentallab@yahoo.com",
+  "state": "South Carolina",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Mark Ries",
+  "company": "Ransom & Randolph",
+  "email": "mries@ransom-randolph.com",
+  "state": "Florida",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Thomas Heusing",
+  "company": "Aidite USA Tech",
+  "email": "thomasheusing@aidite.com",
+  "state": "California",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Melody Wang",
+  "company": "Aidite USA Tech",
+  "email": "melody@aidite.com",
+  "state": "California",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Sara Xu",
+  "company": "Aidite USA Tech",
+  "email": "saraxu@aidite.com",
+  "state": "California",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Jordan Greenberg",
+  "company": "FOLLOW-ME! Technology (hyperDENT)",
+  "email": "jordan.greenberg@fm-dental.com",
+  "state": "New Hampshire",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Darin Lockaby",
+  "company": "Cajun Prosthetics",
+  "email": "darin.lockaby@dess-usa.com",
+  "state": "Florida",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Dell Dine",
+  "company": "Weiss Advisors",
+  "email": "dell@weissadvisorsstl.com",
+  "state": "Indiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Jess Gray",
+  "company": "FLX Dental Arts, LLC",
+  "email": "ja.mash09@gmail.com",
+  "state": "New York",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Jen Rodgers",
+  "company": "FLX Dental Arts, LLC",
+  "email": "jen.rodgers88@gmail.com",
+  "state": "New York",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Morris Fucarino",
+  "company": "Majestic Dental Arts, Inc.",
+  "email": "majdent@yahoo.com",
+  "state": "Florida",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Mandy Arena",
+  "company": "D3 Solutions",
+  "email": "mandy@the-dental-arena.com",
+  "state": "Missouri",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Kyle Sturm",
+  "company": "Dental Art & Design",
+  "email": "ksturm@dentalartanddesign.com",
+  "state": "Missouri",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Larry Sturm",
+  "company": "Dental Art & Design",
+  "email": "lsturm@dentalartanddesign.com",
+  "state": "Missouri",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Cole Sturm",
+  "company": "Dental Art & Design",
+  "email": "csturm@dentalartanddesign.com",
+  "state": "Missouri",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Mark Anderson",
+  "company": "Image Dental Arts",
+  "email": "mark@imagedentalartsavl.com",
+  "state": "North Carolina",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Billy Goddard",
+  "company": "Premier Dental Arts",
+  "email": "billy@premierdentalarts.net",
+  "state": "Tennessee",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Jessica Goddard",
+  "company": "Premier Dental Arts",
+  "email": "jessica@premierdentalarts.net",
+  "state": "Tennessee",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Lori Margiotta",
+  "company": "Bookkeeper For Dentists",
+  "email": "lori@bookkeeperfordentists.com",
+  "state": "Ontario, Canada",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Julie Pickert",
+  "company": "Cajun Prosthetics",
+  "email": "julie.pickert@dess-usa.com",
+  "state": "Florida",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Ty Prim",
+  "company": "Dentsply Sirona",
+  "email": "preston.prim@dentsplysirona.com",
+  "state": "Alabama",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Richard Nixon",
+  "company": "LabPilot",
+  "email": "nixon@labpilot.net",
+  "state": "Canada",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Denisse Lasso",
+  "company": "Exocad",
+  "email": "deramos@exocad.com",
+  "state": "Florida",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Derek Keene",
+  "company": "Keystone Industries",
+  "email": "dkeene@keystoneind.com",
+  "state": "New Jersey",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Alex Berger",
+  "company": "CIMsystem",
+  "email": "berger@cimsystem.com",
+  "state": "Indiana",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Per Claesson",
+  "company": "GreatLab, Inc",
+  "email": "per.claesson@greatlabdental.com",
+  "state": "California",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Chandler Boy",
+  "company": "GreatLab, Inc",
+  "email": "chandler.boy@greatlabdental.com",
+  "state": "California",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Erin Gordon",
+  "company": "Eastside Dental Lab",
+  "email": "erinlynngordon@gmail.com",
+  "state": "North Carolina",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Kathleen Ramsey",
+  "company": "Eastside Dental Lab",
+  "email": "kassiegordon@gmail.com",
+  "state": "North Carolina",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Preet Sahota",
+  "company": "Indiana University Fort Wayne",
+  "email": "isahotak19@gmail.com",
+  "state": "Indiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Grady Crosslin",
+  "company": "Crosslin's Creative Ceramics, Inc.",
+  "email": "grady@ccclab.dental",
+  "state": "Florida",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "James Neuber",
+  "company": "Ocean Ceramics",
+  "email": "jamesneuber@gmail.com",
+  "state": "British Columbia, Canada",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Linda Faircloth",
+  "company": "Nola-Blackburn Dental Lab",
+  "email": "lindaf413@gmail.com",
+  "state": "Louisiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Austin Heath",
+  "company": "Elite Dental Manufacturing",
+  "email": "austin@edm.dental",
+  "state": "Georgia",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Joshua Fitzgerald",
+  "company": "Fitzgerald Dental Studio, LLC",
+  "email": "fitzgeralddentalstudio@gmail.com",
+  "state": "North Carolina",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Tara Fitzgerald",
+  "company": "Fitzgerald Dental Studio, LLC",
+  "email": "tara@fitzgeralddentalstudio.com",
+  "state": "North Carolina",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Jenny Abbott-Cole",
+  "company": "LMT Communications",
+  "email": "jenny@lmtmag.com",
+  "state": "Connecticut",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Josh Throndson",
+  "company": "Innovative Dental Technologies",
+  "email": "office@idtdentallabs.com",
+  "state": "Tennessee",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Chris Urist",
+  "company": "Primotec USA",
+  "email": "chris@primotecusa.com",
+  "state": "Connecticut",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Danny Horelik",
+  "company": "Primotec USA",
+  "email": "danny@primotecusa.com",
+  "state": "Connecticut",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Ruben Mesia",
+  "company": "Dental Specialty Group of Pinellas",
+  "email": "dagmara.mesia@gmail.com",
+  "state": "Florida",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Heather Voss",
+  "company": "Bonadent Dental Laboratories",
+  "email": "hvoss@bonadent.com",
+  "state": "New York",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Sarah Thibodeaux",
+  "company": "Bayou Crown & Bridge",
+  "email": "sarah@bayoucb.com",
+  "state": "Louisiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Marcelle Meche",
+  "company": "Bayou Crown & Bridge",
+  "email": "bayou@bayoucb.com",
+  "state": "Louisiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Nate Kirkwood",
+  "company": "Hermitage Dental Lab",
+  "email": "nate@hermitagelab.com",
+  "state": "Tennessee",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Andrew Fukui",
+  "company": "Pac-Dent, Inc.",
+  "email": "andrew.fukui@pac-dent.com",
+  "state": "California",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Ryan Solorzano",
+  "company": "Pac-Dent, Inc.",
+  "email": "ryan.solorzano@pac-dent.com",
+  "state": "California",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Rick LaDuca",
+  "company": "Handler",
+  "email": "rickladuca@blackstoneind.com",
+  "state": "New Jersey",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Mike Milici",
+  "company": "Handler",
+  "email": "mmilici@blackstoneind.com",
+  "state": "New Jersey",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "John Frymark",
+  "company": "Bonadent Dental Laboratories",
+  "email": "jfrymark@bonadent.com",
+  "state": "New York",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Dylan Paolicelli",
+  "company": "Bonadent Dental Laboratories",
+  "email": "dpaolicelli@bonadent.com",
+  "state": "New York",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Joshua Williams",
+  "company": "GPS Dental",
+  "email": "jwilliams@gpsdental.com",
+  "state": "Florida",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Andrew Perricone",
+  "company": "GPS Dental",
+  "email": "aperricone@gpsdental.com",
+  "state": "Florida",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Clay Scott",
+  "company": "GPS Dental",
+  "email": "cscott@gpsdental.com",
+  "state": "Florida",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Chris Jackson",
+  "company": "Bite-Finder",
+  "email": "chris@bite-finder.com",
+  "state": "Indiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Mark Delahoussaye",
+  "company": "Delahoussaye Dental Lab",
+  "email": "markd.ddl@gmail.com",
+  "state": "Louisiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Amy McClure",
+  "company": "Gibson Dental Designs",
+  "email": "amcclure@gibsondental.com",
+  "state": "Georgia",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "April Sandoval",
+  "company": "Gibson Dental Designs",
+  "email": "asandoval@gibsondental.com",
+  "state": "Georgia",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Jorge Aguilar",
+  "company": "Fleur de Lis Dental Care",
+  "email": "fleurdelisdental@gmail.com",
+  "state": "Louisiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "John Hatheway",
+  "company": "Hatheway Partials & Dentures",
+  "email": "dochatheway3@gmail.com",
+  "state": "Louisiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Kevin Hudi",
+  "company": "MicroDental Laboratory",
+  "email": "kevin.hudi@yahoo.com",
+  "state": "Florida",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Kerry Hudi",
+  "company": "MicroDental Laboratory",
+  "email": "kerry.hudi@gmail.com",
+  "state": "Florida",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Chris Bradley",
+  "company": "Smile Line USA",
+  "email": "chris@smilelineusa.com",
+  "state": "Colorado",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Bryan Bradley",
+  "company": "Smile Line USA",
+  "email": "6bradleys@gmail.com",
+  "state": "Colorado",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Kyle Harrison",
+  "company": "T&H Laboratory Inc.",
+  "email": "thdentallab15@gmail.com",
+  "state": "Texas",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Debra Green",
+  "company": "BeeHive Dental Solutions",
+  "email": "debbie@beehivedentalsolutions.com",
+  "state": "Utah",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Anne Valvoda",
+  "company": "The Dental Lab",
+  "email": "avalvoda@thedentallab.net",
+  "state": "Virginia",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Jay Collins",
+  "company": "The Dental Lab",
+  "email": "jayc@thedentallab.net",
+  "state": "Pennsylvania",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Austyn Feldmann",
+  "company": "The Dental Lab",
+  "email": "afeldmann@thedentallab.net",
+  "state": "Missouri",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Yury Bogatyrev",
+  "company": "The Dental Lab",
+  "email": "ybogatyrev@thedentallab.net",
+  "state": "Pennsylvania",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Joe Young",
+  "company": "Young Dental Laboratory, Inc., CDL",
+  "email": "joe@youngdentallab.com",
+  "state": "Pennsylvania",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Charles Selser",
+  "company": "Selser Dental Lab",
+  "email": "charles@selserdental.com",
+  "state": "Louisiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Michael Selser",
+  "company": "Selser Dental Lab",
+  "email": "michael@selserdental.com",
+  "state": "Louisiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Vicki Thomas",
+  "company": "SaVvy Lab Solutions",
+  "email": "signaturesmilesbyvicki@gmail.com",
+  "state": "North Carolina",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Shaana Gripp",
+  "company": "Kure Dental Solutions",
+  "email": "kuresolutions@outlook.com",
+  "state": "North Carolina",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Razi Setoodegan",
+  "company": "CNC Group",
+  "email": "razi@cnc-group.org",
+  "state": "California",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Angie Guilbeau",
+  "company": "Louisiana Dental Implant Lab",
+  "email": "angie@ladentalimplantlab.com",
+  "state": "Louisiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Kim Ealy",
+  "company": "Ampersand Dental Solutions",
+  "email": "kim@amplab27.com",
+  "state": "Georgia",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Mike Thomas",
+  "company": "Edge Dental Studio",
+  "email": "mike.thomas@edgesolutions.com",
+  "state": "North Carolina",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Mac Barry",
+  "company": "Level 3 Financial Solutions",
+  "email": "mbarry@l3fs.com",
+  "state": "Mississippi",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Coco McDonnell",
+  "company": "Level 3 Financial Solutions",
+  "email": "cmcdonnell@l3fs.com",
+  "state": "Mississippi",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Eric Stollar",
+  "company": "VHF",
+  "email": "eric.stollar@vhf.com",
+  "state": "New York",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Rob Fletcher",
+  "company": "Aces",
+  "email": "bww2543@gmail.com",
+  "state": "Florida",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Kristen Smith-Seals",
+  "company": "Dream Design Dental Lab",
+  "email": "dreamdesigndental@gmail.com",
+  "state": "Mississippi",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "John Madden",
+  "company": "John Madden Prosthetics",
+  "email": "theoheeks@gmail.com",
+  "state": "Minnesota",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Chris Frye",
+  "company": "Whip Mix Corp.",
+  "email": "cfrye@whipmix.com",
+  "state": "Kentucky",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Katherine Steinbock-Dyke",
+  "company": "Whip Mix Corp.",
+  "email": "kdyke@whipmix.com",
+  "state": "Kentucky",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Patrick Galante",
+  "company": "Whip Mix Corp.",
+  "email": "pgalante@whipmix.com",
+  "state": "Kentucky",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Jessica Seagraves",
+  "company": "VHF",
+  "email": "jessica.seagraves@vhf.com",
+  "state": "Louisiana",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Roy Leake Jr.",
+  "company": "Miracle Dental Lab",
+  "email": "rleake@miracledental.biz",
+  "state": "Texas",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Dean Ribeiro",
+  "company": "Kulzer Dental",
+  "email": "dean.ribeiro@kulzer-dental.com",
+  "state": "Tennessee",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Andy Johnston",
+  "company": "Kulzer Dental",
+  "email": "andrew.johnston@kulzer-dental.com",
+  "state": "Washington",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Giacomo Anselmo",
+  "company": "Stratasys",
+  "email": "giacomo.anselmo@stratasys.com",
+  "state": "Minnesota",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "David Bolen",
+  "company": "Stratasys",
+  "email": "david.bolen@stratasys.com",
+  "state": "Texas",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Gal Brill",
+  "company": "Stratasys",
+  "email": "gal.brill@stratasys.com",
+  "state": "Minnesota",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Brandon Bean",
+  "company": "Louisiana Dental Center",
+  "email": "brandon.bean2016@gmail.com",
+  "state": "Louisiana",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Jenelle Eaton",
+  "company": "Cajun Prosthetics",
+  "email": "jenelle.eaton@dess-usa.com",
+  "state": "Florida",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Dan McCoy",
+  "company": "Golden Ceramic Dental Lab",
+  "email": "danmccoy@gcdl.net",
+  "state": "Illinois",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Bianka Nethery",
+  "company": "Elite Ceramics Dental Laboratory",
+  "email": "info@ecdentallab.com",
+  "state": "Texas",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Larry Nethery",
+  "company": "Elite Ceramics Dental Laboratory",
+  "email": "lnetheryjr@yahoo.com",
+  "state": "Texas",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Scot Armstrong",
+  "company": "Smile Fusion Dental Labs",
+  "email": "scot@smilefusiondentallabs.com",
+  "state": "Kentucky",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Ted Mattingly",
+  "company": "Smile Fusion Dental Labs",
+  "email": "ted@smilefusiondentallabs.com",
+  "state": "Kentucky",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Barb Warner",
+  "company": "Voices from the Bench",
+  "email": "barbwarner@knightdentalgroup.com",
+  "state": "Florida",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Scott Crane",
+  "company": "2onelab",
+  "email": "scott@2onelab.com",
+  "state": "Georgia",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Duy-Anh Tan Tan",
+  "company": "Scheftner",
+  "email": "d.tan@scheftner.dental",
+  "state": "Germany",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Florian Jung",
+  "company": "Scheftner",
+  "email": "f.jung@scheftner.dental",
+  "state": "Germany",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Tim Bertram",
+  "company": "Bertram Dental Lab",
+  "email": "timbertram@bertramdental.com",
+  "state": "Wisconsin",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Esther Noltensmeier",
+  "company": "Sun/Wagner/Panther",
+  "email": "e.noltensmeier@sungmbh.de",
+  "state": "Germany",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Stuart Steinbock",
+  "company": "Digital Dental",
+  "email": "stuart@digitaldental.com",
+  "state": "Kentucky",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Elvis Dahl",
+  "company": "Voices from the Bench",
+  "email": "info@voicesfromthebench.com",
+  "state": "Indiana",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Cory Lambertson",
+  "company": "Asiga",
+  "email": "cory@asiga.com",
+  "state": "Michigan",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Matt Travis",
+  "company": "Burt & Associates",
+  "email": "mtravis@burtcollect.com",
+  "state": "Texas",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Beth Collington",
+  "company": "Exocad",
+  "email": "bcollington@exocad.com",
+  "state": "New Jersey",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Nick Moyer",
+  "company": "Dreve America",
+  "email": "nick.moyer@dreve-america.com",
+  "state": "Minnesota",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Maddy Ryan",
+  "company": "Dreve America",
+  "email": "maddy.ryan@dreve-america.com",
+  "state": "Minnesota",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Leslie Shadwick",
+  "company": "Dentsply Sirona",
+  "email": "leslie.shadwickl@dentsplysirona.com",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Amy Byrd",
+  "company": "Dentsply Sirona",
+  "email": "amy.byrd@dentsplysirona.com",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Carl Horrocks",
+  "company": "3Shape",
+  "email": "carl.horrocks@3shape.com",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "John Morton",
+  "company": "Auto Crib",
+  "email": "jmorton@autocrib.com",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Rob Nazzal",
+  "company": "iCortica",
+  "email": "rob@icortica.com",
+  "state": "Massachusetts",
+  "badgeType": "SPEAKER",
+  "isVendor": true,
+  "isSpeaker": true,
+  "isNowak": false
+ },
+ {
+  "name": "Tamara Nazzal",
+  "company": "iCortica",
+  "email": "tamara@icortica.com",
+  "state": "Massachusetts",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Renee Tuttobene",
+  "company": "Digital Dental",
+  "email": "renee@ecgllc.com",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Carolina Prigione",
+  "company": "Exocad",
+  "email": "cprigione@exocad.com",
+  "state": "New Jersey",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Richard Peng",
+  "company": "Huge Dental",
+  "email": "richard.p@hugedentalusa.com",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Dwight Blair",
+  "company": "imes-icore",
+  "email": "dwight.blair@imes-icore.com",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "George Cowburn",
+  "company": "LabPilot",
+  "email": "george@labpilot.net",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Blake Hibray",
+  "company": "Sevaredent",
+  "email": "blake.hibray@sevaredent.com",
+  "state": "",
+  "badgeType": "SPEAKER",
+  "isVendor": true,
+  "isSpeaker": true,
+  "isNowak": false
+ },
+ {
+  "name": "Kim Solomon",
+  "company": "Sevaredent",
+  "email": "kim.solomon@sevaredent.com",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Brian Binnie",
+  "company": "SprintRay",
+  "email": "brian.binnie@sprintray.com",
+  "state": "California",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Grace Miu",
+  "company": "Shining 3D",
+  "email": "gratiela@shining3d.us",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Mitch Heimbuch",
+  "company": "SprintRay",
+  "email": "mitch.heimbuch@sprintray.com",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Michael Reina",
+  "company": "SprintRay",
+  "email": "michael.reina@sprintray.com",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Harvey Cai",
+  "company": "Xtcera",
+  "email": "harvey@xianton.com",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Jesus Contreras",
+  "company": "DLyte",
+  "email": "j.contreras@gpainnova.com",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Marta Lingenfelser",
+  "company": "DLyte",
+  "email": "m.lingenfelser@gpainnova.com",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Jimmy Ruiz",
+  "company": "Roland DGA",
+  "email": "jruiz@rolanddga.com",
+  "state": "California",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Juan Molina",
+  "company": "Roland DGA",
+  "email": "jmolina@rolanddga.com",
+  "state": "California",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Bennett Napier",
+  "company": "Partners in Association Management",
+  "email": "bennett@executiveoffice.org",
+  "state": "Florida",
+  "badgeType": "SPEAKER",
+  "isVendor": false,
+  "isSpeaker": true,
+  "isNowak": false
+ },
+ {
+  "name": "David Jackson",
+  "company": "Mid-South Dental Lab",
+  "email": "david@midsouthdentallab.com",
+  "state": "Tennessee",
+  "badgeType": "SPEAKER",
+  "isVendor": false,
+  "isSpeaker": true,
+  "isNowak": false
+ },
+ {
+  "name": "Chelsie Jackson",
+  "company": "Mid-South Dental Lab",
+  "email": "chelsie@midsouthdentallab.com",
+  "state": "Tennessee",
+  "badgeType": "SPEAKER",
+  "isVendor": false,
+  "isSpeaker": true,
+  "isNowak": false
+ },
+ {
+  "name": "John Wilson",
+  "company": "Sunrise Dental Laboratory",
+  "email": "john@sunrisedentallaboratory.com",
+  "state": "Florida",
+  "badgeType": "SPEAKER",
+  "isVendor": false,
+  "isSpeaker": true,
+  "isNowak": false
+ },
+ {
+  "name": "Matt Moran",
+  "company": "Nowak Dental Supplies",
+  "email": "matt.moran@nowakdental.com",
+  "state": "Florida",
+  "badgeType": "NOWAK",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": true
+ },
+ {
+  "name": "Jill Spina",
+  "company": "Nowak Dental Supplies",
+  "email": "jill@nowakdental.com",
+  "state": "Florida",
+  "badgeType": "NOWAK",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": true
+ },
+ {
+  "name": "Martin Niedermaier",
+  "company": "Dekema",
+  "email": "martin.niedermaier@dekema.com",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "April Newell",
+  "company": "3D Systems",
+  "email": "april.newell@3dsystems.com",
+  "state": "Florida",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Krista Singh",
+  "company": "Nowak Dental Supplies",
+  "email": "krista.singh@nowakdental.com",
+  "state": "Missouri",
+  "badgeType": "NOWAK",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": true
+ },
+ {
+  "name": "Bianca Roth",
+  "company": "GPS Digital RPD",
+  "email": "broth@clearchoice.com",
+  "state": "Alabama",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Hannah Weber",
+  "company": "3Shape",
+  "email": "hannah.weber@3shape.com",
+  "state": "New Jersey",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Jim Sommers",
+  "company": "GC America",
+  "email": "jim.sommers@gc.dental",
+  "state": "Texas",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Christian Scull",
+  "company": "GC America",
+  "email": "christian.scull@gc.dental",
+  "state": "Florida",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Mike Prozillo",
+  "company": "Keystone",
+  "email": "mprozzillo@keystoneind.com",
+  "state": "New Jersey",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Jay Shin",
+  "company": "TruAbutment",
+  "email": "jay.shin@truabutment.com",
+  "state": "",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Russell Schafer",
+  "company": "Nola Dentures and General Dentistry",
+  "email": "russell.schafer.dds@gmail.com",
+  "state": "",
+  "badgeType": "LAB",
+  "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ }
+]
