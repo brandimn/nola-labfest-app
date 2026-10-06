@@ -18,14 +18,28 @@ export default function ScreenPage() {
   const [voteUrl, setVoteUrl] = useState("");
   useEffect(() => setVoteUrl(`${window.location.origin}/live/vote`), []);
   const music = useRef<HTMLAudioElement | null>(null);
+  const lobby = useRef<HTMLAudioElement | null>(null);
   const ding = useRef<HTMLAudioElement | null>(null);
   const lastRevealed = useRef(0);
 
+  // Brass band under the writing timer, jazz club in the lobby. Only one plays
+  // at a time, and Mute on the controller silences both.
   useEffect(() => {
-    if (!started || !music.current) return;
-    const shouldPlay = state?.phase === "WRITING" && !state.game.muted;
-    if (shouldPlay) music.current.play().catch(() => {});
-    else { music.current.pause(); music.current.currentTime = 0; }
+    if (!started) return;
+    const muted = !!state?.game.muted;
+    const phase = state?.phase;
+
+    const writing = phase === "WRITING" && !muted;
+    if (music.current) {
+      if (writing) music.current.play().catch(() => {});
+      else { music.current.pause(); music.current.currentTime = 0; }
+    }
+
+    const inLobby = (phase === "LOBBY" || phase === "CHAMPION") && !muted;
+    if (lobby.current) {
+      if (inLobby) lobby.current.play().catch(() => {});
+      else lobby.current.pause();
+    }
   }, [state?.phase, state?.game.muted, started]);
 
   useEffect(() => {
@@ -38,8 +52,9 @@ export default function ScreenPage() {
 
   if (!started) {
     return (
-      <main className="stage flex min-h-screen flex-col items-center justify-center gap-10">
-        <img src="/live/title.webp" alt="" className="max-h-[55vh] w-auto max-w-[80vw] drop-shadow-2xl" />
+      <main className="stage flex min-h-screen flex-col items-center justify-center gap-8">
+        <img src="/live/title.webp" alt="" className="max-h-[50vh] w-auto max-w-[80vw] drop-shadow-2xl" />
+        <p className="text-2xl font-semibold text-white/70">Tap once to let the music play</p>
         <button
           onClick={() => setStarted(true)}
           className="rounded-full px-20 py-8 font-display text-5xl font-bold text-slate-900 shadow-2xl"
@@ -64,6 +79,7 @@ export default function ScreenPage() {
   return (
     <main className="stage relative flex h-screen flex-col overflow-hidden px-12 py-6">
       <audio ref={music} src="/game/sounds/thinking.mp3" loop preload="auto" />
+      <audio ref={lobby} src="/game/sounds/lobby.mp3" loop preload="auto" />
       <audio ref={ding} src="/game/sounds/ding.mp3" preload="auto" />
 
       <div className="beads" />

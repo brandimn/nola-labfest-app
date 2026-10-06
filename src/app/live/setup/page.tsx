@@ -22,6 +22,7 @@ export default function SetupPage() {
   const [error, setError] = useState("");
   const [note, setNote] = useState("");
   const [newPrompt, setNewPrompt] = useState({ round: "R1", text: "" });
+  const [newPlayer, setNewPlayer] = useState("");
 
   const load = useCallback(async () => {
     const r = await fetch("/api/live/setup", { cache: "no-store" });
@@ -95,10 +96,32 @@ export default function SetupPage() {
       </section>
 
       <section className="mt-5 rounded-2xl bg-white/5 p-4">
-        <div className="mb-3 flex items-center justify-between">
-          <p className="text-xs uppercase tracking-wider text-white/50">Players ({data.players.length})</p>
-          <button onClick={() => act("ADD_PLAYER", { name: "New player" })} className="rounded bg-white/15 px-3 py-1 text-sm">
-            + Add
+        <p className="mb-3 text-xs uppercase tracking-wider text-white/50">
+          Players ({data.players.length})
+        </p>
+
+        <div className="mb-4 flex gap-2">
+          <input
+            value={newPlayer}
+            onChange={(e) => setNewPlayer(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && newPlayer.trim()) {
+                act("ADD_PLAYER", { name: newPlayer.trim() });
+                setNewPlayer("");
+              }
+            }}
+            placeholder="Type a name, then press Add"
+            className="flex-1 rounded-lg bg-white p-3 text-slate-900"
+          />
+          <button
+            onClick={() => {
+              if (!newPlayer.trim()) return;
+              act("ADD_PLAYER", { name: newPlayer.trim() });
+              setNewPlayer("");
+            }}
+            className="rounded-lg bg-[#F5A547] px-5 py-3 font-bold text-slate-900"
+          >
+            Add
           </button>
         </div>
         <div className="space-y-2">
@@ -119,7 +142,12 @@ export default function SetupPage() {
               </button>
             </div>
           ))}
-          {!data.players.length && <p className="text-sm text-white/50">Add the six finalists here.</p>}
+          {!data.players.length && (
+            <p className="rounded-lg bg-white/5 p-3 text-sm text-white/60">
+              Nothing runs until there are players. Add the six finalists above. Names can be
+              changed right up to showtime, so put anything in for now.
+            </p>
+          )}
         </div>
       </section>
 
@@ -137,6 +165,12 @@ export default function SetupPage() {
             value={newPrompt.text}
             onChange={(e) => setNewPrompt((s) => ({ ...s, text: e.target.value }))}
             placeholder="New prompt"
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && newPrompt.text.trim()) {
+                act("ADD_PROMPT", newPrompt);
+                setNewPrompt({ round: newPrompt.round, text: "" });
+              }
+            }}
             className="flex-1 rounded-lg bg-white p-2 text-slate-900"
           />
           <button
