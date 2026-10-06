@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { QRDisplay } from "@/components/qr-display";
 import { useCountdown, useLiveState } from "@/lib/live-client";
 
 const PURPLE = "#7C3AED";
@@ -12,6 +13,10 @@ export default function ScreenPage() {
   const { state, offline } = useLiveState(1000);
   const seconds = useCountdown(state);
   const [started, setStarted] = useState(false);
+  // Built from wherever the screen is actually served, so it is right whatever
+  // address the laptop is on.
+  const [voteUrl, setVoteUrl] = useState("");
+  useEffect(() => setVoteUrl(`${window.location.origin}/live/vote`), []);
   const music = useRef<HTMLAudioElement | null>(null);
   const ding = useRef<HTMLAudioElement | null>(null);
   const lastRevealed = useRef(0);
@@ -85,7 +90,18 @@ export default function ScreenPage() {
               alt=""
               className="max-h-[52vh] w-auto max-w-[80vw] drop-shadow-2xl"
             />
-            <p className="mt-6 text-4xl font-semibold text-white/80">Scan the code on your table to play</p>
+            <div className="mt-6 flex items-center justify-center gap-12">
+              {voteUrl && (
+                <div className="rounded-3xl bg-white p-5 shadow-2xl">
+                  <QRDisplay value={voteUrl} size={240} />
+                </div>
+              )}
+              <div className="text-left">
+                <p className="font-display text-6xl font-black" style={{ color: GOLD }}>Scan to vote</p>
+                <p className="mt-2 text-3xl font-semibold text-white/80">No app. No password.</p>
+                <p className="mt-1 text-3xl font-semibold text-white/80">Just point your camera.</p>
+              </div>
+            </div>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               {state?.players.map((p) => (
                 <span key={p.id} className="chip rounded-2xl px-10 py-5 text-4xl font-bold">{p.name}</span>
@@ -159,6 +175,12 @@ export default function ScreenPage() {
               <p className="blink mb-8 font-display text-7xl font-black" style={{ color: GOLD }}>
                 Vote now on your phone
               </p>
+            )}
+            {phase === "VOTING" && voteUrl && (
+              <div className="absolute bottom-6 right-6 rounded-2xl bg-white p-3 text-center shadow-xl">
+                <QRDisplay value={voteUrl} size={130} />
+                <p className="mt-1 text-xs font-bold text-slate-700">Just joined? Scan</p>
+              </div>
             )}
 
             <div className="w-full max-w-6xl space-y-5">
