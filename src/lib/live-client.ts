@@ -60,7 +60,7 @@ export function useLiveState(everyMs: number, fresh = false) {
     stop.current = false;
     let timer: ReturnType<typeof setTimeout>;
 
-    const tick = async () => {
+    const fetchOnce = async () => {
       try {
         const r = await fetch(`/api/live/state${fresh ? "?fresh=1" : ""}`, {
           cache: "no-store",
@@ -74,13 +74,28 @@ export function useLiveState(everyMs: number, fresh = false) {
       } catch {
         setOffline(true);
       }
+    };
+
+    const tick = async () => {
+      await fetchOnce();
       if (!stop.current) timer = setTimeout(tick, everyMs);
     };
+
+    // Browsers throttle timers in a tab that is not on screen, to roughly once
+    // a minute, so a big screen sitting behind another tab appears frozen.
+    // Catching up the moment it is looked at again costs one request.
+    const onVisible = () => {
+      if (!document.hidden) fetchOnce();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", onVisible);
 
     tick();
     return () => {
       stop.current = true;
       clearTimeout(timer);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", onVisible);
     };
   }, [everyMs, fresh]);
 

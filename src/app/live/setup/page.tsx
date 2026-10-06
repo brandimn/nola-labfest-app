@@ -6,6 +6,19 @@ import { usePost } from "@/lib/live-client";
 
 type Player = { id: string; name: string; seatOrder: number; deviceId: string | null };
 type Prompt = { id: string; round: string; text: string; sortOrder: number; isFinale: boolean; hasPhoto: boolean };
+const SCREEN_NAMES: Record<string, string> = {
+  LOBBY: "Lobby",
+  PROMPT: "Prompt up",
+  WRITING: "Writing",
+  REVEAL: "Answers",
+  VOTING: "Voting",
+  RESULTS: "Results",
+  UNMASKED: "Names",
+  SCOREBOARD: "Scoreboard",
+  BELT_INTRO: "Belt Match",
+  CHAMPION: "Champion",
+};
+
 type Data = {
   game: { id: string; mode: string; name: string; beltText: string; timerSeconds: number; answerMaxLength: number };
   players: Player[];
@@ -18,6 +31,25 @@ export default function SetupPage() {
   const [error, setError] = useState("");
   const [note, setNote] = useState("");
   const [newPlayer, setNewPlayer] = useState("");
+  // What the big screen is showing this second, so a preview tap confirms
+  // itself here rather than needing the other window in view.
+  const [showing, setShowing] = useState<string>("");
+
+  useEffect(() => {
+    let stop = false;
+    const tick = async () => {
+      try {
+        const r = await fetch("/api/live/state?fresh=1", { cache: "no-store" });
+        if (r.ok) {
+          const d = await r.json();
+          setShowing(d.phase);
+        }
+      } catch { /* leave the last value */ }
+      if (!stop) setTimeout(tick, 1200);
+    };
+    tick();
+    return () => { stop = true; };
+  }, []);
 
   const load = useCallback(async () => {
     const r = await fetch("/api/live/setup", { cache: "no-store" });
@@ -215,6 +247,18 @@ export default function SetupPage() {
         >
           Open the big screen first
         </a>
+
+        <div className="mt-3 rounded-xl bg-black/30 p-3 text-center">
+          <p className="text-xs uppercase tracking-wider text-white/50">
+            The big screen is showing
+          </p>
+          <p className="font-display text-2xl font-black text-[#F5A547]">
+            {SCREEN_NAMES[showing] ?? showing ?? "…"}
+          </p>
+          <p className="mt-1 text-xs text-white/40">
+            If this changes but the other window does not, click that window once to wake it up.
+          </p>
+        </div>
         <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
           {([
             ["LOBBY", "Lobby"],
