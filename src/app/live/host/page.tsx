@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useCountdown, useLiveState, usePost } from "@/lib/live-client";
+import { ROUNDS, ROUND_NOTES, ROUND_TITLES } from "@/lib/live-rounds";
 
 type Prompt = { id: string; round: string; text: string; sortOrder: number; used: boolean; isFinale: boolean };
 
@@ -370,24 +371,48 @@ export default function HostPage() {
         </section>
       )}
 
-      {/* Prompt list */}
+      {/* Prompt list, in the order they are played and grouped the same way as
+          the setup page, so there is never a doubt which round is which. */}
       <section className="mt-5">
         <p className="mb-2 text-xs uppercase tracking-wider text-white/50">Prompts</p>
-        <div className="space-y-2">
-          {prompts.map((p) => (
-            <button
-              key={p.id}
-              onClick={() => act("SHOW_PROMPT", { promptId: p.id })}
-              className={`w-full rounded-lg p-3 text-left text-sm ${
-                state?.prompt?.id === p.id ? "bg-[#F5A547] text-slate-900" : "bg-white/10"
-              }`}
-            >
-              <span className="mr-2 text-xs opacity-70">{p.round}</span>
-              {p.text}
-            </button>
-          ))}
-          {!prompts.length && <p className="text-sm text-white/50">No prompts yet. Add them on the setup page.</p>}
-        </div>
+        {!prompts.length && (
+          <p className="text-sm text-white/50">No prompts yet. Add them on the setup page.</p>
+        )}
+        {ROUNDS.map((round) => {
+          const inRound = prompts.filter((p) => p.round === round);
+          if (!inRound.length) return null;
+          return (
+            <div key={round} className="mt-4">
+              <p className="font-display text-lg font-bold text-[#F5A547]">{ROUND_TITLES[round]}</p>
+              <p className="mb-2 text-xs text-white/50">{ROUND_NOTES[round]}</p>
+              <div className="space-y-2">
+                {inRound.map((p) => (
+                  <button
+                    key={p.id}
+                    onClick={() => act("SHOW_PROMPT", { promptId: p.id })}
+                    className={`w-full rounded-lg p-3 text-left text-sm ${
+                      state?.prompt?.id === p.id
+                        ? "bg-[#F5A547] text-slate-900"
+                        : p.used
+                          ? "bg-white/5 text-white/40"
+                          : "bg-white/10"
+                    }`}
+                  >
+                    {p.text}
+                    {p.isFinale && (
+                      <span className="ml-2 rounded-full bg-[#7C3AED] px-2 py-0.5 text-[10px] font-bold uppercase text-white">
+                        Finale
+                      </span>
+                    )}
+                    {p.used && state?.prompt?.id !== p.id && (
+                      <span className="ml-2 text-xs">done</span>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          );
+        })}
       </section>
 
       <section className="mt-6 grid grid-cols-2 gap-2">

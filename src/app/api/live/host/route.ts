@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { HOST_COOKIE, hostPin, isHost } from "@/lib/live-host";
 import { REVEAL_GAP_MS, beltFinalistsFrom, beltStanding, getActiveGame, getOrCreateGame, getState, scoreboardFor, shuffled } from "@/lib/live-game";
+import { byPlayingOrder } from "@/lib/live-rounds";
 
 export const dynamic = "force-dynamic";
 
@@ -92,10 +93,13 @@ export async function POST(req: NextRequest) {
 
       // Lobby, a scoreboard, or the Belt Match intro: on to the next prompt.
       const rounds = state.beltFinalists.length ? ["BELT"] : ["R1", "R2"];
-      const next = await prisma.gamePrompt.findFirst({
+      // Sorted in code, not in the query. Ordering on the round string is
+      // alphabetical, which only gives R1 before R2 by luck and would put BELT
+      // first the moment these sets ever overlap. See src/lib/live-rounds.ts.
+      const candidates = await prisma.gamePrompt.findMany({
         where: { gameId: game.id, used: false, round: { in: rounds } },
-        orderBy: [{ isFinale: "asc" }, { round: "asc" }, { sortOrder: "asc" }],
       });
+      const next = candidates.sort(byPlayingOrder)[0] ?? null;
 
       if (next) {
         await set({
@@ -131,10 +135,11 @@ export async function POST(req: NextRequest) {
         (state.currentPromptId
           ? await prisma.gamePrompt.findUnique({ where: { id: state.currentPromptId } })
           : null) ??
-        (await prisma.gamePrompt.findFirst({
-          where: { gameId: game.id },
-          orderBy: [{ round: "asc" }, { sortOrder: "asc" }],
-        }));
+        // The preview samples the first prompt of the show, so it has to be the
+        // first by playing order, not the alphabetically first round.
+        (await prisma.gamePrompt
+          .findMany({ where: { gameId: game.id } })
+          .then((all) => all.sort(byPlayingOrder)[0] ?? null));
 
       const data: Record<string, unknown> = {
         phase: want,

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { isHost } from "@/lib/live-host";
 import { getActiveGame } from "@/lib/live-game";
+import { byPlayingOrder } from "@/lib/live-rounds";
 
 export const dynamic = "force-dynamic";
 
@@ -16,10 +17,11 @@ export async function GET() {
     }),
     prisma.gamePrompt.findMany({
       where: { gameId: game.id },
-      orderBy: [{ round: "asc" }, { sortOrder: "asc" }],
       select: { id: true, round: true, text: true, sortOrder: true, isFinale: true, imageUrl: true },
     }),
   ]);
+  // Playing order, not alphabetical by round. See src/lib/live-rounds.ts.
+  prompts.sort(byPlayingOrder);
   return NextResponse.json(
     {
       game: {
