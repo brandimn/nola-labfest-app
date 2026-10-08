@@ -56,7 +56,25 @@ export default function HostPage() {
     const r = await fetch("/api/live/prompts", { cache: "no-store" });
     if (r.ok) setPrompts(await r.json());
   }
-  useEffect(() => { if (authed) loadPrompts(); }, [authed]);
+  // Already signed in from earlier? Then do not ask again. The marker cookie
+  // lasts a day, but this page kept its own idea of being signed in in memory
+  // only, so a phone reloading the tab mid show, which Safari does whenever it
+  // feels like it, dropped the operator back to the PIN pad with the room
+  // waiting. Any host-only endpoint answers the question.
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/live/setup", { cache: "no-store" })
+      .then((r) => { if (!cancelled && r.ok) setAuthed(true); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  // Keep the list in step with the show. NEXT is what moves the game on and
+  // marks a prompt played, so watching the current prompt change catches every
+  // route to it, including the game advancing itself on a timer.
+  useEffect(() => {
+    if (authed) loadPrompts();
+  }, [authed, state?.prompt?.id, state?.phase]);
 
   useEffect(() => {
     if (!authed) return;
