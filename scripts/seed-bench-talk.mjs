@@ -6,9 +6,40 @@ const prisma = new PrismaClient();
 const PROMPTS = [
   { round: "R1", text: "Your lab's OnlyFans name" },
   { round: "R1", text: 'The real translation of "can you rush this one?"' },
-  { round: "R1", text: "Your worst pickup line to use at a dental convention" },
+  { round: "R1", text: "Your worst pickup line to use on a lab tech" },
   { round: "R1", text: "The one thing you should NOT yell at a dental convention" },
 ];
+
+// Reword a prompt that is already loaded. The seeder skips anything whose text
+// it already recognises, so changing the list above does nothing to a prompt
+// sitting in the database. Matched on the exact old wording, so if Brandi has
+// already fixed it herself on the setup page this quietly finds nothing.
+const REWORDED = [
+  {
+    from: "Your worst pickup line to use at a dental convention",
+    to: "Your worst pickup line to use on a lab tech",
+  },
+];
+
+async function rewordPrompts() {
+  const KEY = "bench-talk-reword-v1";
+  if (await prisma.setting.findUnique({ where: { key: KEY } })) {
+    console.log("[bench-talk] rewordings: already done, skipped");
+    return;
+  }
+  for (const r of REWORDED) {
+    const hit = await prisma.gamePrompt.updateMany({
+      where: { text: r.from },
+      data: { text: r.to },
+    });
+    console.log(
+      hit.count
+        ? `[bench-talk] reworded ${hit.count}: "${r.from}" -> "${r.to}"`
+        : `[bench-talk] nothing matched "${r.from}", left alone`
+    );
+  }
+  await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
+}
 
 async function captionPrompts() {
   const KEY = "bench-talk-captions-v1";
@@ -122,5 +153,6 @@ main()
   .then(renameGame)
   .then(captionPrompts)
   .then(beltPrompts)
+  .then(rewordPrompts)
   .catch((e) => console.error("[bench-talk] skipped:", e?.message ?? e))
   .finally(() => prisma.$disconnect());
