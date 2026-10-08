@@ -33,9 +33,9 @@ export default function ScreenPage() {
   useEffect(() => setVoteUrl(`${window.location.origin}/live/vote`), []);
   const music = useRef<HTMLAudioElement | null>(null);
   const lobby = useRef<HTMLAudioElement | null>(null);
-  const walkout = useRef<HTMLAudioElement | null>(null);
-  // Set when champion.mp3 is not there yet, so the lobby track covers for it.
-  const [walkoutMissing, setWalkoutMissing] = useState(false);
+  const song = useRef<HTMLAudioElement | null>(null);
+  // Set if the song file cannot be loaded, so the jazz track covers for it.
+  const [songMissing, setSongMissing] = useState(false);
   const ding = useRef<HTMLAudioElement | null>(null);
   const drumroll = useRef<HTMLAudioElement | null>(null);
   const lastRevealed = useRef(0);
@@ -54,22 +54,25 @@ export default function ScreenPage() {
       else { music.current.pause(); music.current.currentTime = 0; }
     }
 
-    // The champion gets the LabFest song, taken off the music video's audio
-    // track. If that file ever goes missing the lobby jazz carries the moment
-    // rather than leaving the biggest beat of the night in silence.
-    const crowning = phase === "CHAMPION" && !muted;
-    const wantsWalkout = crowning && !walkoutMissing;
-    if (walkout.current) {
-      if (wantsWalkout) walkout.current.play().catch(() => {});
-      else { walkout.current.pause(); walkout.current.currentTime = 0; }
+    // The LabFest song, lifted off the music video, bookends the night: once
+    // while the room fills up and again when the belt is handed over. It is
+    // rewound whenever it stops, so the crowning opens on the first bar rather
+    // than halfway through a verse.
+    const songMoment = (phase === "LOBBY" || phase === "CHAMPION") && !muted;
+    const wantsSong = songMoment && !songMissing;
+    if (song.current) {
+      if (wantsSong) song.current.play().catch(() => {});
+      else { song.current.pause(); song.current.currentTime = 0; }
     }
 
-    const inLobby = (phase === "LOBBY" || (crowning && walkoutMissing)) && !muted;
+    // The jazz is only cover for a missing song file now, so neither moment
+    // ever falls silent.
+    const needsFallback = songMoment && songMissing;
     if (lobby.current) {
-      if (inLobby) lobby.current.play().catch(() => {});
+      if (needsFallback) lobby.current.play().catch(() => {});
       else lobby.current.pause();
     }
-  }, [state?.phase, state?.game.muted, started, walkoutMissing]);
+  }, [state?.phase, state?.game.muted, started, songMissing]);
 
   // Asking a clip to play while it is still playing does nothing, and the bell
   // rings longer than the gap between answers, so every other ding was being
@@ -120,13 +123,15 @@ export default function ScreenPage() {
   return (
     <main className="stage relative flex h-screen flex-col overflow-hidden px-12 py-6">
       <audio ref={music} src="/game/sounds/thinking.mp3" loop preload="auto" />
-      <audio ref={lobby} src="/game/sounds/lobby.mp3" loop preload="auto" />
+      {/* Only cover for a missing song file, so it is not worth pulling 3.7MB
+          down the venue wifi before anybody needs it. */}
+      <audio ref={lobby} src="/game/sounds/lobby.mp3" loop preload="none" />
       <audio
-        ref={walkout}
-        src="/game/sounds/champion.m4a"
+        ref={song}
+        src="/game/sounds/labfest-song.m4a"
         loop
         preload="auto"
-        onError={() => setWalkoutMissing(true)}
+        onError={() => setSongMissing(true)}
       />
       <audio ref={ding} src="/game/sounds/ding.mp3" preload="auto" />
       <audio ref={drumroll} src="/game/sounds/drumroll.mp3" preload="auto" />
