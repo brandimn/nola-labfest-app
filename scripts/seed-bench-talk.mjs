@@ -53,18 +53,26 @@ async function rewordPrompts() {
 // wording wastes a deploy each time.
 async function listPrompts() {
   const prompts = await prisma.gamePrompt.findMany({
-    select: { round: true, text: true, isFinale: true, imageUrl: true, used: true },
+    select: { round: true, text: true, sortOrder: true, isFinale: true, imageUrl: true, used: true },
   });
+  // sortOrder is what actually decides the order within a round, so it has to
+  // be selected and sorted on. Leaving it out made this listing print rows in
+  // whatever order Postgres handed back, which looked authoritative and was not.
   const rank = (r) => ["R1", "R2", "BELT"].indexOf(r);
   prompts.sort(
-    (a, b) => rank(a.round) - rank(b.round) || Number(a.isFinale) - Number(b.isFinale)
+    (a, b) =>
+      rank(a.round) - rank(b.round) ||
+      Number(a.isFinale) - Number(b.isFinale) ||
+      a.sortOrder - b.sortOrder
   );
   console.log(`[bench-talk] prompts now loaded (${prompts.length}):`);
   for (const p of prompts) {
     const tags = [p.imageUrl ? "photo" : null, p.isFinale ? "FINALE" : null, p.used ? "used" : null]
       .filter(Boolean)
       .join(" ");
-    console.log(`[bench-talk]   ${p.round.padEnd(4)} ${p.text}${tags ? `  [${tags}]` : ""}`);
+    console.log(
+      `[bench-talk]   ${p.round.padEnd(4)} #${String(p.sortOrder).padEnd(2)} ${p.text}${tags ? `  [${tags}]` : ""}`
+    );
   }
 }
 
