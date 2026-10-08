@@ -14,7 +14,14 @@ const PROMPTS = [
 // it already recognises, so changing the list above does nothing to a prompt
 // sitting in the database. Matched on the exact old wording, so if Brandi has
 // already fixed it herself on the setup page this quietly finds nothing.
+// Both spellings are listed because the live copy carries a question mark the
+// seeder's own list never had, which is exactly how the first attempt at this
+// matched nothing.
 const REWORDED = [
+  {
+    from: "Your worst pickup line to use at a dental convention?",
+    to: "Your worst pickup line to use on a lab tech",
+  },
   {
     from: "Your worst pickup line to use at a dental convention",
     to: "Your worst pickup line to use on a lab tech",
@@ -22,7 +29,7 @@ const REWORDED = [
 ];
 
 async function rewordPrompts() {
-  const KEY = "bench-talk-reword-v1";
+  const KEY = "bench-talk-reword-v2";
   if (await prisma.setting.findUnique({ where: { key: KEY } })) {
     console.log("[bench-talk] rewordings: already done, skipped");
     return;
