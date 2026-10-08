@@ -54,10 +54,9 @@ export default function ScreenPage() {
       else { music.current.pause(); music.current.currentTime = 0; }
     }
 
-    // The champion gets their own walkout track. Until that file exists the
-    // lobby jazz carries the moment rather than leaving the biggest beat of the
-    // night in silence, so dropping champion.mp3 into public/game/sounds is the
-    // only step needed to change it.
+    // The champion gets the LabFest song, taken off the music video's audio
+    // track. If that file ever goes missing the lobby jazz carries the moment
+    // rather than leaving the biggest beat of the night in silence.
     const crowning = phase === "CHAMPION" && !muted;
     const wantsWalkout = crowning && !walkoutMissing;
     if (walkout.current) {
@@ -124,7 +123,7 @@ export default function ScreenPage() {
       <audio ref={lobby} src="/game/sounds/lobby.mp3" loop preload="auto" />
       <audio
         ref={walkout}
-        src="/game/sounds/champion.mp3"
+        src="/game/sounds/champion.m4a"
         loop
         preload="auto"
         onError={() => setWalkoutMissing(true)}
