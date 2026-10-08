@@ -33,6 +33,9 @@ export default function ScreenPage() {
   useEffect(() => setVoteUrl(`${window.location.origin}/live/vote`), []);
   const music = useRef<HTMLAudioElement | null>(null);
   const lobby = useRef<HTMLAudioElement | null>(null);
+  const walkout = useRef<HTMLAudioElement | null>(null);
+  // Set when champion.mp3 is not there yet, so the lobby track covers for it.
+  const [walkoutMissing, setWalkoutMissing] = useState(false);
   const ding = useRef<HTMLAudioElement | null>(null);
   const drumroll = useRef<HTMLAudioElement | null>(null);
   const lastRevealed = useRef(0);
@@ -51,12 +54,23 @@ export default function ScreenPage() {
       else { music.current.pause(); music.current.currentTime = 0; }
     }
 
-    const inLobby = (phase === "LOBBY" || phase === "CHAMPION") && !muted;
+    // The champion gets their own walkout track. Until that file exists the
+    // lobby jazz carries the moment rather than leaving the biggest beat of the
+    // night in silence, so dropping champion.mp3 into public/game/sounds is the
+    // only step needed to change it.
+    const crowning = phase === "CHAMPION" && !muted;
+    const wantsWalkout = crowning && !walkoutMissing;
+    if (walkout.current) {
+      if (wantsWalkout) walkout.current.play().catch(() => {});
+      else { walkout.current.pause(); walkout.current.currentTime = 0; }
+    }
+
+    const inLobby = (phase === "LOBBY" || (crowning && walkoutMissing)) && !muted;
     if (lobby.current) {
       if (inLobby) lobby.current.play().catch(() => {});
       else lobby.current.pause();
     }
-  }, [state?.phase, state?.game.muted, started]);
+  }, [state?.phase, state?.game.muted, started, walkoutMissing]);
 
   // Asking a clip to play while it is still playing does nothing, and the bell
   // rings longer than the gap between answers, so every other ding was being
@@ -108,6 +122,13 @@ export default function ScreenPage() {
     <main className="stage relative flex h-screen flex-col overflow-hidden px-12 py-6">
       <audio ref={music} src="/game/sounds/thinking.mp3" loop preload="auto" />
       <audio ref={lobby} src="/game/sounds/lobby.mp3" loop preload="auto" />
+      <audio
+        ref={walkout}
+        src="/game/sounds/champion.mp3"
+        loop
+        preload="auto"
+        onError={() => setWalkoutMissing(true)}
+      />
       <audio ref={ding} src="/game/sounds/ding.mp3" preload="auto" />
       <audio ref={drumroll} src="/game/sounds/drumroll.mp3" preload="auto" />
 

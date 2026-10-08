@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useCountdown, useLiveState, usePost } from "@/lib/live-client";
+import { useCountdown, useLiveState, usePost, type LiveState } from "@/lib/live-client";
 import { ROUNDS, ROUND_NOTES, ROUND_TITLES } from "@/lib/live-rounds";
 
 type Prompt = { id: string; round: string; text: string; sortOrder: number; used: boolean; isFinale: boolean };
@@ -33,6 +33,116 @@ const NEXT_HINT: Record<string, string> = {
   BELT_INTRO: "Starts the head to head",
   CHAMPION: "Resets the big screen",
 };
+
+/** Says, in plain words, what is on the projector right now.
+ *
+ *  The operator runs the show from a phone while the big screen is across the
+ *  room and often behind them. Without this they have to turn round and squint
+ *  to know whether the answers have finished appearing or the vote is still
+ *  open. Nothing here is a control; it is a mirror.
+ *
+ *  liveVotes comes from the operator's own vote poll, because the shared state
+ *  deliberately hides vote counts until the results are up and the big screen
+ *  must not leak them early. */
+function RoomSees({
+  state,
+  seconds,
+  liveVotes,
+}: {
+  state: LiveState | null;
+  seconds: number | null;
+  liveVotes: number;
+}) {
+  if (!state) {
+    return (
+      <div className="mt-4 rounded-2xl border border-white/15 bg-black/30 p-4 text-center text-sm text-white/50">
+        Waiting for the big screen…
+      </div>
+    );
+  }
+
+  const players = state.players.length;
+  const joined = state.players.filter((p) => p.claimed).length;
+  const shown = Math.min(state.revealedCount, state.revealTotal);
+  const champion =
+    state.belt?.rows.find((p) => p.id === state.championId) ??
+    state.scoreboard?.find((p) => p.id === state.championId);
+  const winner = [...state.answers].sort((a, b) => (b.votes ?? 0) - (a.votes ?? 0))[0];
+
+  let headline = "";
+  let detail = "";
+
+  switch (state.phase) {
+    case "LOBBY":
+      headline = "Title card and the Join code";
+      detail = `${joined} of ${players} players have picked their name`;
+      break;
+    case "PROMPT":
+      headline = "The question, big. Nobody can type yet";
+      detail =
+        state.getReadyIn && state.getReadyIn > 0
+          ? `Writing opens in ${state.getReadyIn}s`
+          : "Writing is about to open";
+      break;
+    case "WRITING":
+      headline = "The question and the clock";
+      detail = `${seconds ?? 0}s left, ${state.answerCount} of ${players} answered`;
+      break;
+    case "REVEAL":
+      headline = "Answers appearing one at a time, no names yet";
+      detail = state.revealDone
+        ? "All of them are up, the vote is opening"
+        : `${shown} of ${state.revealTotal} shown`;
+      break;
+    case "VOTING":
+      headline = "Every answer, and the QR code to vote";
+      detail = liveVotes === 1 ? "1 vote in so far" : `${liveVotes} votes in so far`;
+      break;
+    case "RESULTS":
+      headline = "The bars filling in with the votes";
+      detail = winner
+        ? `Winning answer: ${winner.text}`
+        : `${state.totalVotes ?? 0} votes counted`;
+      break;
+    case "UNMASKED":
+      headline = "Same answers, now with the names on them";
+      detail = winner?.player ? `${winner.player} took that one` : "";
+      break;
+    case "SCOREBOARD":
+      headline = "The running scores";
+      detail = "Next tap starts the Belt Match";
+      break;
+    case "BELT_INTRO":
+      headline = "The final two, head to head";
+      detail = state.belt?.rows.map((r) => `${r.name} ${r.wins}`).join("   ") ?? "";
+      break;
+    case "CHAMPION":
+      headline = "The champion with the belt";
+      detail = champion?.name ? `${champion.name} wins it` : "";
+      break;
+    default:
+      headline = state.phase;
+  }
+
+  return (
+    <div className="mt-4 rounded-2xl border border-white/15 bg-black/30 p-4">
+      <p className="text-[11px] font-bold uppercase tracking-widest text-white/40">
+        On the big screen
+      </p>
+      <p className="mt-1 font-display text-lg font-bold leading-tight">{headline}</p>
+      {detail && <p className="mt-1 text-sm text-white/70">{detail}</p>}
+      {state.prompt && ["PROMPT", "WRITING", "REVEAL", "VOTING", "RESULTS", "UNMASKED"].includes(state.phase) && (
+        <p className="mt-2 border-t border-white/10 pt-2 text-sm italic text-white/60">
+          {state.prompt.photo ? "Photo up. " : ""}
+          {state.prompt.text}
+        </p>
+      )}
+      {state.game.muted && (
+        <p className="mt-2 text-xs font-bold text-amber-300">Sound is muted</p>
+      )}
+    </div>
+  );
+}
 
 export default function HostPage() {
   // fresh=1: the host must never be served a cached state after his own tap.
@@ -178,6 +288,11 @@ export default function HostPage() {
         {NEXT_LABEL[phase] ?? "Next"}
       </button>
       <p className="mt-2 text-center text-sm text-white/60">{NEXT_HINT[phase] ?? ""}</p>
+
+      {/* What the projector is showing, in words, so the operator never has to
+          look up at it to know where the show is. */}
+      <RoomSees state={state} seconds={seconds} liveVotes={votes.total} />
+
 
       {/* Writing controls */}
       {phase === "WRITING" && (
