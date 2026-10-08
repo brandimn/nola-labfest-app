@@ -79,7 +79,12 @@ export function beltFinalistsFrom(board: { id: string; points: number }[]) {
   if (board.length <= 2) return board.map((p) => p.id);
   const cutoff = board[1].points;
   const through = board.filter((p, i) => i === 0 || p.points >= cutoff);
-  return through.map((p) => p.id);
+  // A tie for second lets a third through, which the Belt Match is built for.
+  // Any more than that is not a tie worth honouring: it means hardly anybody
+  // voted and the whole table is sitting on the same score, and without this
+  // cap all six players went into a head to head meant for two. A dry run with
+  // no votes hit it every time, and a thin crowd on the night would too.
+  return (through.length > 3 ? board.slice(0, 2) : through).map((p) => p.id);
 }
 
 /** Best of three. Wins are counted from the ordered list of round winners, so
