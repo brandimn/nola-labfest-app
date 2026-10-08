@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/session";
 import { Maximize2 } from "lucide-react";
+import { ImageLightbox } from "@/components/image-lightbox";
 
 export const dynamic = "force-dynamic";
 
@@ -20,22 +21,16 @@ export default async function FloorMapPage() {
         Find your way around the vendor hall. Tap the map to open it full size and zoom in.
       </p>
 
-      <a
-        href="/floor-map.png"
-        target="_blank"
-        rel="noreferrer"
-        className="block overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
-      >
-        <img src="/floor-map.png" alt="NOLA LabFest vendor floor map" className="w-full" />
-      </a>
-      <a
-        href="/floor-map.png"
-        target="_blank"
-        rel="noreferrer"
-        className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-[#7C3AED]"
-      >
-        <Maximize2 className="h-4 w-4" /> Open full-size map
-      </a>
+      <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+        <ImageLightbox
+          src="/floor-map.png"
+          alt="NOLA LabFest vendor floor map"
+          thumbClassName="w-full cursor-zoom-in"
+        />
+      </div>
+      <p className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500">
+        <Maximize2 className="h-4 w-4" /> Tap the map to zoom in
+      </p>
 
       {vendors.length > 0 && (
         <section className="mt-7">
