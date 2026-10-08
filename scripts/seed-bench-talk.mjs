@@ -41,6 +41,26 @@ async function rewordPrompts() {
   await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
 }
 
+// Print what is actually loaded, every deploy. The prompts can be edited in
+// Setup, so the list in this file is not the truth and guessing at the live
+// wording wastes a deploy each time.
+async function listPrompts() {
+  const prompts = await prisma.gamePrompt.findMany({
+    select: { round: true, text: true, isFinale: true, imageUrl: true, used: true },
+  });
+  const rank = (r) => ["R1", "R2", "BELT"].indexOf(r);
+  prompts.sort(
+    (a, b) => rank(a.round) - rank(b.round) || Number(a.isFinale) - Number(b.isFinale)
+  );
+  console.log(`[bench-talk] prompts now loaded (${prompts.length}):`);
+  for (const p of prompts) {
+    const tags = [p.imageUrl ? "photo" : null, p.isFinale ? "FINALE" : null, p.used ? "used" : null]
+      .filter(Boolean)
+      .join(" ");
+    console.log(`[bench-talk]   ${p.round.padEnd(4)} ${p.text}${tags ? `  [${tags}]` : ""}`);
+  }
+}
+
 async function captionPrompts() {
   const KEY = "bench-talk-captions-v1";
   if (await prisma.setting.findUnique({ where: { key: KEY } })) {
@@ -154,5 +174,6 @@ main()
   .then(captionPrompts)
   .then(beltPrompts)
   .then(rewordPrompts)
+  .then(listPrompts)
   .catch((e) => console.error("[bench-talk] skipped:", e?.message ?? e))
   .finally(() => prisma.$disconnect());
