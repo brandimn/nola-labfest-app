@@ -76,6 +76,45 @@ async function listPrompts() {
   }
 }
 
+// Put Round 1 in the order of the printed cue cards. The cards are physical and
+// the operator reads from them out loud, so when the two disagree the cards
+// win. Matched on a distinctive fragment rather than the whole string, because
+// the live copy carries punctuation the code never had.
+const CARD_ORDER_R1 = [
+  { find: "rush this", card: 1 },
+  { find: "pickup line", card: 2 },
+  { find: "NOT yell", card: 3 },
+  { find: "OnlyFans", card: 4 },
+];
+
+async function matchPrintedCards() {
+  const KEY = "bench-talk-card-order-v1";
+  if (await prisma.setting.findUnique({ where: { key: KEY } })) {
+    console.log("[bench-talk] card order: already done, skipped");
+    return;
+  }
+
+  // Card 1 reads "can you rush this case?", the app said "one".
+  const rush = await prisma.gamePrompt.updateMany({
+    where: { round: "R1", text: { contains: "rush this one" } },
+    data: { text: 'The real translation of "can you rush this case?"' },
+  });
+  if (rush.count) console.log(`[bench-talk] card 1 reworded to "rush this case"`);
+
+  for (const c of CARD_ORDER_R1) {
+    const hit = await prisma.gamePrompt.updateMany({
+      where: { round: "R1", text: { contains: c.find, mode: "insensitive" } },
+      data: { sortOrder: c.card - 1 },
+    });
+    console.log(
+      hit.count === 1
+        ? `[bench-talk] card ${c.card}: "${c.find}" placed`
+        : `[bench-talk] card ${c.card}: "${c.find}" matched ${hit.count} prompts, CHECK THIS`
+    );
+  }
+  await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
+}
+
 async function captionPrompts() {
   const KEY = "bench-talk-captions-v1";
   if (await prisma.setting.findUnique({ where: { key: KEY } })) {
@@ -189,6 +228,7 @@ main()
   .then(captionPrompts)
   .then(beltPrompts)
   .then(rewordPrompts)
+  .then(matchPrintedCards)
   .then(listPrompts)
   .catch((e) => console.error("[bench-talk] skipped:", e?.message ?? e))
   .finally(() => prisma.$disconnect());
