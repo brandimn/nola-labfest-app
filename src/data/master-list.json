@@ -1908,5 +1908,15 @@
   "isVendor": true,
   "isSpeaker": false,
   "isNowak": false
+ },
+ {
+  "name": "Jeff Youngerman",
+  "company": "Stratasys",
+  "email": "jeff-youngerman@labfest.badge",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
  }
 ]

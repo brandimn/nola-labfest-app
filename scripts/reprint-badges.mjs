@@ -36,9 +36,10 @@ const BATCHES = [
     emails: ["d.tan@scheftner.dental"],
   },
   {
-    key: "reprint-2026-10-09-jeff-youngerman",
+    // Nobody of that name existed when this first ran, so it found nothing and
+    // recorded itself. A fresh key retries now that he is on the master list.
+    key: "reprint-2026-10-09-jeff-youngerman-v2",
     why: "his badge printed a washed out blue",
-    // By name: he is not on the master list, so there is no address to go on.
     names: ["Jeff Youngerman"],
   },
 ];
