@@ -5,8 +5,12 @@ import { QRDisplay } from "@/components/qr-display";
 import { useCountdown, useLiveState } from "@/lib/live-client";
 
 // Which mascot pose belongs to which moment.
+// The microphone pose is cut off at the right edge of its own artwork, so half
+// the pointing hand simply is not there, in this set and the one before it.
+// Nothing to restore, so the lobby borrows a pose that is whole. Put "mic" back
+// here the moment there is an export with room around it.
 const TOOTH: Record<string, string> = {
-  LOBBY: "mic",
+  LOBBY: "wink",
   PROMPT: "question",
   WRITING: "question",
   REVEAL: "peek",
