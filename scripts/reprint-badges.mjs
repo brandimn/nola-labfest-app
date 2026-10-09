@@ -30,6 +30,17 @@ const BATCHES = [
     // The corrected address, because the rename in sync-master-list runs first.
     emails: ["edwin-kee@labfest.badge"],
   },
+  {
+    key: "reprint-2026-10-09-duyanh-tan",
+    why: "surname was doubled, Duy-Anh Tan Tan",
+    emails: ["d.tan@scheftner.dental"],
+  },
+  {
+    key: "reprint-2026-10-09-jeff-youngerman",
+    why: "his badge printed a washed out blue",
+    // By name: he is not on the master list, so there is no address to go on.
+    names: ["Jeff Youngerman"],
+  },
 ];
 
 async function main() {
@@ -39,13 +50,44 @@ async function main() {
       continue;
     }
 
-    const people = await prisma.user.findMany({
-      where: { email: { in: batch.emails } },
-      select: { id: true, name: true, email: true },
-    });
+    // By address where there is one, and by name otherwise. Not everybody who
+    // needs a badge reprinting is on the master list: people register
+    // themselves and get added by hand, so their address is not something that
+    // can be looked up from here.
+    const byEmail = batch.emails?.length
+      ? await prisma.user.findMany({
+          where: { email: { in: batch.emails } },
+          select: { id: true, name: true, email: true },
+        })
+      : [];
 
-    const missing = batch.emails.filter(
-      (e) => !people.some((p) => p.email.toLowerCase() === e.toLowerCase())
+    const byName = [];
+    for (const wanted of batch.names ?? []) {
+      const hits = await prisma.user.findMany({
+        where: { name: { equals: wanted, mode: "insensitive" } },
+        select: { id: true, name: true, email: true },
+      });
+      if (hits.length > 1) {
+        // Reprinting the wrong person's badge is worse than reprinting none.
+        console.log(
+          `[reprint] ${batch.key}: "${wanted}" matches ${hits.length} people, skipped: ` +
+            hits.map((h) => h.email).join(", ")
+        );
+        continue;
+      }
+      if (!hits.length) {
+        console.log(`[reprint] ${batch.key}: nobody called "${wanted}" in the app`);
+        continue;
+      }
+      byName.push(hits[0]);
+    }
+
+    const people = [...byEmail, ...byName].filter(
+      (p, i, all) => all.findIndex((o) => o.id === p.id) === i
+    );
+
+    const missing = (batch.emails ?? []).filter(
+      (e) => !byEmail.some((p) => p.email.toLowerCase() === e.toLowerCase())
     );
     if (missing.length) {
       console.log(`[reprint] ${batch.key}: no account for ${missing.join(", ")}`);
