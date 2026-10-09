@@ -31,13 +31,21 @@ export function roundRank(round: string): number {
   return i === -1 ? ROUNDS.length : i;
 }
 
-type Sortable = { round: string; sortOrder: number; isFinale?: boolean };
+type Sortable = {
+  round: string;
+  sortOrder: number;
+  isFinale?: boolean;
+  isTiebreak?: boolean;
+};
 
-// Playing order: by round, then the finale last inside its round, then the
-// order Brandi arranged them in on the setup page.
+// Playing order: by round, then the finale near the end, then a tiebreaker held
+// back behind even that, then the order Brandi arranged them in on the setup
+// page. A tiebreaker only gets played on a night that needs one, so it must
+// never sit in front of the finale.
 export function byPlayingOrder(a: Sortable, b: Sortable): number {
   return (
     roundRank(a.round) - roundRank(b.round) ||
+    Number(a.isTiebreak ?? false) - Number(b.isTiebreak ?? false) ||
     Number(a.isFinale ?? false) - Number(b.isFinale ?? false) ||
     a.sortOrder - b.sortOrder
   );

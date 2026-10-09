@@ -54,6 +54,33 @@ async function rewordPrompts() {
 // The belt caption read "Lab Nerds Unite" and should read "Tooth Nerds Unite".
 // Matched on the old wording, so it corrects the row that is already there and
 // then quietly finds nothing. The schema default covers a fresh database.
+// The sudden death question, for a finale best of three cannot settle. Three
+// finalists on one win each happened on the very first run through.
+async function suddenDeathPrompt() {
+  const KEY = "bench-talk-tiebreak-v1";
+  if (await prisma.setting.findUnique({ where: { key: KEY } })) {
+    console.log("[bench-talk] sudden death question: already done, skipped");
+    return;
+  }
+  const game =
+    (await prisma.game.findFirst({ where: { mode: "LIVE" } })) ??
+    (await prisma.game.findFirst());
+  if (!game) {
+    console.log("[bench-talk] sudden death question: no game yet, skipped");
+    return;
+  }
+  const text = "Last words of a dental technician";
+  const already = await prisma.gamePrompt.findFirst({ where: { gameId: game.id, text } });
+  if (!already) {
+    const count = await prisma.gamePrompt.count({ where: { gameId: game.id, round: "BELT" } });
+    await prisma.gamePrompt.create({
+      data: { gameId: game.id, round: "BELT", text, sortOrder: count, isTiebreak: true },
+    });
+    console.log(`[bench-talk] sudden death question added: "${text}"`);
+  }
+  await prisma.setting.create({ data: { key: KEY, value: new Date().toISOString() } });
+}
+
 async function fixBeltText() {
   const r = await prisma.game.updateMany({
     where: { beltText: "Lab Nerds Unite" },
@@ -68,7 +95,7 @@ async function fixBeltText() {
 
 async function listPrompts() {
   const prompts = await prisma.gamePrompt.findMany({
-    select: { round: true, text: true, sortOrder: true, isFinale: true, imageUrl: true, used: true },
+    select: { round: true, text: true, sortOrder: true, isFinale: true, isTiebreak: true, imageUrl: true, used: true },
   });
   // sortOrder is what actually decides the order within a round, so it has to
   // be selected and sorted on. Leaving it out made this listing print rows in
@@ -77,12 +104,18 @@ async function listPrompts() {
   prompts.sort(
     (a, b) =>
       rank(a.round) - rank(b.round) ||
+      Number(a.isTiebreak) - Number(b.isTiebreak) ||
       Number(a.isFinale) - Number(b.isFinale) ||
       a.sortOrder - b.sortOrder
   );
   console.log(`[bench-talk] prompts now loaded (${prompts.length}):`);
   for (const p of prompts) {
-    const tags = [p.imageUrl ? "photo" : null, p.isFinale ? "FINALE" : null, p.used ? "used" : null]
+    const tags = [
+      p.imageUrl ? "photo" : null,
+      p.isFinale ? "FINALE" : null,
+      p.isTiebreak ? "SUDDEN DEATH" : null,
+      p.used ? "used" : null,
+    ]
       .filter(Boolean)
       .join(" ");
     console.log(
@@ -245,6 +278,7 @@ main()
   .then(rewordPrompts)
   .then(matchPrintedCards)
   .then(fixBeltText)
+  .then(suddenDeathPrompt)
   .then(listPrompts)
   .catch((e) => console.error("[bench-talk] skipped:", e?.message ?? e))
   .finally(() => prisma.$disconnect());

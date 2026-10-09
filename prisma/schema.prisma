@@ -301,6 +301,10 @@ model GamePrompt {
   imageUrl  String? @db.Text
   sortOrder Int     @default(0)
   isFinale  Boolean @default(false)
+  // Held back for a tie the finale could not settle. Never played by the one
+  // button, only by the host reaching for it, so it cannot take the finale's
+  // place in the running order on a night that does not need it.
+  isTiebreak Boolean @default(false)
   used      Boolean @default(false)
 
   answers GameAnswer[]

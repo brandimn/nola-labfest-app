@@ -9,7 +9,7 @@ export async function GET() {
   const game = await getActiveGame();
   const prompts = await prisma.gamePrompt.findMany({
     where: { gameId: game.id },
-    select: { id: true, round: true, text: true, sortOrder: true, used: true, isFinale: true },
+    select: { id: true, round: true, text: true, sortOrder: true, used: true, isFinale: true, isTiebreak: true },
   });
   // Sorted here rather than in the query, because ordering on the round string
   // is alphabetical and puts BELT first. See src/lib/live-rounds.ts.

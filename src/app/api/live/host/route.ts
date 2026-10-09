@@ -103,7 +103,10 @@ export async function POST(req: NextRequest) {
       // alphabetical, which only gives R1 before R2 by luck and would put BELT
       // first the moment these sets ever overlap. See src/lib/live-rounds.ts.
       const candidates = await prisma.gamePrompt.findMany({
-        where: { gameId: game.id, used: false, round: { in: rounds } },
+        // A tiebreaker is never reached by the one button. It only gets played
+        // on a night that needs one, by the host tapping it, so an ordinary
+        // finale is not displaced on every other night.
+        where: { gameId: game.id, used: false, isTiebreak: false, round: { in: rounds } },
       });
       const next = candidates.sort(byPlayingOrder)[0] ?? null;
 

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useCountdown, useLiveState, usePost, type LiveState } from "@/lib/live-client";
 import { ROUNDS, ROUND_NOTES, ROUND_TITLES } from "@/lib/live-rounds";
 
-type Prompt = { id: string; round: string; text: string; sortOrder: number; used: boolean; isFinale: boolean };
+type Prompt = { id: string; round: string; text: string; sortOrder: number; used: boolean; isFinale: boolean; isTiebreak: boolean };
 
 // One button, named after whatever it is about to do, so the operator never has
 // to work out which control applies right now.
@@ -642,6 +642,11 @@ export default function HostPage() {
                     {p.isFinale && (
                       <span className="ml-2 rounded-full bg-[#7C3AED] px-2 py-0.5 text-[10px] font-bold uppercase text-white">
                         Finale
+                      </span>
+                    )}
+                    {p.isTiebreak && (
+                      <span className="ml-2 rounded-full bg-[#0E8C4B] px-2 py-0.5 text-[10px] font-bold uppercase text-white">
+                        Sudden death
                       </span>
                     )}
                     {p.used && state?.prompt?.id !== p.id && (
