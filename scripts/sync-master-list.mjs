@@ -33,6 +33,10 @@ const EMAIL_FIXES = [
   // Spelled Key, should be Kee. His is a placeholder address rather than a real
   // mailbox, so it carried the wrong spelling too.
   { from: "edwin-key@labfest.badge", to: "edwin-kee@labfest.badge" },
+  // Added before his address was known, so he started on a placeholder. The
+  // spelling follows his three Stratasys colleagues; the stratsys.com version
+  // first offered is a different company altogether, and a live one.
+  { from: "jeff-youngerman@labfest.badge", to: "jeff.youngerman@stratasys.com" },
 ];
 
 async function fixEmails() {
