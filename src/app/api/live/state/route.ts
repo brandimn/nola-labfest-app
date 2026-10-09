@@ -130,6 +130,11 @@ export async function GET(req: NextRequest) {
         )
       : null,
     championId: state.championId,
+    // How many belt questions are still unplayed. A sudden death needs one, so
+    // the controls can say whether there is one to reach for.
+    beltPromptsLeft: await prisma.gamePrompt.count({
+      where: { gameId: game.id, round: "BELT", used: false },
+    }),
     scoreboard: board,
     // Who would go into the Belt Match if it started now, and whether that is
     // the host's choice or just the arithmetic. Lets the controls show the pair

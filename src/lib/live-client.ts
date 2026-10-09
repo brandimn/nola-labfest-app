@@ -43,8 +43,12 @@ export type LiveState = {
   belt: {
     rows: { id: string; name: string; wins: number }[];
     clinched: { id: string; name: string; wins: number } | null;
+    /** Names still level at the front, when nobody has pulled clear. */
+    tiedAtTop: string[];
     roundsPlayed: number;
   } | null;
+  /** Belt questions not yet played, which is what a sudden death needs. */
+  beltPromptsLeft: number;
   championId: string | null;
   scoreboard: { id: string; name: string; photoUrl: string | null; points: number }[] | null;
   /** Who would go into the Belt Match if it started right now. */

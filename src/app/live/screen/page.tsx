@@ -433,7 +433,51 @@ export default function ScreenPage() {
           </>
         )}
 
-        {phase === "SCOREBOARD" && (
+        {/* Once the Belt Match is under way the scoreboard is about the belt,
+            not the rounds that got them there. Showing the old points again
+            made it look like the finale had not been scored at all. */}
+        {phase === "SCOREBOARD" && state?.belt && (
+          <>
+            <p className="font-bold uppercase tracking-[0.3em] text-white/60" style={{ fontSize: px(3.4, 2.5) }}>
+              Belt Match
+            </p>
+            <h1
+              className="font-display font-black drop-shadow-lg"
+              style={{ fontSize: px(8, 6), marginBottom: "3vh" }}
+            >
+              {state.belt.clinched
+                ? `${state.belt.clinched.name} takes it`
+                : state.belt.roundsPlayed === 0
+                  ? "Belt Match"
+                  : "All square"}
+            </h1>
+            <div className="flex w-full max-w-4xl flex-col" style={{ gap: "1.2vh" }}>
+              {state.belt.rows.map((r, i) => (
+                <div
+                  key={r.id}
+                  className="fly flex items-center justify-between rounded-3xl"
+                  style={{
+                    background: state.belt?.clinched?.id === r.id ? GOLD : "rgba(255,255,255,0.1)",
+                    color: state.belt?.clinched?.id === r.id ? "#0F172A" : "white",
+                    animationDelay: `${i * 80}ms`,
+                    minHeight: "11vh",
+                    padding: "1.4vh 3vh",
+                  }}
+                >
+                  <span className="font-black" style={{ fontSize: px(4.6, 3.25) }}>{r.name}</span>
+                  <span className="font-display font-black" style={{ fontSize: px(6, 4) }}>{r.wins}</span>
+                </div>
+              ))}
+            </div>
+            {state.belt.roundsPlayed > 0 && state.belt.tiedAtTop.length > 1 && (
+              <p className="mt-6 font-display font-black" style={{ color: GOLD, fontSize: px(4.4, 3) }}>
+                {state.belt.tiedAtTop.join(" and ")} are level. Sudden death.
+              </p>
+            )}
+          </>
+        )}
+
+        {phase === "SCOREBOARD" && !state?.belt && (
           <>
             <h1
               className="font-display font-black drop-shadow-lg"

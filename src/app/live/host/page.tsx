@@ -559,6 +559,20 @@ export default function HostPage() {
               Undo last round
             </button>
           )}
+          {/* Nobody clear at the front. Best of three has no answer for one win
+              each, so say plainly what to do next rather than leaving the room
+              waiting while the operator works it out. */}
+          {!state?.belt?.clinched && (state?.belt?.roundsPlayed ?? 0) > 0 && (state?.belt?.tiedAtTop.length ?? 0) > 1 && (
+            <p className="mt-3 rounded-lg bg-amber-500/25 p-3 text-center text-sm">
+              <span className="font-bold">
+                {state?.belt?.tiedAtTop.join(" and ")} are level on {state?.belt?.rows[0]?.wins}.
+              </span>
+              <br />
+              {(state?.beltPromptsLeft ?? 0) > 0
+                ? "Sudden death: tap the next belt question below. First to win it takes the belt."
+                : "No belt questions left. Settle it on applause and crown them below."}
+            </p>
+          )}
           {state?.belt?.clinched && (
             <p className="mt-3 rounded-lg bg-[#F5A547] p-3 text-center text-sm font-bold text-slate-900">
               {state.belt.clinched.name} has it. Crown them below, or play the third for fun.

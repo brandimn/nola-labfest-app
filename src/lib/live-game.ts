@@ -112,10 +112,20 @@ export function beltStanding(
     wins: winners.filter((w) => w === f.id).length,
   }));
   const top = rows.reduce((best, r) => (r.wins > best ? r.wins : best), 0);
-  // Two wins takes it in a head to head. With three finalists a clear lead
-  // after three rounds is enough, which is why the host still confirms.
-  const clinched = top >= 2 ? rows.find((r) => r.wins === top) ?? null : null;
-  return { rows: rows.sort((a, b) => b.wins - a.wins), clinched, roundsPlayed: winners.length };
+  const leaders = rows.filter((r) => r.wins === top);
+  // Two wins takes it, but only if one person has them. Picking the first row
+  // when several are level would have crowned somebody on list order, the same
+  // way the alphabet nearly picked the finalists.
+  const clinched = top >= 2 && leaders.length === 1 ? leaders[0] : null;
+  return {
+    rows: rows.sort((a, b) => b.wins - a.wins),
+    clinched,
+    // Everyone still level at the front. With three finalists one win each is
+    // the obvious case, and best of three has no answer for it, so the night
+    // needs a sudden death question rather than a rule.
+    tiedAtTop: leaders.length > 1 ? leaders.map((r) => r.name) : [],
+    roundsPlayed: winners.length,
+  };
 }
 
 export function shuffled<T>(items: T[]) {
