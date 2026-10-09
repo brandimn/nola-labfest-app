@@ -24,6 +24,12 @@ const BATCHES = [
     why: "name was spelled Chelsie, should be Chelsey",
     emails: ["chelsie@midsouthdentallab.com"],
   },
+  {
+    key: "reprint-2026-10-09-edwin-kee",
+    why: "name was spelled Key, should be Kee",
+    // The corrected address, because the rename in sync-master-list runs first.
+    emails: ["edwin-kee@labfest.badge"],
+  },
 ];
 
 async function main() {

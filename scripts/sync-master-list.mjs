@@ -30,6 +30,9 @@ const NO_SCANNING = new Set(["gc"]);
 const EMAIL_FIXES = [
   // Her name was printed Chelsie and should be Chelsey, address included.
   { from: "chelsie@midsouthdentallab.com", to: "chelsey@midsouthdentallab.com" },
+  // Spelled Key, should be Kee. His is a placeholder address rather than a real
+  // mailbox, so it carried the wrong spelling too.
+  { from: "edwin-key@labfest.badge", to: "edwin-kee@labfest.badge" },
 ];
 
 async function fixEmails() {
