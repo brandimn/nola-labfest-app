@@ -44,14 +44,12 @@ export default async function SchedulePage() {
         <Link href="/agenda" className="text-sm font-bold text-[#7C3AED]">My Agenda →</Link>
       </div>
 
-      <a
-        href="/labfest-agenda-2026.pdf"
-        target="_blank"
-        rel="noreferrer"
+      <Link
+        href="/schedule/pdf"
         className="mb-4 inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200"
       >
-        <Download className="h-4 w-4" /> Download the printable agenda (PDF)
-      </a>
+        <Download className="h-4 w-4" /> View the printable agenda
+      </Link>
 
       {featured.length > 0 && (
         <section className="mb-6">

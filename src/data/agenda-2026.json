@@ -29,6 +29,7 @@
   {
    "title": "Registration, Continental Breakfast & Vendor Hall",
    "track": "MEAL",
+   "description": "Sponsored by 2OneLab.",
    "location": "Churchill Ballroom, 2nd Floor",
    "startsAt": "2026-10-16T07:30:00-05:00",
    "endsAt": "2026-10-16T08:30:00-05:00"
@@ -104,7 +105,7 @@
   {
    "title": "Mardi Gras World Masquerade",
    "track": "After Hours",
-   "description": "Dinner, drinks and dancing. Masquerade cocktail attire, bring your mask. Buses depart the Hilton (side drive, 1st floor, by the All That Jazz gift shop) at 5:45 and 6:15 PM, and return starting at 8:45 PM with a second pickup at 9:15 PM. Driving yourself? 1380 Port of New Orleans Pl, New Orleans, LA.",
+   "description": "Dinner, drinks and dancing. Masquerade cocktail attire, bring your mask. Buses depart the Hilton (side drive, by the All That Jazz gift shop) at 5:45 and 6:00 PM, returning at 8:45 PM. Driving yourself? 1380 Port of New Orleans Pl, New Orleans, LA.",
    "location": "Mardi Gras World",
    "startsAt": "2026-10-16T18:00:00-05:00",
    "endsAt": "2026-10-16T21:00:00-05:00"
@@ -154,15 +155,15 @@
    "endsAt": "2026-10-17T12:15:00-05:00"
   },
   {
-   "title": "Quiplash Showdown",
+   "title": "LabFest Say Whaaaat????",
    "track": "GAME",
    "location": "Churchill Ballroom, 2nd Floor",
    "startsAt": "2026-10-17T12:15:00-05:00",
    "endsAt": "2026-10-17T13:00:00-05:00"
   },
   {
-   "title": "Turn Followers into Customers: Converting Social Media Into Revenue",
-   "speaker": "Bernard Ory",
+   "title": "The Talent Advantage: Winning the War for Great People",
+   "speaker": "Bennett Napier",
    "location": "Churchill Ballroom, 2nd Floor",
    "startsAt": "2026-10-17T13:00:00-05:00",
    "endsAt": "2026-10-17T14:00:00-05:00"
@@ -175,14 +176,14 @@
    "endsAt": "2026-10-17T14:45:00-05:00"
   },
   {
-   "title": "The Talent Advantage: Winning the War for Great People",
-   "speaker": "Bennett Napier",
+   "title": "Talk Dental to Me, Baby!",
    "location": "Churchill Ballroom, 2nd Floor",
    "startsAt": "2026-10-17T14:45:00-05:00",
    "endsAt": "2026-10-17T15:45:00-05:00"
   },
   {
    "title": "Closing Remarks & Prize Drawing",
+   "description": "Speakers return for Q&A and collaboration, plus participation awards.",
    "location": "Churchill Ballroom, 2nd Floor",
    "startsAt": "2026-10-17T15:45:00-05:00",
    "endsAt": "2026-10-17T16:15:00-05:00"

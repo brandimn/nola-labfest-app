@@ -2,6 +2,7 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireUser } from "@/lib/session";
 import { Tag, CalendarClock } from "lucide-react";
+import { ImageLightbox } from "@/components/image-lightbox";
 
 export const dynamic = "force-dynamic";
 
@@ -40,13 +41,12 @@ export default async function PromosPage() {
           {promos.map((p) => (
             <div key={p.id} className="card overflow-hidden">
               {p.imageUrl && (
-                <a href={p.imageUrl} target="_blank" rel="noreferrer" className="block bg-slate-50">
-                  <img
+                <div className="bg-slate-50">
+                  <ImageLightbox
                     src={p.imageUrl}
-                    alt=""
-                    className="mx-auto max-h-[30rem] w-full object-contain"
+                    thumbClassName="mx-auto max-h-[30rem] w-full object-contain cursor-zoom-in"
                   />
-                </a>
+                </div>
               )}
               <div className="p-4">
                 <Link
