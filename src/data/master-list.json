@@ -1650,7 +1650,7 @@
   "isNowak": false
  },
  {
-  "name": "Chelsie Jackson",
+  "name": "Chelsey Jackson",
   "company": "Mid-South Dental Lab",
   "email": "chelsie@midsouthdentallab.com",
   "state": "Tennessee",
@@ -1886,6 +1886,26 @@
   "state": "Louisiana",
   "badgeType": "LAB",
   "isVendor": false,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Paula Sostres",
+  "company": "DLyte",
+  "email": "p.sostres@gpainnova.com",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
+ },
+ {
+  "name": "Enric Sanz",
+  "company": "DLyte",
+  "email": "e.sanz@gpainnova.com",
+  "state": "",
+  "badgeType": "VENDOR",
+  "isVendor": true,
   "isSpeaker": false,
   "isNowak": false
  }
