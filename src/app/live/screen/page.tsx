@@ -111,8 +111,31 @@ export default function ScreenPage() {
   // than dropping to a title card nobody is watching for.
 
   const phase = state?.phase ?? "LOBBY";
-  const total = state?.players.length ?? 0;
-  const answered = state?.answerCount ?? 0;
+
+  // In the Belt Match only the finalists are still playing, so the room should
+  // be told "1 of 3", not "1 of 5", and only their names belong on screen.
+  const inPlay =
+    state?.prompt?.round === "BELT" && state.beltFinalists.length
+      ? state.players.filter((p) => state.beltFinalists.includes(p.id))
+      : state?.players ?? [];
+  const total = inPlay.length;
+  const answered = inPlay.filter((p) => p.answered).length;
+
+  // The stage is a fixed height with overflow hidden, so anything that does not
+  // fit is cut off rather than scrolled to. That is why the bottom answers went
+  // missing with five players, and all three would have gone with six. So the
+  // rows share out the height that is actually left and shrink as more answers
+  // arrive. The tightest case is six answers under a photo with the names
+  // showing, which is the caption round after the unmask.
+  const rowCount = state?.answers.length ?? 0;
+  const hasPhoto = !!state?.prompt?.photo;
+  const showsAuthor = state?.answers.some((a) => a.player) ?? false;
+  const roomForRowsVh = (hasPhoto ? 40 : 56) - (showsAuthor ? 7 : 0);
+  const rowVh = rowCount ? Math.max(6, Math.min(13, roomForRowsVh / rowCount)) : 0;
+  const px = (vh: number, max: number) => `clamp(0.9rem, ${vh}vh, ${max}rem)`;
+
+  const boardCount = state?.scoreboard?.length ?? 0;
+  const boardRowVh = boardCount ? Math.max(6, Math.min(11, 62 / boardCount)) : 0;
   const pct = state?.timer.endsAt && state.game.timerSeconds
     ? Math.max(0, Math.min(1, (seconds ?? 0) / state.game.timerSeconds))
     : 1;
@@ -171,7 +194,7 @@ export default function ScreenPage() {
         </div>
       </header>
 
-      <div className="relative flex flex-1 flex-col items-center justify-center text-center">
+      <div className="relative flex min-h-0 flex-1 flex-col items-center justify-center text-center">
         {phase === "LOBBY" && (
           <>
             <img
@@ -239,7 +262,7 @@ export default function ScreenPage() {
 
                 <p className="mt-6 text-4xl font-bold text-white/85">{answered} of {total} answered</p>
                 <div className="mt-5 flex flex-wrap justify-center gap-4">
-                  {state?.players.map((p) => (
+                  {inPlay.map((p) => (
                     <span
                       key={p.id}
                       className={`rounded-2xl px-8 py-4 text-3xl font-bold transition-all duration-300 ${
@@ -276,15 +299,29 @@ export default function ScreenPage() {
                 className="mb-5 max-h-[26vh] w-auto rounded-2xl shadow-2xl"
               />
             )}
-            <p className="mb-6 max-w-5xl text-4xl font-semibold text-white/75">{state?.prompt?.text}</p>
+            {/* The prompt and the headline give up room as the answers need it,
+                rather than holding their size and pushing answers off the
+                bottom. */}
+            <p
+              className="max-w-5xl font-semibold text-white/75"
+              style={{ fontSize: px(3.2, 2.25), marginBottom: `${Math.max(1, rowVh * 0.22)}vh` }}
+            >
+              {state?.prompt?.text}
+            </p>
 
             {phase === "VOTING" && (
-              <p className="blink mb-8 font-display text-7xl font-black" style={{ color: GOLD }}>
+              <p
+                className="blink font-display font-black"
+                style={{ color: GOLD, fontSize: px(5.6, 4.5), marginBottom: `${Math.max(1, rowVh * 0.3)}vh` }}
+              >
                 Vote now on your phone
               </p>
             )}
             {phase === "RESULTS" && (
-              <p className="pop mb-8 font-display text-7xl font-black" style={{ color: GOLD }}>
+              <p
+                className="pop font-display font-black"
+                style={{ color: GOLD, fontSize: px(5.6, 4.5), marginBottom: `${Math.max(1, rowVh * 0.3)}vh` }}
+              >
                 {state?.totalVotes === 0 ? "No votes in" : "Results"}
               </p>
             )}
@@ -295,12 +332,20 @@ export default function ScreenPage() {
               </div>
             )}
 
-            <div className="w-full max-w-6xl space-y-5">
+            <div
+              className="flex w-full max-w-6xl flex-col"
+              style={{ gap: `${Math.max(0.5, rowVh * 0.11)}vh` }}
+            >
               {state?.answers.map((a, i) => (
                 <div
                   key={a.id}
-                  className="fly relative overflow-hidden rounded-3xl p-7 text-left shadow-xl"
-                  style={{ background: "rgba(255,255,255,0.1)", animationDelay: `${i * 60}ms` }}
+                  className="fly relative flex flex-col justify-center overflow-hidden rounded-3xl text-left shadow-xl"
+                  style={{
+                    background: "rgba(255,255,255,0.1)",
+                    animationDelay: `${i * 60}ms`,
+                    minHeight: `${rowVh}vh`,
+                    padding: `${rowVh * 0.13}vh ${Math.max(1.2, rowVh * 0.22)}vh`,
+                  }}
                 >
                   {a.percent != null && (
                     <div
@@ -314,20 +359,27 @@ export default function ScreenPage() {
                   )}
                   <div className="relative flex items-center justify-between gap-8">
                     <span
-                    className={`font-display font-black leading-tight ${
-                      state?.prompt?.photo ? "text-4xl" : "text-5xl"
-                    }`}
-                  >
-                    {a.text}
-                  </span>
+                      className="font-display font-black leading-tight"
+                      style={{ fontSize: px(rowVh * 0.4, 3.2) }}
+                    >
+                      {a.text}
+                    </span>
                     {a.percent != null && (
-                      <span className="shrink-0 font-display text-6xl font-black" style={{ color: GOLD }}>
+                      <span
+                        className="shrink-0 font-display font-black"
+                        style={{ color: GOLD, fontSize: px(rowVh * 0.46, 3.6) }}
+                      >
                         {a.percent}%
                       </span>
                     )}
                   </div>
+                  {/* Whose answer it was. This was the line getting cut off in
+                      the caption round, which is the whole point of unmasking. */}
                   {a.player && (
-                    <p className="pop relative mt-3 text-4xl font-black" style={{ color: GOLD }}>
+                    <p
+                      className="pop relative font-black"
+                      style={{ color: GOLD, fontSize: px(rowVh * 0.26, 2.2), marginTop: `${rowVh * 0.08}vh` }}
+                    >
                       {a.player}
                     </p>
                   )}
@@ -339,20 +391,34 @@ export default function ScreenPage() {
 
         {phase === "SCOREBOARD" && (
           <>
-            <h1 className="mb-10 font-display text-8xl font-black drop-shadow-lg">Scoreboard</h1>
-            <div className="w-full max-w-4xl space-y-4">
+            <h1
+              className="font-display font-black drop-shadow-lg"
+              style={{ fontSize: px(8, 6), marginBottom: `${Math.max(1.5, boardRowVh * 0.3)}vh` }}
+            >
+              Scoreboard
+            </h1>
+            <div
+              className="flex w-full max-w-4xl flex-col"
+              style={{ gap: `${Math.max(0.5, boardRowVh * 0.12)}vh` }}
+            >
               {state?.scoreboard?.map((p, i) => (
                 <div
                   key={p.id}
-                  className="fly flex items-center justify-between rounded-3xl px-10 py-6"
+                  className="fly flex items-center justify-between rounded-3xl"
                   style={{
                     background: i === 0 ? GOLD : "rgba(255,255,255,0.1)",
                     color: i === 0 ? "#0F172A" : "white",
                     animationDelay: `${i * 80}ms`,
+                    minHeight: `${boardRowVh}vh`,
+                    padding: `${boardRowVh * 0.12}vh ${Math.max(1.5, boardRowVh * 0.26)}vh`,
                   }}
                 >
-                  <span className="text-5xl font-black">{i + 1}. {p.name}</span>
-                  <span className="text-5xl font-black">{p.points}</span>
+                  <span className="font-black" style={{ fontSize: px(boardRowVh * 0.42, 3) }}>
+                    {i + 1}. {p.name}
+                  </span>
+                  <span className="font-black" style={{ fontSize: px(boardRowVh * 0.42, 3) }}>
+                    {p.points}
+                  </span>
                 </div>
               ))}
             </div>

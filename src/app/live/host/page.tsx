@@ -61,7 +61,14 @@ function RoomSees({
     );
   }
 
-  const players = state.players.length;
+  // Only the finalists are still playing in the Belt Match, so the count has to
+  // be out of them and not out of everyone who started the night.
+  const inPlay =
+    state.prompt?.round === "BELT" && state.beltFinalists.length
+      ? state.players.filter((p) => state.beltFinalists.includes(p.id))
+      : state.players;
+  const players = inPlay.length;
+  const answeredNow = inPlay.filter((p) => p.answered).length;
   const joined = state.players.filter((p) => p.claimed).length;
   const shown = Math.min(state.revealedCount, state.revealTotal);
   const champion =
@@ -86,7 +93,7 @@ function RoomSees({
       break;
     case "WRITING":
       headline = "The question and the clock";
-      detail = `${seconds ?? 0}s left, ${state.answerCount} of ${players} answered`;
+      detail = `${seconds ?? 0}s left, ${answeredNow} of ${players} answered`;
       break;
     case "REVEAL":
       headline = "Answers appearing one at a time, no names yet";
@@ -239,8 +246,15 @@ export default function HostPage() {
   }
 
   const phase = state?.phase ?? "LOBBY";
-  const everyoneAnswered =
-    (state?.players.length ?? 0) > 0 && state?.answerCount === state?.players.length;
+  // In the Belt Match only the finalists are still writing, so counting against
+  // everyone who started the night meant "everyone is in" could never be true
+  // and the clock looked stuck waiting on people who were already out.
+  const stillPlaying =
+    state?.prompt?.round === "BELT" && state.beltFinalists.length
+      ? state.players.filter((p) => state.beltFinalists.includes(p.id))
+      : state?.players ?? [];
+  const answeredCount = stillPlaying.filter((p) => p.answered).length;
+  const everyoneAnswered = stillPlaying.length > 0 && answeredCount === stillPlaying.length;
   const Btn = ({ on, children, kind = "normal" }: { on: () => void; children: React.ReactNode; kind?: "normal" | "go" | "quiet" }) => (
     <button
       onClick={on}
@@ -299,7 +313,7 @@ export default function HostPage() {
         <section className="mt-4 rounded-2xl bg-white/5 p-4">
           <p className="text-center font-display text-5xl font-bold">{seconds ?? 0}s</p>
           <p className="mt-1 text-center text-sm text-white/70">
-            {state?.answerCount ?? 0} of {state?.players.length ?? 0} answered
+            {answeredCount} of {stillPlaying.length} answered
           </p>
           {everyoneAnswered && (
             <p className="mt-2 rounded-lg bg-[#0E8C4B]/30 p-2 text-center text-sm font-bold">
