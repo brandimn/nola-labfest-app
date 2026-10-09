@@ -394,6 +394,67 @@ export default function HostPage() {
         {["SCOREBOARD", "BELT_INTRO", "UNMASKED"].includes(phase) && <Btn on={() => act("LOBBY")} kind="quiet">Back to lobby</Btn>}
       </section>
 
+      {/* Who is going into the Belt Match, before it starts. The arithmetic
+          sends the top two through, three on a straight tie for second, but a
+          wider tie falls back to the top two and the second seat then goes on
+          alphabetical order. That is no way to settle a finale in front of a
+          room that just watched three people score the same, so it can be
+          overruled here. */}
+      {phase === "SCOREBOARD" && state?.scoreboard && (
+        <section className="mt-4 rounded-2xl border border-[#F5A547]/40 bg-white/5 p-4">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-white/40">
+            Going into the Belt Match
+          </p>
+          <p className="mt-1 text-sm text-white/70">
+            {state.beltPickedByHost
+              ? "Your pick. Tap a name to change it."
+              : "Picked on points. Tap a name to overrule it."}
+          </p>
+          <div className="mt-3 space-y-2">
+            {state.scoreboard.map((p) => {
+              const inFinal = state.beltProposed.includes(p.id);
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => {
+                    const next = inFinal
+                      ? state.beltProposed.filter((id) => id !== p.id)
+                      : [...state.beltProposed, p.id];
+                    if (next.length < 2 || next.length > 3) {
+                      setError(
+                        next.length < 2
+                          ? "The Belt Match needs two. Tap someone else in first."
+                          : "Three is the most it takes. Tap one out first."
+                      );
+                      return;
+                    }
+                    setError("");
+                    act("SET_FINALISTS", { playerIds: next });
+                  }}
+                  className={`flex w-full items-center justify-between rounded-lg p-3 text-left ${
+                    inFinal ? "bg-[#F5A547] text-slate-900" : "bg-white/10 text-white/70"
+                  }`}
+                >
+                  <span className="font-bold">{p.name}</span>
+                  <span className="text-sm font-semibold">
+                    {p.points}
+                    {inFinal ? " • in" : ""}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          {state.beltPickedByHost && (
+            <button
+              onClick={() => act("CLEAR_FINALISTS")}
+              className="mt-3 w-full rounded-lg bg-white/10 p-2 text-sm font-bold"
+            >
+              Go back to what the points say
+            </button>
+          )}
+        </section>
+      )}
+
       {phase === "REVEAL" && (
         <p className="mt-3 text-center text-sm text-white/60">
           Revealing on its own, {state?.revealedCount ?? 0} of {state?.revealTotal ?? 0} shown.

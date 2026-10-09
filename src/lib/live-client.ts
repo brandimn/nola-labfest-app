@@ -47,6 +47,10 @@ export type LiveState = {
   } | null;
   championId: string | null;
   scoreboard: { id: string; name: string; photoUrl: string | null; points: number }[] | null;
+  /** Who would go into the Belt Match if it started right now. */
+  beltProposed: string[];
+  /** True when that pair is the host's choice rather than the arithmetic. */
+  beltPickedByHost: boolean;
 };
 
 /** Polls the shared state. The host passes fresh so his own taps are not served

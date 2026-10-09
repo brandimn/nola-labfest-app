@@ -364,6 +364,12 @@ model GameState {
   unmasked        Boolean   @default(false)
   // Two normally, three when the second place is tied.
   beltFinalists   String[]  @default([])
+  // Finalists the host chose by hand on the scoreboard, overriding the maths.
+  // Needed because a three way tie for second falls back to the top two and the
+  // second seat then goes on alphabetical order, which is no way to pick a
+  // finale in front of a room that just watched three people score the same.
+  // Kept apart from beltFinalists so choosing does not start the Belt Match.
+  beltPicked      String[]  @default([])
   // One entry per belt round, in order, holding the winning player id.
   // Counting them gives the best of three score.
   beltWinners     String[]  @default([])

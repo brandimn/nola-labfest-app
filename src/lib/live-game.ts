@@ -87,6 +87,19 @@ export function beltFinalistsFrom(board: { id: string; points: number }[]) {
   return (through.length > 3 ? board.slice(0, 2) : through).map((p) => p.id);
 }
 
+/** Who goes into the Belt Match: the host's hand picked pair if they chose one,
+ *  otherwise whatever the scores say.
+ *
+ *  Everything that needs to know, the controls showing the pair and both routes
+ *  into the Belt Match, asks here, so the names on screen are always the names
+ *  that will actually play. */
+export function finalistsFrom(
+  board: { id: string; points: number }[],
+  picked: string[]
+) {
+  return picked.length >= 2 ? picked : beltFinalistsFrom(board);
+}
+
 /** Best of three. Wins are counted from the ordered list of round winners, so
  *  the host can award a round and the score is derived rather than tracked in
  *  two places. */

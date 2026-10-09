@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { ATTRIBUTED_PHASES, advanceIfDue, beltStanding, getActiveGame, getState, revealedSoFar, scoreboardFor, Phase } from "@/lib/live-game";
+import { ATTRIBUTED_PHASES, advanceIfDue, beltStanding, finalistsFrom, getActiveGame, getState, revealedSoFar, scoreboardFor, Phase } from "@/lib/live-game";
 
 // Every screen polls this. Hundreds of phones at once, so it stays small and is
 // cached for a second at the edge. The host passes ?fresh=1 to skip the cache so
@@ -53,6 +53,11 @@ export async function GET(req: NextRequest) {
   const showAnswers = ["REVEAL", "VOTING", "RESULTS", "UNMASKED"].includes(phase);
   const showCounts = ["RESULTS", "UNMASKED"].includes(phase);
   const totalVotes = answers.reduce((n, a) => n + a._count.votes, 0);
+
+  // Needed twice below, so fetched once.
+  const board = ["SCOREBOARD", "BELT_INTRO", "CHAMPION"].includes(phase)
+    ? await scoreboardFor(game.id)
+    : null;
 
   const body = {
     serverTime: Date.now(),
@@ -125,9 +130,12 @@ export async function GET(req: NextRequest) {
         )
       : null,
     championId: state.championId,
-    scoreboard: ["SCOREBOARD", "BELT_INTRO", "CHAMPION"].includes(phase)
-      ? await scoreboardFor(game.id)
-      : null,
+    scoreboard: board,
+    // Who would go into the Belt Match if it started now, and whether that is
+    // the host's choice or just the arithmetic. Lets the controls show the pair
+    // before committing to them.
+    beltProposed: board ? finalistsFrom(board, state.beltPicked) : [],
+    beltPickedByHost: state.beltPicked.length >= 2,
   };
 
   return NextResponse.json(body, {

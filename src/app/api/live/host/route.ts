@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { HOST_COOKIE, hostPin, isHost } from "@/lib/live-host";
-import { REVEAL_GAP_MS, beltFinalistsFrom, beltStanding, getActiveGame, getOrCreateGame, getState, scoreboardFor, shuffled } from "@/lib/live-game";
+import { REVEAL_GAP_MS, beltStanding, finalistsFrom, getActiveGame, getOrCreateGame, getState, scoreboardFor, shuffled } from "@/lib/live-game";
 import { byPlayingOrder } from "@/lib/live-rounds";
 
 export const dynamic = "force-dynamic";
+
+/** Both routes into the Belt Match go through here, so the one button and the
+ *  explicit button cannot disagree about who is playing. */
+async function finalistsFor(gameId: string, picked: string[]) {
+  return finalistsFrom(await scoreboardFor(gameId), picked);
+}
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => ({}));
@@ -110,10 +116,11 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ ok: true, did: "Next prompt" });
       }
 
-      // Rounds are done and the Belt Match has not started: start it.
+      // Rounds are done and the Belt Match has not started: start it. Honours
+      // a hand picked pair, so the one button does the same thing as the
+      // Start Belt Match button.
       if (!state.beltFinalists.length) {
-        const board = await scoreboardFor(game.id);
-        const finalists = beltFinalistsFrom(board);
+        const finalists = await finalistsFor(game.id, state.beltPicked);
         await set({ phase: "BELT_INTRO", beltFinalists: finalists, beltWinners: [] });
         return NextResponse.json({ ok: true, did: "Belt Match" });
       }
@@ -295,9 +302,36 @@ export async function POST(req: NextRequest) {
       await set({ phase: "SCOREBOARD" });
       return NextResponse.json({ ok: true });
 
+    // Choose the finalists by hand from the scoreboard. Does not start the
+    // Belt Match, so the host can look at the board, adjust, and still read the
+    // room before committing.
+    case "SET_FINALISTS": {
+      const ids = Array.isArray(body.playerIds) ? body.playerIds.map(String) : [];
+      const unique = Array.from(new Set<string>(ids));
+      if (unique.length < 2 || unique.length > 3) {
+        return NextResponse.json(
+          { error: "Pick two finalists, or three if you are honouring a tie" },
+          { status: 400 }
+        );
+      }
+      const real = await prisma.gamePlayer.findMany({
+        where: { gameId: game.id, id: { in: unique } },
+        select: { id: true },
+      });
+      if (real.length !== unique.length) {
+        return NextResponse.json({ error: "One of those players is not in this game" }, { status: 400 });
+      }
+      await set({ beltPicked: unique });
+      return NextResponse.json({ ok: true, picked: unique });
+    }
+
+    // Back to whatever the scores say.
+    case "CLEAR_FINALISTS":
+      await set({ beltPicked: [] });
+      return NextResponse.json({ ok: true });
+
     case "START_BELT": {
-      const board = await scoreboardFor(game.id);
-      const finalists = beltFinalistsFrom(board);
+      const finalists = await finalistsFor(game.id, state.beltPicked);
       // Starting the Belt Match clears any previous rounds.
       await set({ phase: "BELT_INTRO", beltFinalists: finalists, beltWinners: [] });
       return NextResponse.json({ ok: true, finalists });
@@ -389,7 +423,8 @@ export async function POST(req: NextRequest) {
       await prisma.gamePrompt.updateMany({ where: { gameId: game.id }, data: { used: false } });
       await set({
         phase: "LOBBY", currentPromptId: null, revealedCount: 0, unmasked: false,
-        timerEndsAt: null, timerRemaining: null, beltFinalists: [], championId: null,
+        timerEndsAt: null, timerRemaining: null, beltFinalists: [], beltPicked: [],
+        beltWinners: [], championId: null,
       });
       return NextResponse.json({ ok: true });
     }
