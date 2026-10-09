@@ -136,6 +136,16 @@ export default function ScreenPage() {
 
   const boardCount = state?.scoreboard?.length ?? 0;
   const boardRowVh = boardCount ? Math.max(6, Math.min(11, 62 / boardCount)) : 0;
+
+  // The lobby holds the title, the voting QR and every player's name. Six names
+  // wrap to a second row and used to push the lineup off the bottom, so the
+  // title gives up height first: it is decoration, the names are not.
+  const lobbyRows = Math.ceil((state?.players.length ?? 0) / 4);
+  const lobbyTitleVh = Math.max(26, 46 - lobbyRows * 6);
+
+  // Four or more answers fill the width and most of the height, so the mascot in
+  // the bottom corner would sit on top of the last one.
+  const crowdedWithAnswers = rowCount >= 4;
   const pct = state?.timer.endsAt && state.game.timerSeconds
     ? Math.max(0, Math.min(1, (seconds ?? 0) / state.game.timerSeconds))
     : 1;
@@ -172,11 +182,12 @@ export default function ScreenPage() {
 
       {/* A different pose for each beat of the game. Bottom corner so it never
           fights the prompt or the answers. */}
-      {TOOTH[phase] && (
+      {TOOTH[phase] && !crowdedWithAnswers && (
         <img
           src={`/live/tooth/${TOOTH[phase]}.png`}
           alt=""
-          className="bob tooth pointer-events-none absolute bottom-4 left-6 z-10 h-44 w-auto"
+          className="bob tooth pointer-events-none absolute bottom-4 left-6 z-10 w-auto"
+          style={{ height: "clamp(6rem, 20vh, 11rem)" }}
         />
       )}
 
@@ -200,23 +211,36 @@ export default function ScreenPage() {
             <img
               src="/live/title.webp"
               alt=""
-              className="max-h-[52vh] w-auto max-w-[80vw] drop-shadow-2xl"
+              className="w-auto max-w-[80vw] shrink drop-shadow-2xl"
+              style={{ maxHeight: `${lobbyTitleVh}vh` }}
             />
-            <div className="mt-6 flex items-center justify-center gap-12">
+            <div className="mt-4 flex shrink-0 items-center justify-center gap-10">
               {voteUrl && (
-                <div className="rounded-3xl bg-white p-5 shadow-2xl">
-                  <QRDisplay value={voteUrl} size={240} />
+                <div className="rounded-3xl bg-white p-4 shadow-2xl">
+                  <QRDisplay value={voteUrl} size={200} />
                 </div>
               )}
               <div className="text-left">
-                <p className="font-display text-6xl font-black" style={{ color: GOLD }}>Scan to vote</p>
-                <p className="mt-2 text-3xl font-semibold text-white/80">No app. No password.</p>
-                <p className="mt-1 text-3xl font-semibold text-white/80">Just point your camera.</p>
+                <p className="font-display font-black" style={{ color: GOLD, fontSize: px(5, 3.75) }}>
+                  Scan to vote
+                </p>
+                <p className="mt-2 font-semibold text-white/80" style={{ fontSize: px(2.6, 1.875) }}>
+                  No app. No password.
+                </p>
+                <p className="mt-1 font-semibold text-white/80" style={{ fontSize: px(2.6, 1.875) }}>
+                  Just point your camera.
+                </p>
               </div>
             </div>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <div className="mt-5 flex flex-wrap items-center justify-center" style={{ gap: "1vh" }}>
               {state?.players.map((p) => (
-                <span key={p.id} className="chip rounded-2xl px-10 py-5 text-4xl font-bold">{p.name}</span>
+                <span
+                  key={p.id}
+                  className="chip rounded-2xl font-bold"
+                  style={{ padding: "1.4vh 2.4vh", fontSize: px(3, 2.25) }}
+                >
+                  {p.name}
+                </span>
               ))}
             </div>
             {!state?.players.length && (
@@ -230,9 +254,17 @@ export default function ScreenPage() {
         {(phase === "PROMPT" || phase === "WRITING") && (
           <>
             {state?.prompt?.photo && (
-              <img src={state.prompt.photo} alt="" className="mb-8 max-h-[36vh] rounded-3xl shadow-2xl" />
+              <img
+                src={state.prompt.photo}
+                alt=""
+                className="mb-5 w-auto shrink rounded-3xl shadow-2xl"
+                style={{ maxHeight: "28vh" }}
+              />
             )}
-            <h1 className="pop max-w-6xl font-display text-[5.5rem] font-black leading-[1.05] drop-shadow-lg">
+            <h1
+              className="pop max-w-6xl font-display font-black leading-[1.05] drop-shadow-lg"
+              style={{ fontSize: px(hasPhoto ? 6 : 7.5, 5.5) }}
+            >
               {state?.prompt?.text}
             </h1>
 
@@ -244,7 +276,10 @@ export default function ScreenPage() {
 
             {phase === "WRITING" && (
               <>
-                <div className="relative mt-10 h-56 w-56">
+                <div
+                  className="relative mt-6 shrink-0"
+                  style={{ height: "18vh", width: "18vh", minHeight: "7rem", minWidth: "7rem" }}
+                >
                   <svg viewBox="0 0 120 120" className="h-full w-full -rotate-90">
                     <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="12" />
                     <circle
@@ -255,20 +290,29 @@ export default function ScreenPage() {
                       style={{ transition: "stroke-dashoffset 0.4s linear, stroke 0.4s" }}
                     />
                   </svg>
-                  <span className="absolute inset-0 flex items-center justify-center font-display text-7xl font-black">
+                  <span
+                    className="absolute inset-0 flex items-center justify-center font-display font-black"
+                    style={{ fontSize: px(9, 4.5) }}
+                  >
                     {seconds ?? 0}
                   </span>
                 </div>
 
-                <p className="mt-6 text-4xl font-bold text-white/85">{answered} of {total} answered</p>
-                <div className="mt-5 flex flex-wrap justify-center gap-4">
+                <p className="mt-4 font-bold text-white/85" style={{ fontSize: px(3.2, 2.25) }}>
+                  {answered} of {total} answered
+                </p>
+                <div className="mt-3 flex flex-wrap justify-center" style={{ gap: "1vh" }}>
                   {inPlay.map((p) => (
                     <span
                       key={p.id}
-                      className={`rounded-2xl px-8 py-4 text-3xl font-bold transition-all duration-300 ${
+                      className={`rounded-2xl font-bold transition-all duration-300 ${
                         p.answered ? "scale-105 text-white shadow-lg" : "text-white/40"
                       }`}
-                      style={{ background: p.answered ? GREEN : "rgba(255,255,255,0.08)" }}
+                      style={{
+                        background: p.answered ? GREEN : "rgba(255,255,255,0.08)",
+                        padding: "1.2vh 2vh",
+                        fontSize: px(2.6, 1.875),
+                      }}
                     >
                       {p.name}
                     </span>

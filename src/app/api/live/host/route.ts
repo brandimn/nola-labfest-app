@@ -190,6 +190,16 @@ export async function POST(req: NextRequest) {
       const promptId = String(body.promptId ?? "");
       const prompt = await prisma.gamePrompt.findUnique({ where: { id: promptId } });
       if (!prompt) return NextResponse.json({ error: "Prompt not found" }, { status: 404 });
+      // A belt question put up from the prompt list used to play like any other
+      // round: no finalists, so nothing could be awarded, nothing scored, and
+      // the night never reached a champion. That is exactly what happened on
+      // the five player run through. The Belt Match has to be started properly.
+      if (prompt.round === "BELT" && !state.beltFinalists.length) {
+        return NextResponse.json(
+          { error: "Tap Start Belt Match first, then the belt questions come up on their own." },
+          { status: 400 }
+        );
+      }
       await set({
         phase: "PROMPT", currentPromptId: prompt.id, revealedCount: 0,
         unmasked: false, timerEndsAt: null, timerRemaining: null,

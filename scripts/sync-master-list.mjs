@@ -21,7 +21,34 @@ const squash = (s) => (s ?? "").toLowerCase().replace(/[^a-z0-9]/g, "");
 // quietly give them scanning back each time.
 const NO_SCANNING = new Set(["gc"]);
 
+// Address corrections, applied before anything else.
+//
+// The sync finds people by email, so changing an address on the master list
+// without moving the existing account first would create a second account for
+// the same person rather than correct the one that is there. Matched on the old
+// address, so it runs once and then finds nothing.
+const EMAIL_FIXES = [
+  // Her name was printed Chelsie and should be Chelsey, address included.
+  { from: "chelsie@midsouthdentallab.com", to: "chelsey@midsouthdentallab.com" },
+];
+
+async function fixEmails() {
+  for (const fix of EMAIL_FIXES) {
+    const moving = await prisma.user.findUnique({ where: { email: fix.from } });
+    if (!moving) continue;
+    const taken = await prisma.user.findUnique({ where: { email: fix.to } });
+    if (taken) {
+      console.log(`[master] cannot move ${fix.from}: ${fix.to} already belongs to ${taken.name}`);
+      continue;
+    }
+    await prisma.user.update({ where: { id: moving.id }, data: { email: fix.to } });
+    console.log(`[master] ${moving.name}: ${fix.from} -> ${fix.to}`);
+  }
+}
+
 async function main() {
+  await fixEmails();
+
   const hash = await bcrypt.hash(SHARED, 10);
   const booths = await prisma.vendor.findMany({ select: { id: true, name: true } });
 

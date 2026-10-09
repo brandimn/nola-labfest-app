@@ -261,7 +261,7 @@ model Game {
   id              String   @id @default(cuid())
   mode            String   @default("PRACTICE") // PRACTICE | LIVE
   name            String   @default("LabFest Say Whaaaat???")
-  beltText        String   @default("Lab Nerds Unite")
+  beltText        String   @default("Tooth Nerds Unite")
   timerSeconds    Int      @default(60)
   answerMaxLength Int      @default(80)
   hostMuted       Boolean  @default(false)

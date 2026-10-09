@@ -254,6 +254,9 @@ export default function HostPage() {
       ? state.players.filter((p) => state.beltFinalists.includes(p.id))
       : state?.players ?? [];
   const answeredCount = stillPlaying.filter((p) => p.answered).length;
+  // The Belt Match is running once finalists are set, which is the only thing
+  // that unlocks the belt questions.
+  const beltStarted = (state?.beltFinalists.length ?? 0) > 0;
   const everyoneAnswered = stillPlaying.length > 0 && answeredCount === stillPlaying.length;
   const Btn = ({ on, children, kind = "normal" }: { on: () => void; children: React.ReactNode; kind?: "normal" | "go" | "quiet" }) => (
     <button
@@ -593,17 +596,32 @@ export default function HostPage() {
             <div key={round} className="mt-4">
               <p className="font-display text-lg font-bold text-[#F5A547]">{ROUND_TITLES[round]}</p>
               <p className="mb-2 text-xs text-white/50">{ROUND_NOTES[round]}</p>
+              {/* Belt questions stay locked until the Belt Match is started, so
+                  they cannot be played as ordinary rounds. Doing that leaves the
+                  game with no finalists, nothing to award and no champion, which
+                  is how the five player run through ended with no ending. */}
+              {round === "BELT" && !beltStarted && (
+                <p className="mb-2 rounded-lg bg-amber-500/20 p-2 text-xs text-amber-200">
+                  Locked until you tap Start Belt Match on the scoreboard. Then these
+                  come up on their own.
+                </p>
+              )}
               <div className="space-y-2">
-                {inRound.map((p) => (
+                {inRound.map((p) => {
+                  const locked = round === "BELT" && !beltStarted;
+                  return (
                   <button
                     key={p.id}
+                    disabled={locked}
                     onClick={() => act("SHOW_PROMPT", { promptId: p.id })}
                     className={`w-full rounded-lg p-3 text-left text-sm ${
-                      state?.prompt?.id === p.id
-                        ? "bg-[#F5A547] text-slate-900"
-                        : p.used
-                          ? "bg-white/5 text-white/40"
-                          : "bg-white/10"
+                      locked
+                        ? "cursor-not-allowed bg-white/5 text-white/30"
+                        : state?.prompt?.id === p.id
+                          ? "bg-[#F5A547] text-slate-900"
+                          : p.used
+                            ? "bg-white/5 text-white/40"
+                            : "bg-white/10"
                     }`}
                   >
                     {p.text}
@@ -616,7 +634,8 @@ export default function HostPage() {
                       <span className="ml-2 text-xs">done</span>
                     )}
                   </button>
-                ))}
+                  );
+                })}
               </div>
             </div>
           );

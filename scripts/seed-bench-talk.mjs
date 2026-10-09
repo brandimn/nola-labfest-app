@@ -51,6 +51,21 @@ async function rewordPrompts() {
 // Print what is actually loaded, every deploy. The prompts can be edited in
 // Setup, so the list in this file is not the truth and guessing at the live
 // wording wastes a deploy each time.
+// The belt caption read "Lab Nerds Unite" and should read "Tooth Nerds Unite".
+// Matched on the old wording, so it corrects the row that is already there and
+// then quietly finds nothing. The schema default covers a fresh database.
+async function fixBeltText() {
+  const r = await prisma.game.updateMany({
+    where: { beltText: "Lab Nerds Unite" },
+    data: { beltText: "Tooth Nerds Unite" },
+  });
+  console.log(
+    r.count
+      ? `[bench-talk] belt caption corrected on ${r.count} game(s) -> Tooth Nerds Unite`
+      : "[bench-talk] belt caption already right"
+  );
+}
+
 async function listPrompts() {
   const prompts = await prisma.gamePrompt.findMany({
     select: { round: true, text: true, sortOrder: true, isFinale: true, imageUrl: true, used: true },
@@ -229,6 +244,7 @@ main()
   .then(beltPrompts)
   .then(rewordPrompts)
   .then(matchPrintedCards)
+  .then(fixBeltText)
   .then(listPrompts)
   .catch((e) => console.error("[bench-talk] skipped:", e?.message ?? e))
   .finally(() => prisma.$disconnect());
