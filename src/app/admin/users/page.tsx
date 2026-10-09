@@ -1,16 +1,16 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/session";
-import { Plus, Upload, Mail, CheckCircle2, Smartphone, Eye } from "lucide-react";
+import { Plus, Upload, Mail, Smartphone, Eye } from "lucide-react";
 import { emailConfigured } from "@/lib/email";
-import { InviteButton } from "@/components/invite-button";
+import { UserSearchList } from "@/components/user-search-list";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminUsersPage() {
   await requireRole("ADMIN");
   const users = await prisma.user.findMany({
-    orderBy: { createdAt: "desc" },
+    orderBy: { name: "asc" },
     take: 500,
   });
   const counts = {
@@ -63,42 +63,19 @@ export default async function AdminUsersPage() {
         </div>
       )}
 
-      <ul className="space-y-1">
-        {users.map((u) => (
-          <li key={u.id} className="card flex items-center justify-between gap-3 p-3">
-            <Link href={`/admin/users/${u.id}`} className="min-w-0 flex-1 hover:opacity-80">
-              <div className="flex items-center gap-2 flex-wrap">
-                <p className="font-medium truncate">{u.name}</p>
-                <span className="text-[10px] rounded-full bg-slate-200 px-2 py-0.5 font-semibold uppercase tracking-wider">
-                  {u.role}
-                </span>
-                {u.invitedAt && (
-                  <span className="inline-flex items-center gap-0.5 rounded-full bg-blue-100 text-blue-800 px-2 py-0.5 text-[10px] font-semibold">
-                    <Mail className="h-3 w-3" /> Invited
-                  </span>
-                )}
-                {u.openedInviteAt && (
-                  <span className="inline-flex items-center gap-0.5 rounded-full bg-purple-100 text-purple-800 px-2 py-0.5 text-[10px] font-semibold">
-                    <Eye className="h-3 w-3" /> Opened
-                  </span>
-                )}
-                {u.installedAt && (
-                  <span className="inline-flex items-center gap-0.5 rounded-full bg-green-100 text-green-800 px-2 py-0.5 text-[10px] font-semibold">
-                    <CheckCircle2 className="h-3 w-3" /> Installed
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-slate-500 truncate">
-                {u.email}
-                {u.company ? ` · ${u.company}` : ""}
-              </p>
-            </Link>
-            {emailReady && (
-              <InviteButton userId={u.id} alreadyInvited={!!u.invitedAt} />
-            )}
-          </li>
-        ))}
-      </ul>
+      <UserSearchList
+        users={users.map((u) => ({
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          role: u.role,
+          company: u.company,
+          invited: !!u.invitedAt,
+          opened: !!u.openedInviteAt,
+          installed: !!u.installedAt,
+        }))}
+        emailReady={emailReady}
+      />
     </main>
   );
 }
