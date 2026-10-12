@@ -25,7 +25,7 @@ export function deviceId() {
 
 export type LiveState = {
   serverTime: number;
-  game: { name: string; beltText: string; mode: string; timerSeconds: number; answerMaxLength: number; muted: boolean };
+  game: { name: string; beltText: string; mode: string; timerSeconds: number; answerMaxLength: number; muted: boolean; musicOff: boolean };
   phase: string;
   players: { id: string; name: string; claimed: boolean; answered: boolean }[];
   prompt: { id: string; round: string; text: string; photo: string | null; isFinale: boolean } | null;

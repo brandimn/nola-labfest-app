@@ -144,9 +144,11 @@ function RoomSees({
           {state.prompt.text}
         </p>
       )}
-      {state.game.muted && (
+      {state.game.muted ? (
         <p className="mt-2 text-xs font-bold text-amber-300">Sound is muted</p>
-      )}
+      ) : state.game.musicOff ? (
+        <p className="mt-2 text-xs font-bold text-amber-300">Music off, effects still playing</p>
+      ) : null}
     </div>
   );
 }
@@ -292,6 +294,17 @@ export default function HostPage() {
             className="mt-2 rounded-lg bg-[#F5A547] px-4 py-2 font-bold text-slate-900"
           >
             Unfreeze
+          </button>
+        </div>
+      )}
+      {state?.game.musicOff && !state?.game.muted && (
+        <div className="mt-2 flex items-center justify-between gap-2 rounded-xl bg-amber-500/25 p-3 text-sm">
+          <span className="font-bold">Music is off. The bell and drumroll still play.</span>
+          <button
+            onClick={() => act("MUSIC", { on: true })}
+            className="shrink-0 rounded-lg bg-[#F5A547] px-3 py-2 font-bold text-slate-900"
+          >
+            Music on
           </button>
         </div>
       )}
@@ -662,6 +675,12 @@ export default function HostPage() {
       </section>
 
       <section className="mt-6 grid grid-cols-2 gap-2">
+        <Btn
+          on={() => act("MUSIC", { on: !!state?.game.musicOff })}
+          kind={state?.game.musicOff ? "go" : "quiet"}
+        >
+          {state?.game.musicOff ? "Music back on" : "Music off"}
+        </Btn>
         <Btn on={() => act("MUTE", { muted: !state?.game.muted })} kind="quiet">
           {state?.game.muted ? "Unmute" : "Mute"}
         </Btn>

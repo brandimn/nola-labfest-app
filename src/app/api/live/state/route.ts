@@ -68,6 +68,7 @@ export async function GET(req: NextRequest) {
       timerSeconds: game.timerSeconds,
       answerMaxLength: game.answerMaxLength,
       muted: game.hostMuted,
+      musicOff: game.musicOff,
     },
     phase,
     players: players.map((p) => ({

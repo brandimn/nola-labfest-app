@@ -50,9 +50,13 @@ export default function ScreenPage() {
   useEffect(() => {
     if (!started) return;
     const muted = !!state?.game.muted;
+    // Music off silences the background beds only. The bell and the drumroll
+    // are handled elsewhere and keep working, so the host can talk over a quiet
+    // room without the rounds losing their punctuation.
+    const noMusic = muted || !!state?.game.musicOff;
     const phase = state?.phase;
 
-    const writing = phase === "WRITING" && !muted;
+    const writing = phase === "WRITING" && !noMusic;
     if (music.current) {
       if (writing) music.current.play().catch(() => {});
       else { music.current.pause(); music.current.currentTime = 0; }
@@ -62,7 +66,7 @@ export default function ScreenPage() {
     // while the room fills up and again when the belt is handed over. It is
     // rewound whenever it stops, so the crowning opens on the first bar rather
     // than halfway through a verse.
-    const songMoment = (phase === "LOBBY" || phase === "CHAMPION") && !muted;
+    const songMoment = (phase === "LOBBY" || phase === "CHAMPION") && !noMusic;
     const wantsSong = songMoment && !songMissing;
     if (song.current) {
       if (wantsSong) song.current.play().catch(() => {});
@@ -76,7 +80,7 @@ export default function ScreenPage() {
       if (needsFallback) lobby.current.play().catch(() => {});
       else lobby.current.pause();
     }
-  }, [state?.phase, state?.game.muted, started, songMissing]);
+  }, [state?.phase, state?.game.muted, state?.game.musicOff, started, songMissing]);
 
   // Asking a clip to play while it is still playing does nothing, and the bell
   // rings longer than the gap between answers, so every other ding was being

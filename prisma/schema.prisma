@@ -265,6 +265,10 @@ model Game {
   timerSeconds    Int      @default(60)
   answerMaxLength Int      @default(80)
   hostMuted       Boolean  @default(false)
+  // Silences the background music on its own, so the host can talk over a quiet
+  // room during the intro while the bell and the drumroll still land. Separate
+  // from hostMuted, which silences everything.
+  musicOff        Boolean  @default(false)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 

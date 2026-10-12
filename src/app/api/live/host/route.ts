@@ -425,6 +425,16 @@ export async function POST(req: NextRequest) {
       });
       return NextResponse.json({ ok: true });
 
+    // Background music only. The bell and the drumroll keep working, so the
+    // host can explain the game over a quiet room without losing the sounds
+    // that carry the rounds.
+    case "MUSIC":
+      await prisma.game.update({
+        where: { id: game.id },
+        data: { musicOff: !body.on },
+      });
+      return NextResponse.json({ ok: true });
+
     case "RESET_GAME": {
       // Answers, votes and progress go; players and prompts stay.
       const prompts = await prisma.gamePrompt.findMany({
