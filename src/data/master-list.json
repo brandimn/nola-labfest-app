@@ -1918,5 +1918,15 @@
   "isVendor": true,
   "isSpeaker": false,
   "isNowak": false
+ },
+ {
+  "name": "Lisa Aguirre",
+  "company": "Roland DGA",
+  "email": "laguirre@rolanddga.com",
+  "state": "California",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
  }
 ]
