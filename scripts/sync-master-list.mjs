@@ -46,9 +46,10 @@ const EMAIL_FIXES = [
 // correcting one on the master list does nothing on its own, so the ones that
 // have genuinely changed are named here.
 const BADGE_FIXES = [
-  // Neither is presenting, so neither wears a speaker badge.
+  // Chelsey is not presenting. David is, with a session on the Saturday, so he
+  // keeps his speaker badge; he was moved to LAB briefly and is moved back.
   { email: "chelsey@midsouthdentallab.com", to: "LAB" },
-  { email: "david@midsouthdentallab.com", to: "LAB" },
+  { email: "david@midsouthdentallab.com", to: "SPEAKER" },
 ];
 
 async function fixBadges() {

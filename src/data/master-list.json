@@ -1644,9 +1644,9 @@
   "company": "Mid-South Dental Lab",
   "email": "david@midsouthdentallab.com",
   "state": "Tennessee",
-  "badgeType": "LAB",
+  "badgeType": "SPEAKER",
   "isVendor": false,
-  "isSpeaker": false,
+  "isSpeaker": true,
   "isNowak": false
  },
  {
