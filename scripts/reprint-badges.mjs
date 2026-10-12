@@ -47,6 +47,11 @@ const BATCHES = [
     why: "wore a speaker badge, neither is presenting",
     emails: ["chelsey@midsouthdentallab.com", "david@midsouthdentallab.com"],
   },
+  {
+    key: "reprint-2026-10-12-esther-noltensmeier",
+    why: "company was Sun/Wagner/Panther, Sun is out",
+    emails: ["e.noltensmeier@sungmbh.de"],
+  },
 ];
 
 async function main() {

@@ -52,6 +52,41 @@ const BADGE_FIXES = [
   { email: "david@midsouthdentallab.com", to: "SPEAKER" },
 ];
 
+// Booths that have been renamed. The booth record is created from its name and
+// nothing renames it afterwards, so a change on the master list would otherwise
+// leave the old name on the vendors page and strand the staff on a booth whose
+// name no longer matches their company.
+const BOOTH_RENAMES = [
+  // Brandi asked for Sun to come out of the name entirely.
+  { from: "Sun", to: "Wagner/Panther" },
+];
+
+async function renameBooths() {
+  for (const r of BOOTH_RENAMES) {
+    const booth = await prisma.vendor.findFirst({
+      where: { name: { equals: r.from, mode: "insensitive" } },
+    });
+    if (!booth) continue;
+    const taken = await prisma.vendor.findFirst({
+      where: { name: { equals: r.to, mode: "insensitive" } },
+    });
+    if (taken) {
+      console.log(`[master] cannot rename ${r.from}: a booth called ${r.to} already exists`);
+      continue;
+    }
+    await prisma.vendor.update({
+      where: { id: booth.id },
+      data: {
+        name: r.to,
+        // The old logo was a generated letter, so it would show the wrong
+        // initial. Clearing it falls back to the first letter of the new name.
+        ...(booth.logoUrl?.includes("/sun.png") ? { logoUrl: null } : {}),
+      },
+    });
+    console.log(`[master] booth renamed: ${r.from} -> ${r.to}`);
+  }
+}
+
 async function fixBadges() {
   for (const fix of BADGE_FIXES) {
     const u = await prisma.user.findUnique({ where: { email: fix.email } });
@@ -82,6 +117,7 @@ async function fixEmails() {
 async function main() {
   await fixEmails();
   await fixBadges();
+  await renameBooths();
 
   const hash = await bcrypt.hash(SHARED, 10);
   const booths = await prisma.vendor.findMany({ select: { id: true, name: true } });
