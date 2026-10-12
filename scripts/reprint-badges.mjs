@@ -42,6 +42,11 @@ const BATCHES = [
     why: "his badge printed a washed out blue",
     names: ["Jeff Youngerman"],
   },
+  {
+    key: "reprint-2026-10-12-jacksons",
+    why: "wore a speaker badge, neither is presenting",
+    emails: ["chelsey@midsouthdentallab.com", "david@midsouthdentallab.com"],
+  },
 ];
 
 async function main() {

@@ -1644,9 +1644,9 @@
   "company": "Mid-South Dental Lab",
   "email": "david@midsouthdentallab.com",
   "state": "Tennessee",
-  "badgeType": "SPEAKER",
+  "badgeType": "LAB",
   "isVendor": false,
-  "isSpeaker": true,
+  "isSpeaker": false,
   "isNowak": false
  },
  {
@@ -1654,9 +1654,9 @@
   "company": "Mid-South Dental Lab",
   "email": "chelsey@midsouthdentallab.com",
   "state": "Tennessee",
-  "badgeType": "SPEAKER",
+  "badgeType": "LAB",
   "isVendor": false,
-  "isSpeaker": true,
+  "isSpeaker": false,
   "isNowak": false
  },
  {

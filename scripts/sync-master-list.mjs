@@ -39,6 +39,31 @@ const EMAIL_FIXES = [
   { from: "jeff-youngerman@labfest.badge", to: "jeff.youngerman@stratasys.com" },
 ];
 
+// Badge corrections.
+//
+// The sync only fills a badge type in when one is missing, deliberately, so
+// that a badge set by hand is not overwritten on every deploy. That also means
+// correcting one on the master list does nothing on its own, so the ones that
+// have genuinely changed are named here.
+const BADGE_FIXES = [
+  // Neither is presenting, so neither wears a speaker badge.
+  { email: "chelsey@midsouthdentallab.com", to: "LAB" },
+  { email: "david@midsouthdentallab.com", to: "LAB" },
+];
+
+async function fixBadges() {
+  for (const fix of BADGE_FIXES) {
+    const u = await prisma.user.findUnique({ where: { email: fix.email } });
+    if (!u) {
+      console.log(`[master] badge fix: no account for ${fix.email}`);
+      continue;
+    }
+    if (u.badgeType === fix.to) continue;
+    await prisma.user.update({ where: { id: u.id }, data: { badgeType: fix.to } });
+    console.log(`[master] ${u.name}: badge ${u.badgeType} -> ${fix.to}`);
+  }
+}
+
 async function fixEmails() {
   for (const fix of EMAIL_FIXES) {
     const moving = await prisma.user.findUnique({ where: { email: fix.from } });
@@ -55,6 +80,7 @@ async function fixEmails() {
 
 async function main() {
   await fixEmails();
+  await fixBadges();
 
   const hash = await bcrypt.hash(SHARED, 10);
   const booths = await prisma.vendor.findMany({ select: { id: true, name: true } });
