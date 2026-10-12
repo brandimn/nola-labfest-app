@@ -56,10 +56,10 @@ const BADGE_FIXES = [
 // nothing renames it afterwards, so a change on the master list would otherwise
 // leave the old name on the vendors page and strand the staff on a booth whose
 // name no longer matches their company.
-const BOOTH_RENAMES = [
-  // Brandi asked for Sun to come out of the name entirely.
-  { from: "Sun", to: "Wagner/Panther" },
-];
+// Nothing pending. The one that prompted this, Sun, turned out not to be a
+// booth name at all: that booth is Wagner Rotary, and Sun only ever appeared in
+// Esther's company field.
+const BOOTH_RENAMES = [];
 
 async function renameBooths() {
   for (const r of BOOTH_RENAMES) {
