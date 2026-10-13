@@ -100,6 +100,41 @@ async function fixBadges() {
   }
 }
 
+// Staff logins. Not part of the master list, which is who is coming to the
+// event: these are people who need the admin side and no badge at all. The sync
+// deliberately refuses to make admins, so they are named here instead.
+const ADMINS = [
+  { email: "gabbie@nowakdental.com", name: "Gabbie" },
+  { email: "reg@nowakdental.com", name: "Registration Desk" },
+];
+
+async function ensureAdmins() {
+  const hash = await bcrypt.hash(SHARED, 10);
+  for (const a of ADMINS) {
+    const existing = await prisma.user.findUnique({ where: { email: a.email } });
+    if (!existing) {
+      await prisma.user.create({
+        data: {
+          email: a.email,
+          name: a.name,
+          company: "Nowak Dental Supplies",
+          role: "ADMIN",
+          password: hash,
+          mustChangePassword: true,
+          // No badge type on purpose, so they never reach the printer.
+          badgeType: null,
+        },
+      });
+      console.log(`[master] admin created: ${a.name} <${a.email}>`);
+      continue;
+    }
+    if (existing.role !== "ADMIN") {
+      await prisma.user.update({ where: { id: existing.id }, data: { role: "ADMIN" } });
+      console.log(`[master] ${existing.name} <${a.email}>: ${existing.role} -> ADMIN`);
+    }
+  }
+}
+
 async function fixEmails() {
   for (const fix of EMAIL_FIXES) {
     const moving = await prisma.user.findUnique({ where: { email: fix.from } });
@@ -115,6 +150,7 @@ async function fixEmails() {
 }
 
 async function main() {
+  await ensureAdmins();
   await fixEmails();
   await fixBadges();
   await renameBooths();
@@ -203,10 +239,16 @@ async function main() {
   // anyone whose is empty, so that is the one way a person can be missing from
   // the printout without anybody noticing. Say so out loud, every deploy.
   const noBadgeType = await prisma.user.findMany({
-    where: { badgeType: null },
+    where: { badgeType: null, role: { not: "ADMIN" } },
     select: { name: true, email: true, role: true },
     orderBy: { name: "asc" },
   });
+  const staffNoBadge = await prisma.user.count({
+    where: { badgeType: null, role: "ADMIN" },
+  });
+  if (staffNoBadge) {
+    console.log(`[master] ${staffNoBadge} admin login(s) with no badge, which is deliberate`);
+  }
   if (noBadgeType.length) {
     console.log(`[master] WILL NOT PRINT, no badge type (${noBadgeType.length}):`);
     for (const u of noBadgeType) console.log(`[master]   ${u.name} <${u.email}> ${u.role}`);
