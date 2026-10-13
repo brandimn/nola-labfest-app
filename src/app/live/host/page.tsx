@@ -279,9 +279,6 @@ export default function HostPage() {
       <div className="flex items-center justify-between">
         <p className="font-display text-xl font-bold">{state?.game.name}</p>
         <div className="flex items-center gap-2">
-          {state?.game.mode === "PRACTICE" && (
-            <span className="rounded-full bg-amber-500 px-3 py-1 text-xs font-bold text-slate-900">PRACTICE</span>
-          )}
           <span className="rounded-full bg-white/15 px-3 py-1 text-xs font-semibold">{phase}</span>
         </div>
       </div>

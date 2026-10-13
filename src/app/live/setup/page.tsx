@@ -220,15 +220,7 @@ export default function SetupPage() {
       />
 
       <section className="mt-5 rounded-2xl bg-white/5 p-4">
-        <p className="mb-3 text-xs uppercase tracking-wider text-white/50">Practice and reset</p>
-        <div className="grid grid-cols-2 gap-2">
-          <button onClick={() => host("SET_MODE", { mode: "PRACTICE" })} className="rounded-xl bg-white/15 p-3 text-sm font-bold">
-            Use practice game
-          </button>
-          <button onClick={() => host("SET_MODE", { mode: "LIVE" })} className="rounded-xl bg-white/15 p-3 text-sm font-bold">
-            Use live game
-          </button>
-        </div>
+        <p className="mb-3 text-xs uppercase tracking-wider text-white/50">Start over</p>
         <ResetButton onConfirm={() => host("RESET_GAME")} />
       </section>
 

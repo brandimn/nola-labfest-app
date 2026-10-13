@@ -46,9 +46,12 @@ export async function POST(req: NextRequest) {
 
   switch (action) {
     case "SET_MODE": {
+      // Flip the mode on the game being played. This used to create a second
+      // game instead, which the app then preferred, so going live swapped the
+      // whole night for an empty one: no players, no prompts, no photos. Going
+      // live is a label on the same game, not a different game.
       const mode = body.mode === "LIVE" ? "LIVE" : "PRACTICE";
-      await getOrCreateGame(mode);
-      // Nothing else to do: getActiveGame prefers LIVE once it exists.
+      await prisma.game.update({ where: { id: game.id }, data: { mode } });
       return NextResponse.json({ ok: true, mode });
     }
 

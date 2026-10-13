@@ -23,10 +23,35 @@ export async function getOrCreateGame(mode: "PRACTICE" | "LIVE") {
 
 /** Whichever game is currently being driven. Live wins if one exists and has
  *  been started; otherwise practice. The host switches modes explicitly. */
+/** The game being played.
+ *
+ *  This used to prefer whichever game was marked LIVE, which meant the Use live
+ *  game button swapped the whole night for an empty one: no players, no
+ *  prompts, no photos, and a first tap that went straight to the Belt Match
+ *  because there were no rounds left to play. The mode is gone now, but a
+ *  database that already has two games still has to land on the right one.
+ *
+ *  So the real game is the one holding the night's setup. With a single game,
+ *  which is the normal case, this is one query exactly as before. */
 export async function getActiveGame() {
-  const live = await prisma.game.findFirst({ where: { mode: "LIVE" } });
-  if (live) return live;
-  return getOrCreateGame("PRACTICE");
+  const games = await prisma.game.findMany({ orderBy: { createdAt: "asc" } });
+  if (!games.length) return getOrCreateGame("LIVE");
+  if (games.length === 1) return games[0];
+
+  const prompts = await prisma.gamePrompt.groupBy({
+    by: ["gameId"],
+    _count: { _all: true },
+  });
+  const players = await prisma.gamePlayer.groupBy({
+    by: ["gameId"],
+    _count: { _all: true },
+  });
+  const weight = (id: string) =>
+    (prompts.find((p) => p.gameId === id)?._count._all ?? 0) * 10 +
+    (players.find((p) => p.gameId === id)?._count._all ?? 0);
+
+  // Ties fall to the oldest, which is the one that was set up first.
+  return [...games].sort((a, b) => weight(b.id) - weight(a.id))[0];
 }
 
 export async function getState(gameId: string) {

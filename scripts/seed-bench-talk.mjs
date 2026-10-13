@@ -93,6 +93,30 @@ async function fixBeltText() {
   );
 }
 
+// Clears away an empty game left behind by the old live mode button, which
+// created a second game rather than relabelling the one being played. Only a
+// game with nothing in it is removed, so this can never take the night's setup
+// with it, and the one that is kept is reported either way.
+async function oneGameOnly() {
+  const games = await prisma.game.findMany({ orderBy: { createdAt: "asc" } });
+  if (games.length < 2) {
+    console.log(`[bench-talk] ${games.length} game in the database`);
+    return;
+  }
+  for (const g of games) {
+    const prompts = await prisma.gamePrompt.count({ where: { gameId: g.id } });
+    const players = await prisma.gamePlayer.count({ where: { gameId: g.id } });
+    const empty = prompts === 0 && players === 0;
+    console.log(
+      `[bench-talk] game ${g.id} (${g.mode}): ${prompts} prompts, ${players} players${empty ? "  EMPTY" : ""}`
+    );
+    if (empty) {
+      await prisma.game.delete({ where: { id: g.id } });
+      console.log(`[bench-talk] removed the empty game left by the live mode button`);
+    }
+  }
+}
+
 async function listPrompts() {
   const prompts = await prisma.gamePrompt.findMany({
     select: { round: true, text: true, sortOrder: true, isFinale: true, isTiebreak: true, imageUrl: true, used: true },
@@ -277,6 +301,7 @@ main()
   .then(beltPrompts)
   .then(rewordPrompts)
   .then(matchPrintedCards)
+  .then(oneGameOnly)
   .then(fixBeltText)
   .then(suddenDeathPrompt)
   .then(listPrompts)

@@ -206,9 +206,6 @@ export default function ScreenPage() {
           className={`h-16 w-auto drop-shadow-lg ${phase === "LOBBY" ? "invisible" : ""}`}
         />
         <div className="flex items-center gap-3">
-          {state?.game.mode === "PRACTICE" && (
-            <span className="rounded-full bg-amber-400 px-5 py-2 text-xl font-bold text-slate-900">PRACTICE</span>
-          )}
           {offline && <span className="rounded-full bg-red-500 px-5 py-2 text-xl font-bold">Reconnecting</span>}
         </div>
       </header>
