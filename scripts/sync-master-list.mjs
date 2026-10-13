@@ -50,6 +50,11 @@ const BADGE_FIXES = [
   // keeps his speaker badge; he was moved to LAB briefly and is moved back.
   { email: "chelsey@midsouthdentallab.com", to: "LAB" },
   { email: "david@midsouthdentallab.com", to: "SPEAKER" },
+  // Registered themselves, so they never got a badge type and would have been
+  // skipped by every print run. All three are labs.
+  { email: "jen@flxdentalarts.com", to: "LAB" },
+  { email: "razi1992@yahoo.com", to: "LAB" },
+  { email: "markanderson2373@gmail.com", to: "LAB" },
 ];
 
 // Booths that have been renamed. The booth record is created from its name and

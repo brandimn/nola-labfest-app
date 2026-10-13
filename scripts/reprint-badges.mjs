@@ -52,6 +52,15 @@ const BATCHES = [
     why: "company was Sun/Wagner/Panther, Sun is out",
     emails: ["e.noltensmeier@sungmbh.de"],
   },
+  {
+    key: "reprint-2026-10-13-self-registered",
+    why: "had no badge type, so no print run would ever have included them",
+    emails: [
+      "jen@flxdentalarts.com",
+      "razi1992@yahoo.com",
+      "markanderson2373@gmail.com",
+    ],
+  },
 ];
 
 async function main() {
