@@ -133,6 +133,22 @@ async function main() {
     select: { name: true, company: true, badgeType: true },
     orderBy: { name: "asc" },
   });
+  // The number to reconcile the printed stack against, and the breakdown, since
+  // the badge types are what the colours on them mean.
+  const everyone = await prisma.user.findMany({
+    where: { badgeType: { not: null } },
+    select: { badgeType: true },
+  });
+  const byType = everyone.reduce((acc, u) => {
+    acc[u.badgeType] = (acc[u.badgeType] ?? 0) + 1;
+    return acc;
+  }, {});
+  const breakdown = Object.entries(byType)
+    .sort((a, b) => b[1] - a[1])
+    .map(([t, n]) => `${t} ${n}`)
+    .join(", ");
+  console.log(`[reprint] BADGES IN TOTAL: ${everyone.length}  (${breakdown})`);
+
   console.log(`[reprint] "Added today" will print ${todays.length} badge(s):`);
   for (const p of todays) {
     console.log(`[reprint]   [${p.badgeType}] ${p.name} | ${p.company ?? "no company"}`);
