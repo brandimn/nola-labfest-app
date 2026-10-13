@@ -1938,5 +1938,15 @@
   "isVendor": false,
   "isSpeaker": false,
   "isNowak": false
+ },
+ {
+  "name": "Erica DiManna",
+  "company": "Aidite USA Tech",
+  "email": "ericadimanna@aidite.com",
+  "state": "California",
+  "badgeType": "VENDOR",
+  "isVendor": true,
+  "isSpeaker": false,
+  "isNowak": false
  }
 ]
