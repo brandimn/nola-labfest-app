@@ -105,7 +105,7 @@ async function fixBadges() {
 // deliberately refuses to make admins, so they are named here instead.
 const ADMINS = [
   { email: "gabbie@nowakdental.com", name: "Gabbie" },
-  { email: "reg@nowakdental.com", name: "Registration Desk" },
+  { email: "reg@nowakdental.com", name: "Reg" },
 ];
 
 async function ensureAdmins() {
@@ -128,9 +128,16 @@ async function ensureAdmins() {
       console.log(`[master] admin created: ${a.name} <${a.email}>`);
       continue;
     }
-    if (existing.role !== "ADMIN") {
-      await prisma.user.update({ where: { id: existing.id }, data: { role: "ADMIN" } });
-      console.log(`[master] ${existing.name} <${a.email}>: ${existing.role} -> ADMIN`);
+    const data = {};
+    if (existing.role !== "ADMIN") data.role = "ADMIN";
+    if (existing.name !== a.name) data.name = a.name;
+    if (Object.keys(data).length) {
+      await prisma.user.update({ where: { id: existing.id }, data });
+      const what = [
+        data.role ? `${existing.role} -> ADMIN` : null,
+        data.name ? `name ${existing.name} -> ${a.name}` : null,
+      ].filter(Boolean).join(", ");
+      console.log(`[master] ${a.email}: ${what}`);
     }
   }
 }
