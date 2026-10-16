@@ -146,7 +146,17 @@ export default async function AdminBadgesPage({
       ) : (
         <div className="badge-grid">
           {badges.map((b) => (
-            <BadgeCard key={b.id} attendee={b} background={background} />
+            <div key={b.id} className="badge-slot">
+              <BadgeCard attendee={b} background={background} />
+              {/* Reprinting one person, for a badge that was missed or came out
+                  wrong, without hunting for the date they were added. */}
+              <a
+                href={`/api/admin/badges/pdf?id=${b.id}`}
+                className="mt-1 block rounded-lg bg-slate-100 py-1.5 text-center text-xs font-semibold text-slate-700 hover:bg-slate-200 print:hidden"
+              >
+                Reprint {b.name.split(" ")[0]}
+              </a>
+            </div>
           ))}
         </div>
       )}

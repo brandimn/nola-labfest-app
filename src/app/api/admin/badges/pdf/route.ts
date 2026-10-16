@@ -27,6 +27,10 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Admin only" }, { status: 403 });
   }
 
+  // One exact person, for the reprint button next to each badge. Matched on the
+  // account id rather than a search, so it can never quietly pick up somebody
+  // whose name or address merely contains theirs.
+  const id = req.nextUrl.searchParams.get("id")?.trim();
   const q = req.nextUrl.searchParams.get("q")?.trim();
   const since = req.nextUrl.searchParams.get("since")?.trim();
   const sinceDate = since && !isNaN(Date.parse(since)) ? new Date(since) : null;
@@ -34,7 +38,8 @@ export async function GET(req: NextRequest) {
   const attendees = await prisma.user.findMany({
     where: {
       badgeType: { not: null },
-      ...(sinceDate ? { createdAt: { gte: sinceDate } } : {}),
+      ...(id ? { id } : {}),
+      ...(sinceDate && !id ? { createdAt: { gte: sinceDate } } : {}),
       ...(q
         ? {
             OR: [
