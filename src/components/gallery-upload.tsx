@@ -85,7 +85,9 @@ export function GalleryUpload() {
             ref={inputRef}
             type="file"
             accept="image/*"
-            capture="environment"
+            // No capture attribute on purpose. It opens the camera straight
+            // away and hides the photo library, so nobody could post a picture
+            // they had already taken, which is most of them at an event.
             onChange={onPick}
             className="hidden"
           />
