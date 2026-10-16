@@ -4,6 +4,7 @@ import QRCode from "qrcode";
 import Link from "next/link";
 import { ArrowLeft, Download } from "lucide-react";
 import { PrintButton } from "@/components/print-button";
+import { ReprintPicker } from "@/components/reprint-picker";
 
 export const dynamic = "force-dynamic";
 
@@ -119,6 +120,17 @@ export default async function AdminBadgesPage({
         </div>
         <button type="submit" className="btn-secondary">Filter</button>
       </form>
+      <div className="mb-3 print:hidden">
+        <ReprintPicker
+          people={badges.map((b) => ({
+            id: b.id,
+            name: b.name,
+            company: b.company,
+            badgeType: b.badgeType,
+          }))}
+        />
+      </div>
+
       <div className="mb-4 flex flex-wrap gap-2 text-xs print:hidden">
         <a
           href={`?since=${todayStr}`}

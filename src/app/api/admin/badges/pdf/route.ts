@@ -30,7 +30,13 @@ export async function GET(req: NextRequest) {
   // One exact person, for the reprint button next to each badge. Matched on the
   // account id rather than a search, so it can never quietly pick up somebody
   // whose name or address merely contains theirs.
-  const id = req.nextUrl.searchParams.get("id")?.trim();
+  // One or several exact people, for the reprint buttons. Matched on account
+  // id rather than a search, so it can never quietly pick up somebody whose
+  // name or address merely contains theirs. Several in one request means they
+  // share a sheet, six up, rather than each coming out on a page of its own.
+  const idParam =
+    req.nextUrl.searchParams.get("ids") ?? req.nextUrl.searchParams.get("id") ?? "";
+  const ids = idParam.split(",").map((x) => x.trim()).filter(Boolean);
   const q = req.nextUrl.searchParams.get("q")?.trim();
   const since = req.nextUrl.searchParams.get("since")?.trim();
   const sinceDate = since && !isNaN(Date.parse(since)) ? new Date(since) : null;
@@ -38,9 +44,9 @@ export async function GET(req: NextRequest) {
   const attendees = await prisma.user.findMany({
     where: {
       badgeType: { not: null },
-      ...(id ? { id } : {}),
-      ...(sinceDate && !id ? { createdAt: { gte: sinceDate } } : {}),
-      ...(q
+      ...(ids.length ? { id: { in: ids } } : {}),
+      ...(sinceDate && !ids.length ? { createdAt: { gte: sinceDate } } : {}),
+      ...(q && !ids.length
         ? {
             OR: [
               { name: { contains: q, mode: "insensitive" } },
