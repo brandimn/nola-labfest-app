@@ -268,6 +268,27 @@ async function main() {
     console.log(`[master] badge check: everyone has a badge type, nobody will be skipped`);
   }
 
+  // Who can actually scan a lead, and who cannot. Scanning goes on the booth,
+  // so a vendor badge with no booth is somebody who will be turned away at
+  // their own stand. The other reports below only cover people coming off the
+  // master list, which misses anyone who registered themselves.
+  const canScan = await prisma.user.count({ where: { vendorId: { not: null } } });
+  const owners = await prisma.vendor.count({ where: { userId: { not: null } } });
+  const stranded = await prisma.user.findMany({
+    where: { badgeType: "VENDOR", vendorId: null, ownedVendor: null },
+    select: { name: true, email: true, company: true, role: true },
+    orderBy: { company: "asc" },
+  });
+  console.log(`[master] can scan leads: ${canScan} on a booth, plus ${owners} booth owners`);
+  if (stranded.length) {
+    console.log(`[master] VENDOR BADGE BUT NO BOOTH, cannot scan (${stranded.length}):`);
+    for (const u of stranded) {
+      console.log(`[master]   ${u.company ?? "no company"} — ${u.name} <${u.email}> ${u.role}`);
+    }
+  } else {
+    console.log("[master] every vendor badge is on a booth");
+  }
+
   console.log(`[master] on the list: ${master.length}`);
   console.log(`[master] created (${created.length}): ${created.slice(0, 60).join(" | ")}`);
   console.log(`[master] updated: ${updated.length}`);
