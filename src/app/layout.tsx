@@ -3,6 +3,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { BottomNav } from "@/components/bottom-nav";
+import { getMyBooth } from "@/lib/booth";
 import { InstallTracker } from "@/components/install-tracker";
 import { getUser } from "@/lib/session";
 
@@ -34,6 +35,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   const user = await getUser();
+  // Scanning follows the booth, not the role. Booth staff can be attendees or
+  // speakers, and gating on role alone hid the scanner from them entirely.
+  const onABooth = user ? !!(await getMyBooth(user.id)) : false;
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <head>
@@ -42,7 +46,7 @@ export default async function RootLayout({
       <body className={`${inter.className} bg-slate-50 text-slate-900 pb-20`}>
         <Providers>
           {children}
-          {user && <BottomNav role={user.role} />}
+          {user && <BottomNav role={user.role} onABooth={onABooth} />}
           {user && <InstallTracker />}
         </Providers>
       </body>

@@ -7,7 +7,13 @@ import { cn } from "@/lib/utils";
 
 type Role = "ATTENDEE" | "VENDOR" | "SPEAKER" | "ADMIN";
 
-export function BottomNav({ role }: { role: Role }) {
+export function BottomNav({
+  role,
+  onABooth = false,
+}: {
+  role: Role;
+  onABooth?: boolean;
+}) {
   const pathname = usePathname();
   // The game runs for a whole ballroom, most of whom are not signed in and have
   // no business in the admin area. It gets the screen to itself.
@@ -19,7 +25,8 @@ export function BottomNav({ role }: { role: Role }) {
     { href: "/", label: "Home", icon: Home, color: "#B13E7D" },
     { href: "/vendors", label: "Vendors", icon: Users, color: "#7C3AED" },
     { href: "/schedule", label: "Schedule", icon: Calendar, color: "#0EA5E9" },
-    role === "VENDOR"
+    // Anyone working a booth scans leads; everyone else collects booths.
+    role === "VENDOR" || onABooth
       ? { href: "/vendor/scan", label: "Scan", icon: QrCode, color: "#0E8C4B" }
       : { href: "/scan", label: "Scan", icon: QrCode, color: "#0E8C4B" },
     role === "ADMIN"

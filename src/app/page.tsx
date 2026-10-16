@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getUser } from "@/lib/session";
+import { getMyBooth } from "@/lib/booth";
 import { prisma } from "@/lib/prisma";
 import {
   Users,
@@ -27,6 +28,9 @@ const EVENT_LABEL = "October 15–17, 2026 · New Orleans";
 
 export default async function Home() {
   const user = await getUser();
+  // Scanning follows the booth, not the role: booth staff can be attendees or
+  // speakers, and those people had no way to reach the lead scanner at all.
+  const myBooth = user ? await getMyBooth(user.id) : null;
   if (!user) redirect("/login");
 
   const [
@@ -289,14 +293,14 @@ export default async function Home() {
           <Tile href="/team" icon={UsersRound} label="Nowak Team" color="#0057A3" image={tileImg.team} />
           <Tile href="/gallery" icon={Images} label="Photo Gallery" color="#DB2777" image={tileImg.gallery} />
           <Tile href="/promos" icon={Tag} label="Promos & Deals" color="#B45309" image={tileImg.promos} />
-          {user.role === "ATTENDEE" && (
+          {user.role === "ATTENDEE" && !myBooth && (
             <>
               <Tile href="/scan" icon={QrCode} label="Scan Booth" color="#0E8C4B" image={tileImg.scan} />
               <Tile href="/badge" icon={IdCard} label="My Badge" color="#F59E0B" image={tileImg.badge} />
               <Tile href="/vote" icon={Sparkles} label="Vote" color="#EC4899" accent={!!myVote} image={tileImg.vote} />
             </>
           )}
-          {user.role === "VENDOR" && (
+          {(user.role === "VENDOR" || myBooth) && (
             <>
               <Tile href="/vendor/scan" icon={QrCode} label="Scan Lead" color="#0E8C4B" />
               <Tile href="/vendor/leads" icon={Trophy} label="My Leads" color="#F59E0B" />
