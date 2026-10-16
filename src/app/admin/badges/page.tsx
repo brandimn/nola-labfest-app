@@ -162,6 +162,11 @@ export default async function AdminBadgesPage({
       )}
 
       <style>{`
+        .badge-bg {
+          background-image: url('${background}');
+          background-size: cover;
+          background-position: center;
+        }
         .badge-grid {
           display: grid;
           grid-template-columns: repeat(2, 1fr);
@@ -203,13 +208,8 @@ function BadgeCard({
   return (
     <div className="badge-slot relative">
     <div
-      className="badge-card relative overflow-hidden rounded-none border border-slate-300 shadow-sm"
-      style={{
-        aspectRatio: "4 / 3",
-        backgroundImage: `url('${background}')`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
+      className="badge-card badge-bg relative overflow-hidden rounded-none border border-slate-300 shadow-sm"
+      style={{ aspectRatio: "4 / 3" }}
     >
       {/* Role tag, top-right over the photo */}
       {type && (
