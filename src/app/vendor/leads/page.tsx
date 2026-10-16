@@ -1,11 +1,11 @@
 import { prisma } from "@/lib/prisma";
 import { getMyBooth } from "@/lib/booth";
-import { requireRole } from "@/lib/session";
+import { requireUser } from "@/lib/session";
 import Link from "next/link";
 import { LeadNote } from "@/components/lead-note";
 
 export default async function VendorLeadsPage() {
-  const user = await requireRole("VENDOR", "ADMIN");
+  const user = await requireUser();
   const vendor = await getMyBooth(user.id);
   if (!vendor) {
     return (

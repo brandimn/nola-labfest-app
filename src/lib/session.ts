@@ -17,12 +17,16 @@ export async function requireUser(opts?: { skipPasswordGate?: boolean }) {
   // back to the login screen.
   const me = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { mustChangePassword: true },
+    select: { mustChangePassword: true, role: true },
   });
   if (!me) redirect("/login?stale=1");
   if (!opts?.skipPasswordGate && me.mustChangePassword) redirect("/change-password");
 
-  return session.user;
+  // The role in the token is whatever it was when they signed in. Somebody
+  // switched from attendee to vendor during the event stayed an attendee
+  // everywhere until they signed out and back in, with nothing explaining why,
+  // so the fresh one wins. This row is already being read for the check above.
+  return { ...session.user, role: me.role as Role };
 }
 
 export async function requireRole(...roles: Role[]) {

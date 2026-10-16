@@ -8,12 +8,13 @@ import { getMyBooth } from "@/lib/booth";
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   const session = await getServerSession(authOptions);
   if (!session?.user) return NextResponse.json({ error: "Please sign in" }, { status: 401 });
-  if (session.user.role !== "VENDOR" && session.user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Not allowed" }, { status: 403 });
-  }
-
+  // No role check: the booth below is the real gate, and it is read fresh.
+  // The role in a sign in token is whatever it was when they signed in, so
+  // checking it locked out anyone switched to a vendor mid event.
   const vendor = await getMyBooth(session.user.id);
-  if (!vendor) return NextResponse.json({ error: "No vendor profile found for your account" }, { status: 400 });
+  if (!vendor) {
+    return NextResponse.json({ error: "Your account is not on a booth" }, { status: 403 });
+  }
 
   const lead = await prisma.lead.findUnique({ where: { id: params.id } });
   if (!lead || lead.vendorId !== vendor.id) {
