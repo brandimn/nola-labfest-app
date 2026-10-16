@@ -9,6 +9,8 @@ export function NewUserForm({ emailConfigured }: { emailConfigured: boolean }) {
     name: "",
     email: "",
     role: "ATTENDEE",
+    badgeType: "LAB",
+    state: "",
     company: "",
     title: "",
     phone: "",
@@ -77,6 +79,8 @@ export function NewUserForm({ emailConfigured }: { emailConfigured: boolean }) {
                 name: "",
                 email: "",
                 role: "ATTENDEE",
+                badgeType: "LAB",
+                state: "",
                 company: "",
                 title: "",
                 phone: "",
@@ -116,6 +120,24 @@ export function NewUserForm({ emailConfigured }: { emailConfigured: boolean }) {
       <div>
         <label className="label">Lab / Company</label>
         <input className="input" value={form.company} onChange={(e) => update("company", e.target.value)} />
+      </div>
+      <div>
+        <label className="label">Badge</label>
+        <select className="input" value={form.badgeType} onChange={(e) => update("badgeType", e.target.value)}>
+          <option value="LAB">Lab</option>
+          <option value="VENDOR">Vendor</option>
+          <option value="SPEAKER">Speaker</option>
+          <option value="NOWAK">Nowak</option>
+          <option value="STUDENT">Student</option>
+        </select>
+        <p className="mt-1 text-xs text-slate-500">
+          This is what prints, and it is separate from the role above. Without
+          one they cannot be printed or even found on the badges page.
+        </p>
+      </div>
+      <div>
+        <label className="label">State</label>
+        <input className="input" value={form.state} onChange={(e) => update("state", e.target.value)} />
       </div>
       <div>
         <label className="label">Title</label>

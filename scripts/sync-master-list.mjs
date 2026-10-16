@@ -113,6 +113,24 @@ const ADMINS = [
   { email: "reg@nowakdental.com", name: "Reg" },
 ];
 
+// Anyone added by hand before the Add user form asked for a badge type. Without
+// one they cannot be printed and do not even appear on the badges page to be
+// searched for, so they are invisible rather than merely unprinted. The badge
+// follows the role they were given, which is the only thing the form recorded.
+async function badgeForTheUnbadged() {
+  const byRole = { VENDOR: "VENDOR", SPEAKER: "SPEAKER" };
+  const stragglers = await prisma.user.findMany({
+    where: { badgeType: null, role: { not: "ADMIN" } },
+    select: { id: true, name: true, email: true, role: true },
+  });
+  for (const u of stragglers) {
+    const badge = byRole[u.role] ?? "LAB";
+    await prisma.user.update({ where: { id: u.id }, data: { badgeType: badge } });
+    console.log(`[master] ${u.name} <${u.email}> had no badge, given ${badge} from their ${u.role} role`);
+  }
+  if (!stragglers.length) console.log("[master] everybody has a badge type");
+}
+
 async function ensureAdmins() {
   const hash = await bcrypt.hash(SHARED, 10);
   for (const a of ADMINS) {
@@ -163,6 +181,7 @@ async function fixEmails() {
 
 async function main() {
   await ensureAdmins();
+  await badgeForTheUnbadged();
   await fixEmails();
   await fixBadges();
   await renameBooths();

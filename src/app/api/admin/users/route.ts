@@ -16,6 +16,8 @@ function generatePassword() {
   return `${l}-${d}`;
 }
 
+const BADGE_TYPES = ["LAB", "VENDOR", "SPEAKER", "NOWAK", "STUDENT"];
+
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (session?.user?.role !== "ADMIN") {
@@ -50,6 +52,12 @@ export async function POST(req: NextRequest) {
       role,
       password: hashed,
       company: body.company?.trim() || null,
+      state: body.state?.trim() || null,
+      // Without a badge type a person cannot be printed and cannot even be
+      // found on the badges page, which selects on exactly that. Somebody added
+      // by hand is somebody who turned up, so they get the general attendee
+      // badge unless told otherwise.
+      badgeType: BADGE_TYPES.includes(body.badgeType) ? body.badgeType : "LAB",
       title: body.title?.trim() || null,
       phone: body.phone?.trim() || null,
     },
