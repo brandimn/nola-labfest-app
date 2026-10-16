@@ -8,9 +8,12 @@ export const dynamic = "force-dynamic";
 
 export default async function GalleryPage() {
   const user = await requireUser();
+  // Deliberately without url. The photos are stored as base64 data URLs, and
+  // selecting them here put every picture into the page itself.
   const photos = await prisma.galleryPhoto.findMany({
     orderBy: { createdAt: "desc" },
     take: 300,
+    select: { id: true, caption: true, uploaderId: true, uploaderName: true },
   });
 
   return (
@@ -39,7 +42,13 @@ export default async function GalleryPage() {
                 className="group relative break-inside-avoid overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm"
               >
                 {canDelete && <GalleryDelete id={p.id} />}
-                <img src={p.url} alt={p.caption || "LabFest photo"} className="w-full" />
+                <img
+                  src={`/api/gallery/${p.id}/image`}
+                  alt={p.caption || "LabFest photo"}
+                  className="w-full"
+                  loading="lazy"
+                  decoding="async"
+                />
                 <figcaption className="px-2.5 py-2">
                   {p.caption && <p className="text-sm text-slate-700">{p.caption}</p>}
                   <p className="text-[11px] text-slate-400">{p.uploaderName}</p>
