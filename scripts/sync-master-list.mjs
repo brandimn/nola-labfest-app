@@ -131,6 +131,37 @@ async function badgeForTheUnbadged() {
   if (!stragglers.length) console.log("[master] everybody has a badge type");
 }
 
+// Who got round the floor, for the prize drawing. Printed here because the
+// drawing page is the only other place this exists and it cannot be read from
+// a laptop.
+async function passportStandings() {
+  const counts = await prisma.boothScan.groupBy({
+    by: ["attendeeId"],
+    _count: { vendorId: true },
+  });
+  if (!counts.length) {
+    console.log("[passport] nobody has scanned a booth");
+    return;
+  }
+  counts.sort((a, b) => b._count.vendorId - a._count.vendorId);
+  const people = await prisma.user.findMany({
+    where: { id: { in: counts.map((c) => c.attendeeId) } },
+    select: { id: true, name: true, company: true, email: true },
+  });
+  const nameOf = new Map(people.map((p) => [p.id, p]));
+  console.log(`[passport] ${counts.length} people have scanned at least one booth`);
+  for (const n of [25, 20, 15, 10, 5]) {
+    console.log(`[passport]   ${n}+ booths: ${counts.filter((c) => c._count.vendorId >= n).length}`);
+  }
+  console.log("[passport] everyone on 10 or more, most first:");
+  for (const c of counts.filter((x) => x._count.vendorId >= 10)) {
+    const p = nameOf.get(c.attendeeId);
+    console.log(
+      `[passport]   ${String(c._count.vendorId).padStart(2)} booths — ${p?.name ?? "?"} | ${p?.company ?? "no company"} | ${p?.email ?? ""}`
+    );
+  }
+}
+
 async function ensureAdmins() {
   const hash = await bcrypt.hash(SHARED, 10);
   for (const a of ADMINS) {
@@ -180,6 +211,7 @@ async function fixEmails() {
 }
 
 async function main() {
+  await passportStandings();
   await ensureAdmins();
   await badgeForTheUnbadged();
   await fixEmails();
