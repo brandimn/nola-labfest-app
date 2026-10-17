@@ -21,6 +21,20 @@ export default async function AdminDrawingPage() {
     having: { vendorId: { _count: { gte: threshold } } },
   });
   const eligibleIds = counts.map((c) => c.attendeeId);
+
+  // How far people actually got. Without this the threshold is a guess, and a
+  // guess set too high shows an empty drawing with nothing explaining why.
+  const allCounts = await prisma.boothScan.groupBy({
+    by: ["attendeeId"],
+    _count: { vendorId: true },
+  });
+  const scanned = allCounts.map((c) => c._count.vendorId).sort((a, b) => b - a);
+  const best = scanned[0] ?? 0;
+  // What each cut off would actually give, so a number can be picked on sight.
+  const steps = Array.from(new Set([threshold, 20, 15, 12, 10, 8, 5, 3, 1]))
+    .filter((n) => n > 0 && n <= Math.max(best, 1))
+    .sort((a, b) => b - a)
+    .map((n) => ({ n, people: scanned.filter((c) => c >= n).length }));
   const eligible = await prisma.user.findMany({
     where: { id: { in: eligibleIds } },
     select: { id: true, name: true, company: true, email: true },
@@ -50,6 +64,38 @@ export default async function AdminDrawingPage() {
           Leave blank to auto-use 90% of the {totalVendors} booths ({defaultThreshold(totalVendors)}).
           Set a specific number if some of those aren&rsquo;t real scannable booths.
         </p>
+      </div>
+
+      <div className="my-4 rounded-lg border border-slate-200 bg-white p-3">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-slate-500">
+          How many booths people actually visited
+        </p>
+        {scanned.length === 0 ? (
+          <p className="text-sm text-slate-600">
+            Nobody has scanned a booth yet, so there is nobody to draw from at any number.
+          </p>
+        ) : (
+          <>
+            <p className="text-sm text-slate-600">
+              {scanned.length} {scanned.length === 1 ? "person has" : "people have"} scanned at
+              least one booth. The most anybody managed is <b>{best}</b>.
+            </p>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {steps.map((s) => (
+                <span
+                  key={s.n}
+                  className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                    s.n === threshold
+                      ? "bg-[#7C3AED] text-white"
+                      : "bg-slate-100 text-slate-600"
+                  }`}
+                >
+                  {s.n}+ booths: {s.people}
+                </span>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
       <p className="mb-3 font-semibold">

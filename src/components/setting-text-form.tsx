@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function SettingTextForm({
   settingKey,
@@ -16,6 +17,7 @@ export function SettingTextForm({
   const [value, setValue] = useState(initialValue);
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);
+  const router = useRouter();
 
   async function save() {
     setBusy(true);
@@ -26,7 +28,12 @@ export function SettingTextForm({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ key: settingKey, value }),
       });
-      if (res.ok) setSaved(true);
+      if (res.ok) {
+        setSaved(true);
+        // Without this the setting is stored but the page keeps showing what it
+        // worked out from the old value, so it looks like nothing happened.
+        router.refresh();
+      }
     } finally {
       setBusy(false);
     }
