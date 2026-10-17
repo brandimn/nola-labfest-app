@@ -7,13 +7,22 @@ import { resolveThreshold, defaultThreshold } from "@/lib/drawing";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminDrawingPage() {
+export default async function AdminDrawingPage({
+  searchParams,
+}: {
+  searchParams: { threshold?: string };
+}) {
   await requireRole("ADMIN");
   const [totalVendors, override] = await Promise.all([
     prisma.vendor.count(),
     prisma.setting.findUnique({ where: { key: "drawingThreshold" } }),
   ]);
-  const threshold = resolveThreshold(totalVendors, override?.value);
+  const saved = resolveThreshold(totalVendors, override?.value);
+  // Clicking one of the counts below looks at that cut off without committing
+  // to it, so several can be compared before one is set for good.
+  const peek = Number.parseInt(searchParams.threshold ?? "", 10);
+  const previewing = Number.isFinite(peek) && peek > 0 && peek !== saved;
+  const threshold = previewing ? peek : saved;
 
   const counts = await prisma.boothScan.groupBy({
     by: ["attendeeId"],
@@ -80,23 +89,35 @@ export default async function AdminDrawingPage() {
               {scanned.length} {scanned.length === 1 ? "person has" : "people have"} scanned at
               least one booth. The most anybody managed is <b>{best}</b>.
             </p>
+            <p className="mt-1 text-xs text-slate-500">Tap one to see who it would enter.</p>
             <div className="mt-2 flex flex-wrap gap-1.5">
               {steps.map((s) => (
-                <span
+                <a
                   key={s.n}
-                  className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
+                  href={`?threshold=${s.n}`}
+                  className={`rounded-full px-2.5 py-1 text-xs font-semibold transition ${
                     s.n === threshold
                       ? "bg-[#7C3AED] text-white"
-                      : "bg-slate-100 text-slate-600"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                   }`}
                 >
                   {s.n}+ booths: {s.people}
-                </span>
+                </a>
               ))}
             </div>
           </>
         )}
       </div>
+
+      {previewing && (
+        <p className="mb-2 rounded-lg bg-amber-50 p-2 text-sm text-amber-900">
+          Looking at <b>{threshold}+ booths</b>. Nothing is saved, and drawing now draws
+          from this list.{" "}
+          <a href="?" className="font-semibold underline">
+            Back to the saved number ({saved})
+          </a>
+        </p>
+      )}
 
       <p className="mb-3 font-semibold">
         {eligible.length} eligible attendee{eligible.length === 1 ? "" : "s"}
